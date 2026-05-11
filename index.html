@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>AnalyticsFutbol Elite v34</title>
+    <title>AnalyticsFutbol Elite v35</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -45,7 +45,6 @@
         .poss-track { height: 6px; background: #222; border-radius: 3px; overflow: hidden; display: flex; margin-bottom: 10px; }
         .poss-fill { height: 100%; transition: width 0.8s ease; }
 
-        /* REALISTIC PITCH */
         .pitch-container { width: 100%; aspect-ratio: 105/68; background: var(--grass); border: 1px solid #1a2e16; border-radius: 4px; position: relative; overflow: hidden; margin-top: 10px; box-shadow: inset 0 0 40px rgba(0,0,0,0.5); }
         .pitch-svg { position: absolute; width: 100%; height: 100%; top: 0; left: 0; }
         .player-dot { width: 16px; height: 16px; border-radius: 50%; position: absolute; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; font-size: 7px; font-weight: 800; border: 1.5px solid #fff; box-shadow: 0 3px 6px rgba(0,0,0,0.4); z-index: 10; transition: 0.2s linear; }
@@ -63,12 +62,10 @@
         .t-opt.active-A { border-color: var(--tA); color: var(--tA); background: rgba(244,63,94,0.15); }
         .t-opt.active-B { border-color: var(--tB); color: var(--tB); background: rgba(59,158,255,0.15); }
 
-        /* CLIP EDITOR */
         .clip-ctrl-box { border-top: 1px solid var(--border); margin-top: 15px; padding-top: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .btn-clip { background: #222; border: 1px solid var(--border); color: #fff; padding: 12px; font-size: 10px; font-weight: 800; border-radius: 4px; cursor: pointer; text-transform: uppercase; }
         .btn-clip.active { background: var(--ball); color: #000; border-color: var(--ball); }
 
-        /* VIDEO & PIZARRA */
         .video-box { width: 100%; aspect-ratio: 16/9; background: #000; position: relative; border-radius: 4px; overflow: hidden; border: 1px solid var(--border); }
         video { width: 100%; height: 100%; object-fit: cover; }
         canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
@@ -178,7 +175,7 @@
         const App = {
             db: null, team: 'A', events: [], totalSecs: 0, timerInterval: null, 
             isDrawing: false, isDemo: false, demoInterval: null,
-            lastM: { team_a_goals:0, team_b_goals:0, possession_a:50 },
+            lastM: { id: null, team_a_goals:0, team_b_goals:0, possession_a:50 },
             clipMarkers: { start: null, end: null },
             
             init: async () => {
@@ -226,50 +223,53 @@
                     setTimeout(() => {
                         App.clipMarkers = { start: null, end: null };
                         startBtn.classList.remove('active'); endBtn.classList.remove('active');
-                        status.innerText = "Clip enviado al PC correctamente";
+                        status.innerText = "Clip enviado al PC";
                     }, 2000);
                 }
             },
             saveClip: async (start, end) => {
                 if(!App.db) return;
-                await App.db.from('clips_requests').insert([{ start_time: start, end_time: end, match_id: App.lastM.id || Date.now() }]);
+                const matchId = App.lastM.id || 'DEFAULT_MATCH';
+                await App.db.from('clips_requests').insert([{ start_time: start, end_time: end, match_id: matchId }]);
             },
             formatTime: (s) => {
                 const m = Math.floor(s / 60).toString().padStart(2,'0');
                 const sec = Math.floor(s % 60).toString().padStart(2,'0');
                 return `${m}:${sec}`;
-                       log: async (type) => {
+            },
+            
+            // EL MOTOR DE EVENTOS CORREGIDO Y BLINDADO
+            log: async (type) => {
                 const vid = document.getElementById('vplayer');
                 const timeStr = document.getElementById('timer-display').innerText;
-                const e = { type, team: App.team, time: timeStr, videoSec: vid.currentTime, id: Date.now() };
+                const videoS = vid.currentTime || 0;
+                
+                const e = { type, team: App.team, time: timeStr, videoSec: videoS, id: Date.now() };
                 App.events.unshift(e);
                 
-                // 1. Actualizamos la pantalla del móvil
                 document.getElementById('log-list').innerHTML = App.events.map(ev => `
                     <div class="ev-item" onclick="App.jumpTo(${ev.videoSec})">
                         <b>${ev.type} EQ.${ev.team}</b> <span>${ev.time} ➔</span>
                     </div>
                 `).join('');
 
-                // 2. ENVIAMOS EL EVENTO A SUPABASE (NUEVO)
-                if(App.db && App.lastM && App.lastM.id) {
+                if(App.db) {
+                    const matchId = App.lastM.id || 'DEFAULT_MATCH';
                     await App.db.from('tactical_events').insert([{
-                        match_id: App.lastM.id,
+                        match_id: matchId,
                         team: App.team,
                         event_type: type,
                         match_time: timeStr,
-                        video_second: vid.currentTime || 0
+                        video_second: videoS
                     }]);
                 }
             },
-
+            
             jumpTo: (sec) => {
                 const v = document.getElementById('vplayer');
                 App.nav('clips', document.querySelector('[onclick*="clips"]'));
                 v.currentTime = sec; v.play();
             },
-            
-            /* --- SISTEMA DEMO REINTEGRADO --- */
             toggleDemo: () => {
                 App.isDemo = !App.isDemo;
                 const btn = document.getElementById('demo-btn');
@@ -280,7 +280,7 @@
                     App.demoInterval = setInterval(App.engineLoop, 100);
                 } else {
                     clearInterval(App.demoInterval);
-                    App.sync(); // Restaurar datos reales
+                    App.sync();
                 }
             },
             engineLoop: () => {
@@ -296,8 +296,6 @@
                     full_data: { positions: mockPositions, players: mockPositions.map(p=>({ id:p.id, team:p.team, pos:p.pos, dist:(t/20).toFixed(2), maxSpd:(25+Math.random()*7).toFixed(1) })) }
                 });
             },
-            /* -------------------------------- */
-
             sync: async () => {
                 if(App.isDemo) return;
                 const { data } = await App.db.from('matches').select('*').order('created_at', { ascending: false }).limit(1);
