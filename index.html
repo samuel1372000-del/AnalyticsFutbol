@@ -238,17 +238,31 @@
                 const m = Math.floor(s / 60).toString().padStart(2,'0');
                 const sec = Math.floor(s % 60).toString().padStart(2,'0');
                 return `${m}:${sec}`;
-            },
-            log: (type) => {
+                       log: async (type) => {
                 const vid = document.getElementById('vplayer');
-                const e = { type, team: App.team, time: document.getElementById('timer-display').innerText, videoSec: vid.currentTime, id: Date.now() };
+                const timeStr = document.getElementById('timer-display').innerText;
+                const e = { type, team: App.team, time: timeStr, videoSec: vid.currentTime, id: Date.now() };
                 App.events.unshift(e);
+                
+                // 1. Actualizamos la pantalla del móvil
                 document.getElementById('log-list').innerHTML = App.events.map(ev => `
                     <div class="ev-item" onclick="App.jumpTo(${ev.videoSec})">
                         <b>${ev.type} EQ.${ev.team}</b> <span>${ev.time} ➔</span>
                     </div>
                 `).join('');
+
+                // 2. ENVIAMOS EL EVENTO A SUPABASE (NUEVO)
+                if(App.db && App.lastM && App.lastM.id) {
+                    await App.db.from('tactical_events').insert([{
+                        match_id: App.lastM.id,
+                        team: App.team,
+                        event_type: type,
+                        match_time: timeStr,
+                        video_second: vid.currentTime || 0
+                    }]);
+                }
             },
+
             jumpTo: (sec) => {
                 const v = document.getElementById('vplayer');
                 App.nav('clips', document.querySelector('[onclick*="clips"]'));
