@@ -533,7 +533,7 @@
 
         <section id="view-clips" class="view-section">
             <div class="af-card">
-                <span class="af-card-label">Analizador de Jugadas v5.0</span>
+                <span class="af-card-label">Análisis de jugadas v0.1.5</span>
                 <div class="af-video-box">
                     <video id="af-player-engine" controls poster="https://via.placeholder.com/800x450/111/fff?text=ESPERANDO+SINCRO+PC"></video>
                     <canvas id="af-drawing-canvas"></canvas>
@@ -547,7 +547,7 @@
 
         <section id="view-events" class="view-section">
             <div class="af-card">
-                <span class="af-card-label">Panel de Tagging y Sucesos</span>
+                <span class="af-card-label">Panel de tagging y sucesos</span>
                 <div class="af-team-toggle">
                     <button id="btn-active-local" class="af-btn-team active-a" onclick="App.setTeamContext('A')">EQUIPO LOCAL</button>
                     <button id="btn-active-visit" class="af-btn-team" onclick="App.setTeamContext('B')">EQUIPO VISITANTE</button>
@@ -558,16 +558,16 @@
                     <button class="af-btn-event" style="border-left-color:var(--af-local)" onclick="App.triggerEvent('PÉRDIDA')">PÉRDIDA</button>
                     <button class="af-btn-event" style="border-left-color:var(--af-accent)" onclick="App.triggerEvent('TIRO')">TIRO</button>
                     <button class="af-btn-event" style="border-left-color:var(--af-local)" onclick="App.triggerEvent('FALTA')">FALTA</button>
-                    <button class="af-btn-event" style="border-left-color:var(--af-balon)" onclick="App.triggerEvent('OFFSIDE')">OFFSIDE</button>
+                    <button class="af-btn-event" style="border-left-color:var(--af-balon)" onclick="App.triggerEvent('OFFSIDE')">FUERA DE JUEGO</button>
                     <button class="af-btn-event" style="border-left-color:var(--af-visit)" onclick="App.triggerEvent('CÓRNER')">CÓRNER</button>
                     <button id="btn-parada" class="af-btn-event" style="border-left-color:var(--af-text-mute)" onclick="App.triggerEvent('PARADA')">PARADA</button>
                 </div>
 
                 <div style="margin-top:25px; display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-                    <button id="af-btn-in" class="af-btn-team" style="background:#222; border-color:#222; color:#fff;" onclick="App.markClipPoint('in')">Inicio Clip</button>
-                    <button id="af-btn-out" class="af-btn-team" style="background:#222; border-color:#222; color:#fff;" onclick="App.markClipPoint('out')">Fin Clip</button>
+                    <button id="af-btn-in" class="af-btn-team" style="background:#222; border-color:#222; color:#fff;" onclick="App.markClipPoint('in')">Inicio del clip</button>
+                    <button id="af-btn-out" class="af-btn-team" style="background:#222; border-color:#222; color:#fff;" onclick="App.markClipPoint('out')">Fin del clip</button>
                 </div>
-                <div id="af-clip-status" style="font-size:10px; color:var(--af-text-low); text-align:center; margin-top:10px;">Analizador v5.0: Esperando puntos IN/OUT</div>
+                <div id="af-clip-status" style="font-size:10px; color:var(--af-text-low); text-align:center; margin-top:10px;">Análisis: Esperando puntos IN/OUT</div>
             </div>
             
             <div class="af-card">
@@ -580,9 +580,9 @@
         <section id="view-report" class="view-section">
             <div class="af-card" style="text-align:center; padding:50px 20px;">
                 <div style="font-size:50px; margin-bottom:25px;">📄📊</div>
-                <h2 style="margin-bottom:12px; letter-spacing:1.5px;">Cerrar Informe</h2>
+                <h2 style="margin-bottom:12px; letter-spacing:1.5px;">Cerrar informe</h2>
                 <p style="font-size:12px; color:var(--af-text-low); margin-bottom:35px; line-height:1.6;">Este proceso generará un documento PDF técnico con estadísticas de posesión absoluta, rendimiento físico y cronología táctica completa.</p>
-                <button class="af-btn-primary" onclick="App.exportProfessionalPDF()">Descargar Informe Oficial PDF</button>
+                <button class="af-btn-primary" onclick="App.exportProfessionalPDF()">Descargar informe oficial PDF</button>
             </div>
         </section>
     </main>
