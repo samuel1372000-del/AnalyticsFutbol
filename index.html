@@ -10,7 +10,7 @@
     
     <link rel="apple-touch-icon" href="https://img.everest.com/placeholder/180x180?text=AF&bg=000000&clr=00d68f">
     
-    <title>AnalyticsFutbol Elite v4.2</title>
+    <title>AnalyticsFutbol Elite v4.3</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -382,7 +382,7 @@
     <header>
         <div class="brand-box">
             <div class="brand-name">AnalyticsFutbol</div>
-            <div class="brand-version">ELITE SYSTEM v4.2</div>
+            <div class="brand-version">ELITE SYSTEM v4.3</div>
         </div>
         <div class="chrono-container">
             <button class="chrono-btn" onclick="App.adjustMinutes(-1)">-</button>
@@ -549,7 +549,7 @@
 
             // INICIALIZACIÓN
             init: async () => {
-                console.log("AnalyticsFutbol: Iniciando sistema v4.2...");
+                console.log("AnalyticsFutbol: Iniciando sistema v4.3...");
                 
                 // Conexión Supabase
                 App.supabaseClient = window.supabase.createClient(
@@ -622,7 +622,6 @@
                 const timestampStr = document.getElementById('timer-display').innerText;
                 const videoSecond = videoElement.currentTime || 0;
 
-                // Crear objeto de evento local
                 const newEvent = {
                     id: Date.now(),
                     type: type,
@@ -634,7 +633,6 @@
                 App.matchEvents.unshift(newEvent);
                 App.updateEventUI();
 
-                // Guardar en Supabase
                 if (App.supabaseClient) {
                     const matchId = App.matchMetadata.id || 'LIVE_MATCH';
                     await App.supabaseClient.from('tactical_events').insert([{
@@ -682,12 +680,10 @@
                     App.clipBuffer.endTime = currentTime;
                     document.getElementById('clip-end').classList.add('recording');
                     
-                    // Enviar a la nube
                     App.sendClipToCloud(App.clipBuffer.startTime, App.clipBuffer.endTime);
                     
                     statusLabel.innerText = "¡Clip enviado al motor del PC!";
                     
-                    // Limpiar tras 2 segundos
                     setTimeout(() => {
                         App.clipBuffer = { startTime: null, endTime: null };
                         document.getElementById('clip-start').classList.remove('recording');
@@ -712,7 +708,7 @@
                 return `${m}:${sec}`;
             },
 
-            // SINCRONIZACIÓN DE DATOS IA
+            // SINCRONIZACIÓN DE DATOS IA CON FORMATEO DE PRECISIÓN
             startDataSync: async () => {
                 if (App.simulationEnabled) return;
 
@@ -733,8 +729,8 @@
                 document.getElementById('score-a').innerText = data.team_a_goals || 0;
                 document.getElementById('score-b').innerText = data.team_b_goals || 0;
                 
-                // Actualizar Posesión
-                const pA = data.possession_a || 50;
+                // ACTUALIZACIÓN DE POSESIÓN: VALOR ABSOLUTO, SIN DECIMALES
+                const pA = Math.round(data.possession_a || 50);
                 const pB = 100 - pA;
                 document.getElementById('bar-a').style.width = pA + '%';
                 document.getElementById('bar-b').style.width = pB + '%';
@@ -750,7 +746,6 @@
                         </div>
                     `).join('');
                     
-                    // Cálculo de métricas tácticas avanzadas (Simples para demo)
                     const playersA = data.full_data.positions.filter(p => p.team === 'A');
                     if(playersA.length > 5) {
                         const minX = Math.min(...playersA.map(p => p.x));
@@ -760,17 +755,22 @@
                     }
                 }
 
-                // Actualizar Tabla Física
+                // ACTUALIZACIÓN DE TABLA FÍSICA: DISTANCIA Y VELOCIDAD CON MÁXIMO 1 DECIMAL
                 if (data.full_data && data.full_data.players) {
                     const tableBody = document.getElementById('physic-table-body');
-                    tableBody.innerHTML = data.full_data.players.slice(0, 11).map(p => `
+                    tableBody.innerHTML = data.full_data.players.slice(0, 11).map(p => {
+                        // Formateo de seguridad: asegurar que sean números antes de aplicar toFixed
+                        const distFormatted = parseFloat(p.dist || 0).toFixed(1);
+                        const spdFormatted = parseFloat(p.maxSpd || 0).toFixed(1);
+                        
+                        return `
                         <tr>
                             <td style="font-weight:800; color:${p.team === 'A' ? 'var(--team-a-color)' : 'var(--team-b-color)'}">#${p.id}</td>
                             <td>${p.pos || 'MID'}</td>
-                            <td>${p.dist || '0.00'} km</td>
-                            <td style="color:var(--accent-color)">${p.maxSpd || '0.0'} km/h</td>
-                        </tr>
-                    `).join('');
+                            <td>${distFormatted} km</td>
+                            <td style="color:var(--accent-color)">${spdFormatted} km/h</td>
+                        </tr>`;
+                    }).join('');
                 }
             },
 
@@ -829,7 +829,7 @@
                 canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
             },
 
-            // SIMULADOR (DEMO)
+            // SIMULADOR CON DATOS DE PRECISIÓN v4.3
             toggleSimulation: () => {
                 App.simulationEnabled = !App.simulationEnabled;
                 const btn = document.getElementById('sim-btn');
@@ -854,11 +854,14 @@
                 }
                 const players = positions.map(p => ({ 
                     id: p.id, team: p.team, pos: 'MID', 
-                    dist: (time / 100).toFixed(2), maxSpd: (28 + Math.random() * 5).toFixed(1) 
+                    // Simulamos con 1 decimal máximo
+                    dist: (time / 100).toFixed(1), 
+                    maxSpd: (28 + Math.random() * 5).toFixed(1) 
                 }));
                 
                 App.renderEngineData({
-                    team_a_goals: 1, team_b_goals: 0, possession_a: 55 + Math.sin(time) * 5,
+                    team_a_goals: 1, team_b_goals: 0, 
+                    possession_a: 55 + Math.sin(time) * 5,
                     full_data: { positions, players }
                 });
             },
@@ -897,7 +900,7 @@
                                 ${App.matchEvents.map(e => `<tr><td>${e.time}</td><td>Eq. ${e.team}</td><td><b>${e.type}</b></td></tr>`).join('')}
                             </tbody>
                         </table>
-                        <div class="footer">Este informe ha sido generado automáticamente por el motor de IA de AnalyticsFutbol v4.2</div>
+                        <div class="footer">Este informe ha sido generado automáticamente por el motor de IA de AnalyticsFutbol v4.3</div>
                     </body>
                     </html>
                 `;
