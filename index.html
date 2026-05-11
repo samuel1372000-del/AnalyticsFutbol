@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Analytics Pro</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root { --bg: #0c0c0c; --card: #161616; --accent: #00d68f; --tA: #f43f5e; --tB: #3b9eff; --text: #ebebeb; --muted: #7a7a7a; }
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, sans-serif; margin: 0; padding: 0; padding-bottom: 70px; }
+    
+    .header { padding: 40px 20px 15px; background: #111; border-bottom: 1px solid #232323; position: sticky; top: 0; z-index: 10; }
+    .header h1 { margin: 0; font-size: 20px; font-weight: 800; letter-spacing: 1px; }
+    .status { font-size: 10px; color: var(--accent); text-transform: uppercase; font-weight: bold; margin-top: 4px; }
+    
+    .view-section { display: none; padding: 15px; animation: fadeIn 0.3s; }
+    .view-section.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .card { background: var(--card); border: 1px solid #232323; border-radius: 12px; padding: 20px; margin-bottom: 15px; }
+    .section-title { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; border-bottom: 1px solid #232323; padding-bottom: 10px; font-weight: bold; }
+    
+    .score-row { display: flex; justify-content: space-around; align-items: center; }
+    .score { font-size: 36px; font-weight: 800; }
+    
+    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+    .stat-box { background: #111; padding: 10px; border-radius: 8px; text-align: center; border: 1px solid #1f1f1f; }
+    .stat-val { font-size: 16px; font-weight: bold; }
+    .stat-lbl { font-size: 9px; color: var(--muted); text-transform: uppercase; margin-top: 4px; }
+    
+    /* Comparativas */
+    .compare-row { display: flex; justify-content: space-between; margin-bottom: 5px; align-items: center; }
+    .compare-lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; }
+    .compare-val { font-size: 13px; font-weight: bold; }
+    .bar-bg { background: #111; height: 6px; border-radius: 3px; overflow: hidden; margin-bottom: 15px; display: flex; }
+    .bar-fill { height: 100%; transition: width 0.5s ease; }
+    
+    /* Videoteca */
+    .video-card { background: var(--card); border: 1px solid #232323; border-radius: 12px; overflow: hidden; margin-bottom: 15px; }
+    .video-player { width: 100%; aspect-ratio: 16/9; background: #000; display: block; }
+    .video-info { padding: 15px; }
+    .video-tag { background: #2a2a2a; color: var(--text); padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; margin-right: 5px; display: inline-block; }
+    .tag-error { background: rgba(244, 63, 94, 0.2); color: var(--tA); }
+
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #111; border-top: 1px solid #232323; display: flex; padding-bottom: env(safe-area-inset-bottom); z-index: 100; }
+    .nav-item { flex: 1; padding: 15px 0; text-align: center; color: var(--muted); font-size: 9px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; transition: 0.2s; cursor: pointer; }
+    .nav-item.active { color: var(--accent); border-top: 2px solid var(--accent); background: rgba(0, 214, 143, 0.05); }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>ANALYTICS.</h1>
+    <div class="status" id="status-text">⏳ Sincronizando...</div>
+  </div>
+
+  <div id="view-resultados" class="view-section active"><div id="content-resultados"></div></div>
+  <div id="view-fisico" class="view-section"><div class="section-title" id="fisico-title">FISICO</div><div id="content-fisico"></div></div>
+  <div id="view-tactica" class="view-section"><div class="section-title" id="tactica-title">TACTICA</div><div id="content-tactica"></div></div>
+  <div id="view-videos" class="view-section">
+    <div class="section-title">VIDEOTECA TACTICA</div>
+    <div class="video-card">
+      <video class="video-player" controls poster="https://via.placeholder.com/640x360/111111/ebebeb?text=VIDEO+PENDIENTE"></video>
+      <div class="video-info">
+        <div style="font-size: 14px; font-weight: bold; margin-bottom: 8px;">Presión en Bloque Alto</div>
+        <div><span class="video-tag tag-error">TACTICO</span><span class="video-tag">Recorte IA</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <div class="nav-item active" onclick="switchTab('resultados', this)">Partidos</div>
+    <div class="nav-item" onclick="switchTab('fisico', this)">Fisico</div>
+    <div class="nav-item" onclick="switchTab('tactica', this)">Tactica</div>
+    <div class="nav-item" onclick="switchTab('videos', this)">Vídeos</div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = "https://zdckdlrgtoglmvgdrvcn.supabase.co"; 
+    const SUPABASE_KEY = "sb_publishable_bGfCRIXGSuGb5XK_SJ0tdw_XYNIHW14"; 
+
+    function switchTab(viewId, element) {
+      document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+      document.getElementById('view-' + viewId).classList.add('active');
+      element.classList.add('active');
+    }
+
+    async function initApp() {
+      const status = document.getElementById('status-text');
+      try {
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const { data, error } = await supabase.from('matches').select('*').order('created_at', { ascending: false });
+        if (error) throw error;
+        
+        status.innerText = "🟢 ONLINE";
+        
+        // Render Resultados
+        let html = "";
+        data.forEach(m => {
+          html += `
+            <div class="card">
+              <div class="section-title" style="border:none;">${m.name || 'Partido'}</div>
+              <div class="score-row">
+                <div style="text-align:center;"><div class="score" style="color:var(--tA)">${m.team_a_goals}</div><div class="stat-lbl">EQ. A</div></div>
+                <div style="color:#222; font-weight:bold;">VS</div>
+                <div style="text-align:center;"><div class="score" style="color:var(--tB)">${m.team_b_goals}</div><div class="stat-lbl">EQ. B</div></div>
+              </div>
+            </div>`;
+        });
+        document.getElementById('content-resultados').innerHTML = html;
+
+        // Lógica Físico y Táctica para el último partido
+        const last = data[0];
+        if(last && last.full_data) {
+          // Aquí se poblarán las gráficas cuando el PC envíe los datos reales
+        }
+
+      } catch (err) {
+        status.innerText = "🔴 ERROR";
+      }
+    }
+
+    setTimeout(initApp, 1000);
+  </script>
+</body>
+</html>
