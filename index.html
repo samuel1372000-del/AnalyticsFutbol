@@ -13,10 +13,9 @@
     
     <link rel="apple-touch-icon" href="icon.png">
     
-    <title>AnalyticsFutbol v0.5.5 Beta Supreme</title>
+    <title>AnalyticsFutbol v0.5.6 Beta Supreme</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
@@ -26,33 +25,33 @@
         */
         :root {
             /* COLORES DE INTERFAZ PROFESIONAL */
-            --af-color-bg-main: #0c0c0c;          /* Fondo base absoluto */
-            --af-color-surface: #111111;          /* Superficie de paneles */
-            --af-color-card: #161616;             /* Fondo de tarjetas */
-            --af-color-border: #232323;           /* Color de bordes técnicos */
-            --af-color-accent: #00d68f;           /* Verde corporativo AnalyticsFutbol */
+            --af-bg-main: #0c0c0c;          /* Fondo base absoluto */
+            --af-surface-panel: #111111;    /* Superficie de paneles */
+            --af-card-inner: #161616;       /* Fondo de tarjetas de datos */
+            --af-border-technical: #232323; /* Color de bordes técnicos */
+            --af-accent-glow: #00d68f;      /* Verde neón AnalyticsFutbol */
             
             /* COLORES TÁCTICOS ESPECÍFICOS */
-            --af-color-local: #f43f5e;            /* Rojo para Equipo Local */
-            --af-color-visit: #3b9eff;            /* Azul para Equipo Visitante */
-            --af-color-ball: #f5a623;             /* Naranja para eventos de balón */
+            --af-team-local: #f43f5e;       /* Rojo para Equipo Local */
+            --af-team-visit: #3b9eff;       /* Azul para Equipo Visitante */
+            --af-ball-action: #f5a623;      /* Naranja para eventos de balón */
             
-            /* TIPOGRAFÍA Y CONTRASTE DE LECTURA */
-            --af-color-text-high: #ebebeb;        /* Texto de máxima prioridad */
-            --af-color-text-low: #7a7a7a;         /* Texto de información secundaria */
-            --af-color-text-muted: #404040;       /* Texto de estado desactivado */
+            /* TIPOGRAFÍA Y CONTRASTE */
+            --af-txt-high: #ebebeb;         /* Texto de prioridad máxima */
+            --af-txt-low: #7a7a7a;          /* Texto secundario informativo */
+            --af-txt-muted: #404040;        /* Texto de estado desactivado */
             
-            /* TERRENO DE JUEGO (CAMPUS) */
-            --af-color-pitch-grass: #0a1b07;      /* Color de césped profundo */
-            --af-color-pitch-lines: rgba(255, 255, 255, 0.4); /* Opacidad líneas campo */
+            /* TERRENO DE JUEGO */
+            --af-grass-deep: #0a1b07;       /* Color de césped profundo */
+            --af-pitch-lines: rgba(255, 255, 255, 0.4); 
             
             /* FUENTES DEL SISTEMA */
-            --af-font-family-ui: 'Manrope', sans-serif;
-            --af-font-family-data: 'Roboto Mono', monospace;
+            --af-font-main: 'Manrope', sans-serif;
+            --af-font-data: 'Roboto Mono', monospace;
         }
 
         /* ============================================================
-           SECCIÓN 2: RESET DE NAVEGADOR Y COMPORTAMIENTO GLOBAL
+           SECCIÓN 2: RESET DE NAVEGADOR Y AJUSTES GLOBALES (EXPANDIDO)
            ============================================================ 
         */
         * {
@@ -69,9 +68,9 @@
         }
 
         html, body {
-            background-color: var(--af-color-bg-main);
-            color: var(--af-color-text-high);
-            font-family: var(--af-font-family-ui);
+            background-color: var(--af-bg-main);
+            color: var(--af-txt-high);
+            font-family: var(--af-font-main);
             height: 100vh;
             width: 100vw;
             overflow: hidden;
@@ -80,52 +79,52 @@
         }
 
         /* ============================================================
-           SECCIÓN 3: ARQUITECTURA DEL HEADER (CABECERA)
+           SECCIÓN 3: ARQUITECTURA DEL HEADER (IDENTIDAD DE MARCA)
            ============================================================ 
         */
-        header.app-main-header {
-            padding-top: 55px; /* Optimizado para iPhone con Notch e Isla Dinámica */
+        header.app-master-header {
+            padding-top: 55px; /* Optimizado para iPhone 14/15/16 Pro */
             padding-right: 20px;
             padding-bottom: 15px;
             padding-left: 20px;
-            background-color: var(--af-color-surface);
+            background-color: var(--af-surface-panel);
             border-bottom-width: 1px;
             border-bottom-style: solid;
-            border-bottom-color: var(--af-color-border);
+            border-bottom-color: var(--af-border-technical);
             display: flex;
             flex-direction: row;
             justify-content: space-between;
             align-items: center;
             flex-shrink: 0;
-            z-index: 1000;
+            z-index: 9999;
         }
 
-        .brand-logo-container {
+        .header-brand-container {
             display: flex;
             flex-direction: column;
         }
 
-        .brand-logo-container h1 {
-            font-size: 24px;
+        .header-brand-container h1 {
+            font-size: 26px; /* Restaurado tamaño original */
             font-weight: 800;
-            letter-spacing: -0.8px;
+            letter-spacing: -1px;
             text-transform: uppercase;
-            color: var(--af-color-accent);
+            color: var(--af-accent-glow);
             line-height: 1.0;
         }
 
-        .brand-logo-container p {
-            font-family: var(--af-font-family-data);
+        .header-brand-container p {
+            font-family: var(--af-font-data);
             font-size: 10px;
-            color: var(--af-color-text-muted);
+            color: var(--af-txt-muted);
             font-weight: 700;
             margin-top: 4px;
-            letter-spacing: 1.5px;
+            letter-spacing: 2px;
             text-transform: uppercase;
         }
 
-        /* CRONÓMETRO DIGITAL INTEGRADO */
-        .chrono-display-box {
+        /* BLOQUE DEL CRONÓMETRO DIGITAL */
+        .chrono-ui-box {
             display: flex;
             flex-direction: row;
             align-items: center;
@@ -138,11 +137,11 @@
             border-radius: 12px;
             border-width: 1px;
             border-style: solid;
-            border-color: var(--af-color-border);
+            border-color: var(--af-border-technical);
         }
 
-        #ui-match-timer {
-            font-family: var(--af-font-family-data);
+        #timer-text-val {
+            font-family: var(--af-font-data);
             font-size: 18px;
             font-weight: 700;
             color: #ffffff;
@@ -150,25 +149,25 @@
             text-align: center;
         }
 
-        .chrono-button-control {
+        .chrono-btn-icon {
             background-color: transparent;
             border-top-style: none;
             border-right-style: none;
             border-bottom-style: none;
             border-left-style: none;
-            color: var(--af-color-text-low);
+            color: var(--af-txt-low);
             font-size: 24px;
             font-weight: 800;
             cursor: pointer;
         }
 
-        .chrono-start-label {
+        .chrono-action-label {
             background-color: transparent;
             border-top-style: none;
             border-right-style: none;
             border-bottom-style: none;
             border-left-style: none;
-            color: var(--af-color-accent);
+            color: var(--af-accent-glow);
             font-weight: 900;
             font-size: 11px;
             margin-left: 10px;
@@ -176,26 +175,26 @@
         }
 
         /* ============================================================
-           SECCIÓN 4: BARRA DE NAVEGACIÓN TÉCNICA
+           SECCIÓN 4: BARRA DE NAVEGACIÓN TÉCNICA (SCROLLER)
            ============================================================ 
         */
-        nav.nav-scroller-system {
+        nav.system-nav-bar {
             display: flex;
             flex-direction: row;
-            background-color: var(--af-color-surface);
+            background-color: var(--af-surface-panel);
             border-bottom-width: 1px;
             border-bottom-style: solid;
-            border-bottom-color: var(--af-color-border);
+            border-bottom-color: var(--af-border-technical);
             overflow-x: auto;
             scrollbar-width: none;
             flex-shrink: 0;
         }
 
-        nav.nav-scroller-system::-webkit-scrollbar {
+        nav.system-nav-bar::-webkit-scrollbar {
             display: none;
         }
 
-        .nav-link-tab {
+        .nav-link-anchor {
             padding-top: 18px;
             padding-right: 25px;
             padding-bottom: 18px;
@@ -204,7 +203,7 @@
             border-right-style: none;
             border-left-style: none;
             background-color: transparent;
-            color: var(--af-color-text-low);
+            color: var(--af-txt-low);
             font-size: 11px;
             font-weight: 800;
             text-transform: uppercase;
@@ -217,93 +216,93 @@
             transition-duration: 0.3s;
         }
 
-        .nav-link-tab.active {
+        .nav-link-anchor.active {
             color: #ffffff;
-            border-bottom-color: var(--af-color-accent);
+            border-bottom-color: var(--af-accent-glow);
             background-color: rgba(0, 214, 143, 0.1);
         }
 
         /* ============================================================
-           SECCIÓN 5: AREA DE TRABAJO (MAIN VIEWPORT)
+           SECCIÓN 5: MAIN VIEWPORT (CONTENEDOR DINÁMICO)
            ============================================================ 
         */
-        main.main-workspace {
+        main.app-content-container {
             flex-grow: 1;
             flex-shrink: 1;
             flex-basis: 0%;
             overflow-y: auto;
             padding-top: 20px;
             padding-right: 20px;
-            padding-bottom: 40px;
+            padding-bottom: 50px; /* Margen inferior para iPad */
             padding-left: 20px;
             -webkit-overflow-scrolling: touch;
         }
 
-        /* DISPOSICIÓN ADAPTATIVA PARA TABLETS E IPAD */
-        @media (min-width: 768px) {
-            main.main-workspace {
+        /* AJUSTE PARA TABLETAS (DISPOSICIÓN DOBLE COLUMNA) */
+        @media (min-width: 800px) {
+            main.app-content-container {
                 display: grid;
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: 1fr 1fr;
                 grid-template-rows: auto;
                 column-gap: 20px;
                 row-gap: 0px;
                 align-content: start;
             }
-            .grid-span-full {
+            .grid-full-width {
                 grid-column: span 2;
             }
         }
 
-        .app-view-panel {
+        .view-panel-section {
             display: none;
         }
 
-        .app-view-panel.active {
+        .view-panel-section.active {
             display: block;
-            animation-name: panelEntryEffect;
-            animation-duration: 0.5s;
+            animation-name: slideInAnim;
+            animation-duration: 0.4s;
             animation-timing-function: ease-out;
         }
 
-        @keyframes panelEntryEffect {
-            from { opacity: 0; transform: translateY(20px); }
+        @keyframes slideInAnim {
+            from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0px); }
         }
 
         /* ============================================================
-           SECCIÓN 6: COMPONENTES UI (CARDS, SCOREBOARD)
+           SECCIÓN 6: COMPONENTES UI (CARDS Y SCOREBOARD)
            ============================================================ 
         */
-        .ui-data-card {
-            background-color: var(--af-color-card);
+        .ui-card {
+            background-color: var(--af-card-inner);
             border-width: 1px;
             border-style: solid;
-            border-color: var(--af-color-border);
+            border-color: var(--af-border-technical);
             border-radius: 14px;
             padding-top: 25px;
             padding-right: 25px;
             padding-bottom: 25px;
             padding-left: 25px;
             margin-bottom: 20px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
         }
 
-        .ui-data-card-label {
-            font-family: var(--af-font-family-data);
+        .ui-label-technical {
+            font-family: var(--af-font-data);
             font-size: 10px;
-            color: var(--af-color-text-low);
+            color: var(--af-txt-low);
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 2.5px;
             margin-bottom: 20px;
             display: block;
-            border-left-width: 3px;
+            border-left-width: 4px;
             border-left-style: solid;
-            border-left-color: var(--af-color-accent);
-            padding-left: 10px;
+            border-left-color: var(--af-accent-glow);
+            padding-left: 12px;
         }
 
-        /* MARCADOR DE GOL */
-        .score-unit-group {
+        /* MARCADOR PROFESIONAL */
+        .live-score-group {
             display: flex;
             flex-direction: row;
             justify-content: space-around;
@@ -311,15 +310,15 @@
             margin-bottom: 30px;
         }
 
-        .score-value-large {
-            font-family: var(--af-font-family-data);
-            font-size: 64px;
+        .score-digit-large {
+            font-family: var(--af-font-data);
+            font-size: 68px;
             font-weight: 700;
             line-height: 1;
         }
 
         /* TRACKER DE POSESIÓN */
-        .poss-bar-container {
+        .possession-progress-bg {
             height: 14px;
             background-color: #222222;
             border-radius: 7px;
@@ -329,7 +328,7 @@
             margin-bottom: 15px;
         }
 
-        .poss-bar-segment {
+        .poss-segment {
             height: 100%;
             transition-property: width;
             transition-duration: 0.8s;
@@ -340,11 +339,11 @@
            SECCIÓN 7: RADAR TÁCTICO (PITCH RENDERER)
            ============================================================ 
         */
-        .stadium-pitch-overlay {
+        .stadium-radar-container {
             width: 100%;
             aspect-ratio: 105/68;
-            background-color: var(--af-color-pitch-grass);
-            border-width: 2px;
+            background-color: var(--af-grass-deep);
+            border-width: 2.5px;
             border-style: solid;
             border-color: #1a2e16;
             border-radius: 14px;
@@ -353,18 +352,18 @@
             box-shadow: inset 0 0 100px rgba(0,0,0,0.9);
         }
 
-        .pitch-vector-lines {
+        .pitch-svg-vector {
             position: absolute;
             width: 100%;
             height: 100%;
             top: 0;
             left: 0;
-            z-index: 5;
+            z-index: 10;
         }
 
-        .ia-player-dot {
-            width: 18px;
-            height: 18px;
+        .ia-player-node {
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
             position: absolute;
             transform: translate(-50%, -50%);
@@ -373,91 +372,164 @@
             justify-content: center;
             font-size: 8px;
             font-weight: 800;
-            border-width: 2px;
+            border-width: 2.5px;
             border-style: solid;
             border-color: #ffffff;
             box-shadow: 0 4px 12px rgba(0,0,0,0.8);
-            z-index: 20;
+            z-index: 30;
             transition-property: all;
             transition-duration: 0.4s;
             transition-timing-function: cubic-bezier(0.1, 0.7, 0.1, 1);
         }
 
         /* ============================================================
-           SECCIÓN 8: MOTOR DE VIDEO (ANALYZER)
+           SECCIÓN 8: PANEL DE EVENTOS (BUTTON GRID REHAB)
            ============================================================ 
         */
-        .pro-video-container {
+        .team-context-box {
+            display: flex;
+            flex-direction: row;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .btn-ui-team {
+            flex-grow: 1;
+            padding-top: 20px;
+            padding-bottom: 20px;
+            border-radius: 10px;
+            border-width: 2px;
+            border-style: solid;
+            border-color: var(--af-border-technical);
+            background-color: transparent;
+            color: var(--af-txt-low);
+            font-weight: 800;
+            font-size: 12px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition-duration: 0.3s;
+        }
+
+        .btn-ui-team.active-local { 
+            border-color: var(--af-team-local); 
+            color: var(--af-team-local); 
+            background-color: rgba(244,63,94,0.15); 
+        }
+
+        .btn-ui-team.active-visit { 
+            border-color: var(--af-team-visit); 
+            color: var(--af-team-visit); 
+            background-color: rgba(59,158,255,0.15); 
+        }
+
+        .grid-event-tags {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Cuadrícula forzada */
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .btn-tag-action {
+            background-color: var(--af-surface-panel);
+            border-width: 1px;
+            border-style: solid;
+            border-color: var(--af-border-technical);
+            color: #ffffff;
+            padding-top: 24px;
+            padding-right: 20px;
+            padding-bottom: 24px;
+            padding-left: 20px;
+            font-size: 12px;
+            font-weight: 800;
+            border-radius: 12px;
+            text-align: left;
+            border-left-width: 6px;
+            border-left-style: solid;
+            border-left-color: var(--af-txt-muted);
+            cursor: pointer;
+            transition-duration: 0.2s;
+        }
+
+        .btn-tag-action:active {
+            transform: scale(0.97);
+            background-color: #222;
+        }
+
+        /* ============================================================
+           SECCIÓN 9: MOTOR DE VIDEO (PRO ANALYSIS)
+           ============================================================ 
+        */
+        .video-panel-wrapper {
             width: 100%;
             aspect-ratio: 16/9;
             background-color: #000000;
             position: relative;
-            border-radius: 14px;
+            border-radius: 16px;
             overflow: hidden;
             border-width: 2px;
             border-style: solid;
-            border-color: var(--af-color-border);
+            border-color: var(--af-border-technical);
             margin-bottom: 25px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            box-shadow: 0 12px 50px rgba(0,0,0,0.6);
         }
 
-        video.ia-video-engine {
+        video.pro-video-engine {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
 
-        canvas#tactical-canvas-layer {
+        canvas#drawing-layer-canvas {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 100;
+            z-index: 200;
         }
 
-        canvas#tactical-canvas-layer.drawing-active {
+        canvas#drawing-layer-canvas.active-pizarra {
             pointer-events: all;
         }
 
         /* ============================================================
-           SECCIÓN 9: TABLAS DE DATOS Y BOTONERA
+           SECCIÓN 10: TABLAS DE RENDIMIENTO Y BOTONES GLOBALES
            ============================================================ 
         */
-        .performance-data-grid {
+        .table-data-system {
             width: 100%;
             border-collapse: collapse;
         }
 
-        .performance-data-grid th {
+        .table-data-system th {
             text-align: left;
-            color: var(--af-color-text-low);
+            color: var(--af-txt-low);
             font-size: 10px;
-            padding-bottom: 18px;
-            border-bottom-width: 1px;
-            border-bottom-style: solid;
-            border-bottom-color: var(--af-color-border);
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-        }
-
-        .performance-data-grid td {
-            padding-top: 20px;
             padding-bottom: 20px;
             border-bottom-width: 1px;
             border-bottom-style: solid;
+            border-bottom-color: var(--af-border-technical);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .table-data-system td {
+            padding-top: 22px;
+            padding-bottom: 22px;
+            border-bottom-width: 1px;
+            border-bottom-style: solid;
             border-bottom-color: #1a1a1a;
-            font-family: var(--af-font-family-data);
-            font-size: 14px;
+            font-family: var(--af-font-data);
+            font-size: 15px;
             color: #ffffff;
         }
 
-        .btn-system-action {
+        .btn-full-width-action {
             width: 100%;
-            padding-top: 22px;
+            padding-top: 24px;
             padding-right: 20px;
-            padding-bottom: 22px;
+            padding-bottom: 24px;
             padding-left: 20px;
             border-radius: 12px;
             border-top-style: none;
@@ -466,28 +538,22 @@
             border-left-style: none;
             font-weight: 800;
             text-transform: uppercase;
-            font-size: 13px;
-            background-color: var(--af-color-accent);
+            font-size: 14px;
+            background-color: var(--af-accent-glow);
             color: #000000;
             margin-bottom: 15px;
             cursor: pointer;
-            letter-spacing: 1.2px;
-            box-shadow: 0 4px 15px rgba(0, 214, 143, 0.25);
-            transition-duration: 0.2s;
+            letter-spacing: 1.5px;
+            box-shadow: 0 6px 20px rgba(0, 214, 143, 0.3);
         }
 
-        .btn-system-action:active {
-            transform: scale(0.98);
-            opacity: 0.9;
-        }
-
-        .btn-system-secondary {
+        .btn-full-width-secondary {
             background-color: #333333;
             color: #ffffff;
             box-shadow: none;
         }
 
-        .timeline-event-row {
+        .timeline-log-row {
             padding-top: 20px;
             padding-bottom: 20px;
             border-bottom-width: 1px;
@@ -500,25 +566,25 @@
             cursor: pointer;
         }
 
-        .timeline-event-row b {
-            color: var(--af-color-accent);
+        .timeline-log-row b {
+            color: var(--af-accent-glow);
             font-weight: 800;
         }
 
     </style>
 </head>
-<body onload="App.bootstrap()">
+<body onload="App.initializeSystem()">
 
-    <header class="app-main-header">
-        <div class="header-brand-box">
+    <header class="app-master-header">
+        <div class="header-brand-container">
             <h1>AnalyticsFutbol</h1>
-            <p>BETA SYSTEM v0.5.5 SUPREME</p>
+            <p>BETA SYSTEM v0.5.6 DEFINITIVE</p>
         </div>
-        <div class="chrono-display-box">
-            <button class="chrono-button-control" onclick="App.adjustMatchTime(-1)">-</button>
-            <span id="ui-match-timer">00:00</span>
-            <button class="chrono-button-control" onclick="App.adjustMatchTime(1)">+</button>
-            <button id="ui-btn-timer-trigger" class="chrono-start-label" onclick="App.toggleChronoEngine()">START</button>
+        <div class="chrono-ui-box">
+            <button class="chrono-button-control" onclick="App.modifyChronoTime(-1)">-</button>
+            <span id="ui-timer-display-text">00:00</span>
+            <button class="chrono-button-control" onclick="App.modifyChronoTime(1)">+</button>
+            <button id="ui-btn-chrono-toggle" class="chrono-start-label" onclick="App.toggleChronoEngine()">START</button>
         </div>
     </header>
 
@@ -531,373 +597,371 @@
         <button class="nav-link-tab" onclick="App.navigateToView('report', this)">Informe</button>
     </nav>
 
-    <main class="main-workspace" id="app-main-viewport">
+    <main class="main-workspace" id="app-viewport-root">
         
-        <section id="view-live" class="app-view-panel active grid-span-full">
+        <section id="view-live" class="view-panel-section active grid-full-width">
             <div class="ui-data-card">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;">
-                    <span class="ui-data-card-label">Sincronización Cloud Realtime</span>
-                    <button id="ui-btn-sim-toggle" onclick="App.toggleFullSimulation()" style="background:transparent; border:1px solid var(--af-color-text-low); color:var(--af-color-text-low); padding:10px 18px; font-size:9px; border-radius:30px; font-weight:800; cursor:pointer;">SIMULADOR: OFF</button>
+                    <span class="ui-data-card-label">Estado de Transmisión Realtime</span>
+                    <button id="ui-btn-engine-sim" onclick="App.toggleSimulationMode()" style="background:transparent; border:1px solid var(--af-txt-low); color:var(--af-txt-low); padding:10px 20px; font-size:10px; border-radius:30px; font-weight:800; cursor:pointer;">SIMULADOR: OFF</button>
                 </div>
                 
-                <div class="score-unit-group">
+                <div class="live-score-group">
                     <div style="text-align:center">
-                        <div class="score-value-large" style="color:var(--af-color-local)" id="ui-val-score-local">0</div>
-                        <div style="font-size:10px; color:var(--af-color-text-low); letter-spacing:2px; margin-top:10px;">LOCAL</div>
+                        <div class="score-digit-large" style="color:var(--af-team-local)" id="ui-score-val-local">0</div>
+                        <div style="font-size:11px; color:var(--af-txt-low); letter-spacing:2px; margin-top:10px; font-weight:800;">LOCAL</div>
                     </div>
-                    <div style="font-size:32px; font-weight:900; opacity:0.15; font-family:var(--af-font-family-data)">VS</div>
+                    <div style="font-size:36px; font-weight:900; opacity:0.15; font-family:var(--af-font-data)">VS</div>
                     <div style="text-align:center">
-                        <div class="score-value-large" style="color:var(--af-color-visit)" id="ui-val-score-visit">0</div>
-                        <div style="font-size:10px; color:var(--af-color-text-low); letter-spacing:2px; margin-top:10px;">VISITANTE</div>
+                        <div class="score-digit-large" style="color:var(--af-team-visit)" id="ui-score-val-visit">0</div>
+                        <div style="font-size:11px; color:var(--af-txt-low); letter-spacing:2px; margin-top:10px; font-weight:800;">VISITANTE</div>
                     </div>
                 </div>
 
-                <div class="poss-bar-container">
-                    <div id="ui-bar-poss-local" style="width:50%; background-color:var(--af-color-local);" class="poss-bar-segment"></div>
-                    <div id="ui-bar-poss-visit" style="width:50%; background-color:var(--af-color-visit);" class="poss-bar-segment"></div>
+                <div class="possession-progress-bg">
+                    <div id="ui-bar-poss-l" style="width:50%; background-color:var(--af-team-local);" class="poss-segment"></div>
+                    <div id="ui-bar-poss-v" style="width:50%; background-color:var(--af-team-visit);" class="poss-segment"></div>
                 </div>
-                <div class="possession-text-labels">
-                    <span id="ui-txt-poss-local" style="color:var(--af-color-local); font-weight:800;">50%</span>
-                    <span style="color:var(--af-color-text-muted); letter-spacing:4px">POSESIÓN ABSOLUTA</span>
-                    <span id="ui-txt-poss-visit" style="color:var(--af-color-visit); font-weight:800;">50%</span>
+                <div class="possession-text-labels" style="display:flex; justify-content:space-between; font-family:var(--af-font-data); font-size:13px; font-weight:800;">
+                    <span id="ui-label-poss-l" style="color:var(--af-team-local)">50%</span>
+                    <span style="color:var(--af-txt-muted); letter-spacing:5px">POSESIÓN ABSOLUTA</span>
+                    <span id="ui-label-poss-v" style="color:var(--af-team-visit)">50%</span>
                 </div>
             </div>
 
-            <div class="stadium-pitch-overlay">
-                <svg class="pitch-vector-lines" viewBox="0 0 105 68" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="105" height="68" fill="none" stroke="var(--af-color-pitch-lines)" stroke-width="0.6"/>
-                    <line x1="52.5" y1="0" x2="52.5" y2="68" stroke="var(--af-color-pitch-lines)" stroke-width="0.6"/>
-                    <circle cx="52.5" cy="34" r="9.15" fill="none" stroke="var(--af-color-pitch-lines)" stroke-width="0.6"/>
-                    <rect x="0" y="13.84" width="16.5" height="40.32" fill="none" stroke="var(--af-color-pitch-lines)" stroke-width="0.6"/>
-                    <rect x="88.5" y="13.84" width="16.5" height="40.32" fill="none" stroke="var(--af-color-pitch-lines)" stroke-width="0.6"/>
+            <div class="stadium-radar-container">
+                <svg class="pitch-svg-vector" viewBox="0 0 105 68" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="105" height="68" fill="none" stroke="var(--af-pitch-lines)" stroke-width="0.6"/>
+                    <line x1="52.5" y1="0" x2="52.5" y2="68" stroke="var(--af-pitch-lines)" stroke-width="0.6"/>
+                    <circle cx="52.5" cy="34" r="9.15" fill="none" stroke="var(--af-pitch-lines)" stroke-width="0.6"/>
+                    <rect x="0" y="13.84" width="16.5" height="40.32" fill="none" stroke="var(--af-pitch-lines)" stroke-width="0.6"/>
+                    <rect x="88.5" y="13.84" width="16.5" height="40.32" fill="none" stroke="var(--af-pitch-lines)" stroke-width="0.6"/>
                 </svg>
-                <div id="ui-dynamic-radar-layer"></div>
+                <div id="ui-ia-radar-container-layer"></div>
             </div>
         </section>
 
-        <section id="view-tactical" class="app-view-panel">
+        <section id="view-tactical" class="view-panel-section grid-full-width">
             <div class="ui-data-card">
-                <span class="ui-data-card-label">Métricas de Bloque Dinámicas</span>
-                <div style="display:grid; grid-template-columns: 1fr; gap:20px">
-                    <div style="background:#0a0a0a; padding:35px; border-radius:18px; text-align:center; border: 1px solid #1a1a1a;">
-                        <div id="ui-val-tactical-compacity" style="font-family:var(--af-font-family-data); font-size:42px; font-weight:800">--</div>
-                        <div style="font-size:11px; color:var(--af-color-text-low); margin-top:10px; letter-spacing:1px;">COMPACIDAD DE BLOQUE (m)</div>
+                <span class="ui-data-card-label">Métricas de Bloque Dinámicas IA</span>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:25px">
+                    <div style="background:#0a0a0a; padding:40px; border-radius:20px; text-align:center; border: 1px solid #222;">
+                        <div id="ui-tactical-compacity-val" style="font-family:var(--af-font-data); font-size:48px; font-weight:800">--</div>
+                        <div style="font-size:11px; color:var(--af-txt-low); margin-top:12px; letter-spacing:2px; font-weight:800;">COMPACIDAD BLOQUE (m)</div>
                     </div>
-                    <div style="background:#0a0a0a; padding:35px; border-radius:18px; text-align:center; border: 1px solid #1a1a1a;">
-                        <div id="ui-val-tactical-height" style="font-family:var(--af-font-family-data); font-size:42px; font-weight:800; color:var(--af-color-accent)">--</div>
-                        <div style="font-size:11px; color:var(--af-color-text-low); margin-top:10px; letter-spacing:1px;">ALTURA MEDIA DE PRESIÓN (m)</div>
+                    <div style="background:#0a0a0a; padding:40px; border-radius:20px; text-align:center; border: 1px solid #222;">
+                        <div id="ui-tactical-height-val" style="font-family:var(--af-font-data); font-size:48px; font-weight:800; color:var(--af-accent-glow)">--</div>
+                        <div style="font-size:11px; color:var(--af-txt-low); margin-top:12px; letter-spacing:2px; font-weight:800;">ALTURA MEDIA PRESIÓN (m)</div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="view-physic" class="app-view-panel grid-span-full">
+        <section id="view-physic" class="view-panel-section grid-full-width">
             <div class="ui-data-card">
-                <span class="ui-data-card-label">Monitorización Física Individual</span>
-                <table class="performance-data-grid">
+                <span class="ui-data-card-label">Análisis Atlético Individual (1 Decimal)</span>
+                <table class="table-data-system">
                     <thead>
                         <tr>
                             <th>DORSAL</th>
                             <th>POSICIÓN</th>
-                            <th>DISTANCIA TOTAL</th>
-                            <th>VELOCIDAD MÁXIMA</th>
+                            <th>DISTANCIA (km)</th>
+                            <th>V. MÁX (km/h)</th>
                         </tr>
                     </thead>
-                    <tbody id="ui-tbody-physic-engine">
+                    <tbody id="ui-physic-engine-table-body">
                         </tbody>
                 </table>
             </div>
         </section>
 
-        <section id="view-clips" class="app-view-panel grid-span-full">
+        <section id="view-clips" class="view-panel-section grid-full-width">
             <div class="ui-data-card">
-                <span class="ui-data-card-label">Análisis de Video y Pizarra</span>
-                <div class="pro-video-container">
-                    <video id="ui-html5-video-player" controls poster="https://via.placeholder.com/800x450/111/fff?text=CONECTANDO+CON+PC"></video>
-                    <canvas id="tactical-canvas-layer"></canvas>
+                <span class="ui-data-card-label">Analizador de Video e Inteligencia Artificial</span>
+                <div class="video-panel-wrapper">
+                    <video id="ui-pro-video-player" controls poster="https://via.placeholder.com/800x450/111/fff?text=ESPERANDO+SINCRO+MOTOR+PC"></video>
+                    <canvas id="drawing-layer-canvas"></canvas>
                 </div>
-                <div style="display:flex; flex-direction:row; gap:15px; margin-top:10px">
-                    <button class="btn-system-action" style="flex:2" onclick="App.activateDrawingMode()">Activar Herramientas de Dibujo</button>
-                    <button class="btn-system-action btn-system-secondary" style="flex:1" onclick="App.clearTacticalCanvas()">Limpiar</button>
+                <div style="display:flex; flex-direction:row; gap:15px; margin-top:15px">
+                    <button class="btn-full-width-action" style="flex:2" onclick="App.toggleDrawingSystem()">Activar Herramientas de Dibujo</button>
+                    <button class="btn-full-width-action btn-full-width-secondary" style="flex:1" onclick="App.resetTacticalCanvas()">Limpiar</button>
                 </div>
             </div>
         </section>
 
-        <section id="view-events" class="app-view-panel">
+        <section id="view-events" class="view-panel-section">
             <div class="ui-data-card">
-                <span class="ui-data-card-label">Centro de Tagging Realtime</span>
-                <div class="af-team-toggle">
-                    <button id="ui-btn-ctx-local" class="af-btn-team active-a" onclick="App.setGlobalTeamContext('A')">EQUIPO LOCAL</button>
-                    <button id="ui-btn-ctx-visit" class="af-btn-team" onclick="App.setGlobalTeamContext('B')">EQUIPO VISITANTE</button>
+                <span class="ui-data-card-label">Centro de Tagging Realtime v0.5.6</span>
+                <div class="team-context-box">
+                    <button id="ui-btn-ctx-local" class="btn-ui-team active-local" onclick="App.setGlobalTeamContext('A')">LOCAL</button>
+                    <button id="ui-btn-ctx-visit" class="btn-ui-team" onclick="App.setGlobalTeamContext('B')">VISITANTE</button>
                 </div>
-                <div class="af-events-grid">
-                    <button class="af-btn-event" style="border-left-color:var(--af-color-ball)" onclick="App.executeTacticalTag('GOL')">GOL</button>
-                    <button class="af-btn-event" style="border-left-color:var(--af-color-accent)" onclick="App.executeTacticalTag('RECUPERACIÓN')">RECUPERACIÓN</button>
-                    <button class="af-btn-event" style="border-left-color:var(--af-color-local)" onclick="App.executeTacticalTag('PÉRDIDA')">PÉRDIDA</button>
-                    <button class="af-btn-event" style="border-left-color:var(--af-color-accent)" onclick="App.executeTacticalTag('TIRO')">TIRO</button>
-                    <button class="af-btn-event" style="border-left-color:var(--af-color-local)" onclick="App.executeTacticalTag('FALTA')">FALTA</button>
-                    <button class="af-btn-event" style="border-left-color:var(--af-color-ball)" onclick="App.executeTacticalTag('OFFSIDE')">OFFSIDE</button>
-                    <button class="af-btn-event" style="border-left-color:var(--af-color-visit)" onclick="App.executeTacticalTag('CÓRNER')">CÓRNER</button>
-                    <button class="af-btn-event" style="border-left-color:var(--af-color-text-muted)" onclick="App.executeTacticalTag('PARADA')">PARADA</button>
+                <div class="grid-event-tags">
+                    <button class="btn-tag-action" style="border-left-color:var(--af-ball-action)" onclick="App.executeTechnicalEvent('GOL')">GOL</button>
+                    <button class="btn-tag-action" style="border-left-color:var(--af-accent-glow)" onclick="App.executeTechnicalEvent('RECUPERACIÓN')">RECUPERACIÓN</button>
+                    <button class="btn-tag-action" style="border-left-color:var(--af-team-local)" onclick="App.executeTechnicalEvent('PÉRDIDA')">PÉRDIDA</button>
+                    <button class="btn-tag-action" style="border-left-color:var(--af-accent-glow)" onclick="App.executeTechnicalEvent('TIRO')">TIRO</button>
+                    <button class="btn-tag-action" style="border-left-color:var(--af-team-local)" onclick="App.executeTechnicalEvent('FALTA')">FALTA</button>
+                    <button class="btn-tag-action" style="border-left-color:var(--af-ball-action)" onclick="App.executeTechnicalEvent('OFFSIDE')">OFFSIDE</button>
+                    <button class="btn-tag-action" style="border-left-color:var(--af-team-visit)" onclick="App.executeTechnicalEvent('CÓRNER')">CÓRNER</button>
+                    <button class="btn-tag-action" style="border-left-color:var(--af-txt-muted)" onclick="App.executeTechnicalEvent('PARADA')">PARADA</button>
                 </div>
                 <div style="margin-top:35px; display:grid; grid-template-columns:1fr 1fr; gap:15px;">
-                    <button id="ui-btn-clip-in" class="af-btn-team" style="background:#222; border-color:#222; color:#fff;" onclick="App.markInstantClip('in')">Inicio de Jugada</button>
-                    <button id="ui-btn-clip-out" class="af-btn-team" style="background:#222; border-color:#222; color:#fff;" onclick="App.markInstantClip('out')">Fin de Jugada</button>
+                    <button id="ui-btn-in" class="btn-ui-team" style="background:#222; border-color:#222; color:#fff;" onclick="App.markClipBuffer('in')">Inicio de Jugada</button>
+                    <button id="ui-btn-out" class="btn-ui-team" style="background:#222; border-color:#222; color:#fff;" onclick="App.markClipBuffer('out')">Fin de Jugada</button>
                 </div>
             </div>
             
             <div class="ui-data-card">
-                <span class="ui-data-card-label">Cronología de Sucesos</span>
-                <div id="ui-timeline-log-container">
+                <span class="ui-data-card-label">Registro Cronológico de Sucesos</span>
+                <div id="ui-timeline-log-container-engine">
                     </div>
             </div>
         </section>
 
-        <section id="view-report" class="app-view-panel grid-span-full">
+        <section id="view-report" class="view-panel-section grid-full-width">
             <div class="ui-data-card" style="text-align:center; padding-top:80px; padding-bottom:80px;">
-                <div style="font-size:72px; margin-bottom:35px; filter: drop-shadow(0 0 15px var(--af-color-accent));">📊</div>
-                <h2 style="margin-bottom:15px; letter-spacing:1px; font-size:28px;">Finalizar Sesión v0.5.5</h2>
-                <p style="font-size:15px; color:var(--af-color-text-low); margin-bottom:50px; line-height:1.7; max-width:500px; margin-left:auto; margin-right:auto;">Consolidación de toda la inteligencia táctica recolectada. Se generará un informe PDF con métricas físicas de 1 decimal y posesión absoluta sincronizada.</p>
-                <button class="btn-system-action" onclick="App.generateFinalTechnicalReport()">Descargar Informe Técnico PDF</button>
+                <div style="font-size:80px; margin-bottom:30px; filter: drop-shadow(0 0 20px var(--af-accent-glow));">📊</div>
+                <h2 style="margin-bottom:15px; letter-spacing:1px; font-size:32px;">Finalizar Sesión v0.5.6</h2>
+                <p style="font-size:16px; color:var(--af-txt-low); margin-bottom:50px; line-height:1.7; max-width:550px; margin-left:auto; margin-right:auto;">Consolidación de toda la inteligencia táctica recolectada. Se generará un informe PDF con métricas físicas de 1 decimal y posesión absoluta sincronizada.</p>
+                <button class="btn-full-width-action" onclick="App.generateProfessionalTechnicalPDF()">Descargar Informe Técnico PDF Oficial</button>
             </div>
         </section>
     </main>
 
     <script>
         const App = {
-            /* ESTADOS GLOBALES DE LA APLICACIÓN
-               Controlan la sincronización y la reactividad de la UI.
-            */
-            cloudCon: null,
-            activeTeamContext: 'A',
-            eventBufferHistory: [],
-            matchSecondsCounter: 0,
-            chronoTimerInterval: null,
-            isPizarraDrawing: false,
+            // PROPIEDADES DE CONEXIÓN Y ESTADO GLOBAL
+            supabaseCon: null,
+            activeTeamCode: 'A',
+            historicalEventLog: [],
+            totalElapsedMatchSeconds: 0,
+            chronoTimerIntervalId: null,
+            isDrawingOverlayEnabled: false,
             isSimulationModeActive: false,
-            simulationLoopId: null,
+            simulationIntervalLoopId: null,
             
-            /* ESCUDO DE PROTECCIÓN DE DATOS (EVITA SOBREESCRITURA DE GOL) */
-            dataWriteShield: false,
+            // ESCUDO ANTI-FLICKER (SINCRO MARCADOR)
+            writeShieldLock: false,
             
-            /* OBJETO DE DATOS DE LA SESIÓN ACTUAL */
-            currentSession: {
+            // ESTADO MAESTRO DE LA SESIÓN DE PARTIDO
+            matchSessionState: {
                 id: null,
-                goalsL: 0,
-                goalsV: 0,
-                possL: 50,
-                iaDataPayload: {
+                localG: 0,
+                visitG: 0,
+                possessionL: 50,
+                iaDataStore: {
                     players: [],
                     positions: []
                 }
             },
             
-            /* BUFFER DE CLIPS DE VIDEO */
-            videoClipState: {
+            // BUFFER DE MARCAS DE CLIP
+            clipBufferState: {
                 markIn: null,
                 markOut: null
             },
 
-            /* 1. BOOTSTRAP: ARRANQUE DEL SISTEMA Y CONEXIÓN NUBE */
-            bootstrap: async function() {
-                console.log("[BOOT] Iniciando Motor AnalyticsFutbol v0.5.5...");
+            /* 1. INITIALIZE: ARRANQUE DE LA MAQUINARIA */
+            initializeSystem: async function() {
+                console.log("[MOTOR] Iniciando AnalyticsFutbol Elite Engine v0.5.6...");
                 
-                // Conexión verificada a Supabase
-                this.cloudCon = window.supabase.createClient(
+                // Credenciales verificadas (Supabase v2 SDK)
+                this.supabaseCon = window.supabase.createClient(
                     "https://zdckdlrgtoglmvgdrvcn.supabase.co", 
                     "sb_publishable_bGfCRIXGSuGb5XK_SJ0tdw_XYNIHW14"
                 );
 
-                this.setupTacticalCanvasEngine();
-                this.syncCloudEngineData();
+                this.setupTacticalDrawingEngine();
+                this.performCloudSynchronization();
                 
-                // Bucle de sincronización bidireccional (Frecuencia: 5 segundos)
+                // Sincronización continua de base de datos (5 segundos)
                 setInterval(function() {
-                    App.syncCloudEngineData();
+                    App.performCloudSynchronization();
                 }, 5000);
             },
 
-            /* 2. NAVEGACIÓN: CAMBIO DE VISTA SPA (SINGLE PAGE APPLICATION) */
-            navigateToView: function(targetId, tabElement) {
-                const allPanels = document.querySelectorAll('.app-view-panel');
-                const allTabLinks = document.querySelectorAll('.nav-link-tab');
+            /* 2. NAVIGATION: NAVEGADOR DE PESTAÑAS (SPA) */
+            navigateToView: function(viewId, anchorElement) {
+                const sections = document.querySelectorAll('.view-panel-section');
+                const tabs = document.querySelectorAll('.nav-link-tab');
                 
-                // Reset de estados visuales
-                allPanels.forEach(function(p) { p.classList.remove('active'); });
-                allTabLinks.forEach(function(t) { t.classList.remove('active'); });
+                // Limpiar estados activos
+                sections.forEach(function(s) { s.classList.remove('active'); });
+                tabs.forEach(function(t) { t.classList.remove('active'); });
                 
-                // Activación de destino
-                const activePanel = document.getElementById('view-' + targetId);
-                if (activePanel) {
-                    activePanel.classList.add('active');
+                // Activar nueva sección y pestaña
+                const targetPanel = document.getElementById('view-' + viewId);
+                if (targetPanel) {
+                    targetPanel.classList.add('active');
                 }
                 
-                if (tabElement) {
-                    tabElement.classList.add('active');
+                if (anchorElement) {
+                    anchorElement.classList.add('active');
                 }
             },
 
-            /* 3. RELOJ: LÓGICA DE CONTROL TEMPORAL */
-            adjustMatchTime: function(minutesDelta) {
-                this.matchSecondsCounter = Math.max(0, this.matchSecondsCounter + (minutesDelta * 60));
-                this.updateUIChronoText();
+            /* 3. CLOCK: CONTROL DEL TIEMPO DE JUEGO */
+            modifyChronoTime: function(min) {
+                this.totalElapsedMatchSeconds = Math.max(0, this.totalElapsedMatchSeconds + (min * 60));
+                this.refreshUIChrono();
             },
 
             toggleChronoEngine: function() {
-                const triggerBtn = document.getElementById('ui-btn-timer-trigger');
-                if (this.chronoTimerInterval) {
-                    // Estado: Detener
-                    clearInterval(this.chronoTimerInterval);
-                    this.chronoTimerInterval = null;
-                    triggerBtn.innerText = 'START';
-                    triggerBtn.style.color = 'var(--af-color-accent)';
+                const btn = document.getElementById('ui-btn-chrono-toggle');
+                if (this.chronoTimerIntervalId) {
+                    // Acción: Pausar
+                    clearInterval(this.chronoTimerIntervalId);
+                    this.chronoTimerIntervalId = null;
+                    btn.innerText = 'START';
+                    btn.style.color = 'var(--af-accent-glow)';
                 } else {
-                    // Estado: Iniciar
-                    this.chronoTimerInterval = setInterval(function() {
-                        App.matchSecondsCounter++;
-                        App.updateUIChronoText();
+                    // Acción: Iniciar
+                    this.chronoTimerIntervalId = setInterval(function() {
+                        App.totalElapsedMatchSeconds++;
+                        App.refreshUIChrono();
                     }, 1000);
-                    triggerBtn.innerText = 'PAUSE';
-                    triggerBtn.style.color = '#ff4444';
+                    btn.innerText = 'PAUSE';
+                    btn.style.color = '#ff4444';
                 }
             },
 
-            updateUIChronoText: function() {
-                const m = Math.floor(this.matchSecondsCounter / 60).toString().padStart(2, '0');
-                const s = (this.matchSecondsCounter % 60).toString().padStart(2, '0');
-                document.getElementById('ui-match-timer').innerText = m + ":" + s;
+            refreshUIChrono: function() {
+                const mm = Math.floor(this.totalElapsedMatchSeconds / 60).toString().padStart(2, '0');
+                const ss = (this.totalElapsedMatchSeconds % 60).toString().padStart(2, '0');
+                document.getElementById('ui-timer-display-text').innerText = mm + ":" + ss;
             },
 
-            /* 4. EVENTOS: TAGGING Y GESTIÓN DE MARCADOR */
-            setGlobalTeamContext: function(code) {
-                this.activeTeamContext = code;
+            /* 4. EVENTS: LÓGICA DE TAGGING Y GESTIÓN DE MARCADOR */
+            setGlobalTeamContext: function(teamCode) {
+                this.activeTeamCode = teamCode;
                 const localBtn = document.getElementById('ui-btn-ctx-local');
                 const visitBtn = document.getElementById('ui-btn-ctx-visit');
                 
-                if (code === 'A') {
-                    localBtn.classList.add('active-a');
-                    visitBtn.classList.remove('active-b');
+                if (teamCode === 'A') {
+                    localBtn.classList.add('active-local');
+                    visitBtn.classList.remove('active-visit');
                 } else {
-                    visitBtn.classList.add('active-b');
-                    localBtn.classList.remove('active-a');
+                    visitBtn.classList.add('active-visit');
+                    localBtn.classList.remove('active-local');
                 }
             },
 
-            executeTacticalTag: async function(tagName) {
-                const videoElement = document.getElementById('ui-html5-video-player');
-                const timeString = document.getElementById('ui-match-timer').innerText;
-                const videoSeconds = videoElement.currentTime || 0;
+            executeTechnicalEvent: async function(eventType) {
+                const video = document.getElementById('ui-pro-video-player');
+                const time = document.getElementById('ui-timer-display-text').innerText;
+                const videoSeconds = video.currentTime || 0;
 
-                // Construcción del objeto de evento
-                const eventObject = {
+                // Crear el objeto del suceso táctico
+                const eventEntry = {
                     id: Date.now(),
-                    type: tagName,
-                    team: this.activeTeamContext,
-                    time: timeString,
+                    type: eventType,
+                    team: this.activeTeamCode,
+                    time: time,
                     vSec: videoSeconds
                 };
 
-                this.eventBufferHistory.unshift(eventObject);
+                this.historicalEventLog.unshift(eventEntry);
                 this.renderTimelineLogUI();
 
-                // LÓGICA CRÍTICA DE GOL (ACTUALIZACIÓN BBDD)
-                if (tagName === 'GOL') {
-                    this.dataWriteShield = true; // Bloqueo de sincronización entrante
+                // LÓGICA CRÍTICA: GOL Y PERSISTENCIA DE DATOS
+                if (eventType === 'GOL') {
+                    this.writeShieldLock = true; // Blindaje contra sobrescritura asíncrona
                     
-                    if (this.activeTeamContext === 'A') {
-                        this.currentSession.goalsL++;
-                        document.getElementById('ui-val-score-local').innerText = this.currentSession.goalsL;
+                    if (this.activeTeamCode === 'A') {
+                        this.matchSessionState.localG++;
+                        document.getElementById('ui-score-val-local').innerText = this.matchSessionState.localG;
                     } else {
-                        this.currentSession.goalsV++;
-                        document.getElementById('ui-val-score-visit').innerText = this.currentSession.goalsV;
+                        this.matchSessionState.visitG++;
+                        document.getElementById('ui-score-val-visit').innerText = this.matchSessionState.visitG;
                     }
                     
-                    // Empuje de datos a la tabla 'matches' de Supabase
-                    if (this.cloudCon && this.currentSession.id) {
-                        await this.cloudCon.from('matches').update({
-                            team_a_goals: this.currentSession.goalsL,
-                            team_b_goals: this.currentSession.goalsV
-                        }).eq('id', this.currentSession.id);
+                    // Actualización asíncrona en Supabase (tabla 'matches')
+                    if (this.supabaseCon && this.matchSessionState.id) {
+                        await this.supabaseCon.from('matches').update({
+                            team_a_goals: this.matchSessionState.localG,
+                            team_b_goals: this.matchSessionState.visitG
+                        }).eq('id', this.matchSessionState.id);
                     }
                     
-                    // Liberación del escudo tras 5 segundos
-                    setTimeout(function() { App.dataWriteShield = false; }, 5000);
+                    // Liberación del bloqueo tras 5 segundos (latencia de red)
+                    setTimeout(function() { App.writeShieldLock = false; }, 5000);
                 }
 
-                // Inserción en tabla histórica 'tactical_events'
-                if (this.cloudCon) {
-                    const matchId = this.currentSession.id || 'LIVE_BETA';
-                    await this.cloudCon.from('tactical_events').insert([{
+                // Inserción en tabla cronológica 'tactical_events'
+                if (this.supabaseCon) {
+                    const matchId = this.matchSessionState.id || 'LIVE_BETA_v5.6';
+                    await this.supabaseCon.from('tactical_events').insert([{
                         match_id: matchId,
-                        team: this.activeTeamContext,
-                        event_type: tagName,
-                        match_time: timeString,
+                        team: this.activeTeamCode,
+                        event_type: eventType,
+                        match_time: time,
                         video_second: videoSeconds
                     }]);
                 }
             },
 
             renderTimelineLogUI: function() {
-                const container = document.getElementById('ui-timeline-log-container');
-                container.innerHTML = this.eventBufferHistory.map(function(ev) {
+                const container = document.getElementById('ui-timeline-log-container-engine');
+                container.innerHTML = this.historicalEventLog.map(function(ev) {
                     return `
-                    <div class="timeline-event-row" onclick="App.jumpToVideoSeconds(${ev.vSec})">
-                        <div><b>${ev.type}</b> (Eq. ${ev.team})</div>
-                        <div style="font-family:var(--af-font-family-data); font-size:11px; color:var(--af-color-text-low)">${ev.time} ➔</div>
+                    <div class="timeline-log-row" onclick="App.jumpToVideoSeconds(${ev.vSec})">
+                        <div><b>${ev.type}</b> (Equipo ${ev.team})</div>
+                        <div style="font-family:var(--af-font-data); font-size:10px; color:var(--af-txt-low)">${ev.time} ➔</div>
                     </div>
                     `;
                 }).join('');
             },
 
             jumpToVideoSeconds: function(seconds) {
-                const player = document.getElementById('ui-html5-video-player');
+                const player = document.getElementById('ui-pro-video-player');
                 this.navigateToView('clips', document.querySelector('[onclick*="clips"]'));
                 player.currentTime = seconds;
                 player.play();
             },
 
-            /* 5. GESTIÓN DE CLIPS DE VIDEO */
-            markInstantClip: function(position) {
-                const p = document.getElementById('ui-html5-video-player');
-                const time = p.currentTime > 0 ? p.currentTime : this.matchSecondsCounter;
-                const inBtn = document.getElementById('ui-btn-clip-in');
-                const outBtn = document.getElementById('ui-btn-clip-out');
+            /* 5. VIDEO: GESTIÓN DE RECORTE DE CLIPS */
+            markClipBuffer: function(actionType) {
+                const player = document.getElementById('ui-pro-video-player');
+                const time = player.currentTime > 0 ? player.currentTime : this.totalElapsedMatchSeconds;
+                const inBtn = document.getElementById('ui-btn-in');
+                const outBtn = document.getElementById('ui-btn-out');
 
-                if (position === 'in') {
-                    this.videoClipState.markIn = time;
-                    inBtn.style.backgroundColor = 'var(--af-color-ball)';
+                if (actionType === 'in') {
+                    this.clipBufferState.markIn = time;
+                    inBtn.style.backgroundColor = 'var(--af-ball-action)';
                     inBtn.style.color = '#000';
                 } else {
-                    if (this.videoClipState.markIn === null) return;
-                    this.videoClipState.markOut = time;
-                    outBtn.style.backgroundColor = 'var(--af-color-ball)';
+                    if (this.clipBufferState.markIn === null) return;
+                    this.clipBufferState.markOut = time;
+                    outBtn.style.backgroundColor = 'var(--af-ball-action)';
                     outBtn.style.color = '#000';
                     
-                    // Envío de orden a Supabase (clips_requests)
-                    if (this.cloudCon) {
-                        this.cloudCon.from('clips_requests').insert([{
-                            match_id: this.currentSession.id || 'LIVE',
-                            start_time: this.videoClipState.markIn,
-                            end_time: this.videoClipState.markOut
+                    // Orden de envío a Supabase (clips_requests)
+                    if (this.supabaseCon) {
+                        this.supabaseCon.from('clips_requests').insert([{
+                            match_id: this.matchSessionState.id || 'LIVE_v5.6',
+                            start_time: this.clipBufferState.markIn,
+                            end_time: this.clipBufferState.markOut
                         }]);
                     }
                     
-                    // Reset de botones tras 2 segundos
+                    // Reset automático tras 2.5 segundos
                     setTimeout(function() {
-                        App.videoClipState = { markIn: null, markOut: null };
+                        App.clipBufferState = { markIn: null, markOut: null };
                         inBtn.style.background = '#222';
                         outBtn.style.background = '#222';
                         inBtn.style.color = '#fff';
                         outBtn.style.color = '#fff';
-                    }, 2000);
+                    }, 2500);
                 }
             },
 
-            /* 6. SINCRONIZACIÓN DE MOTOR (RECEPCIÓN DE DATOS) */
-            syncCloudEngineData: async function() {
+            /* 6. SYNC: RECEPCIÓN DE DATOS DEL MOTOR IA (PC) */
+            performCloudSynchronization: async function() {
                 if (this.isSimulationModeActive) return;
                 
-                const { data, error } = await this.cloudCon
+                const { data, error } = await this.supabaseCon
                     .from('matches')
                     .select('*')
                     .order('created_at', { ascending: false })
@@ -905,101 +969,101 @@
 
                 if (data && data[0]) {
                     const row = data[0];
-                    this.currentSession.id = row.id;
+                    this.matchSessionState.id = row.id;
                     
-                    // Lógica de Protección: Solo actualizar marcador si NO estamos escribiendo uno manual
-                    if (this.dataWriteShield === false) {
-                        this.currentSession.goalsL = row.team_a_goals;
-                        this.currentSession.goalsV = row.team_b_goals;
+                    // Protocolo de Protección de Escritura
+                    if (this.writeShieldLock === false) {
+                        this.matchSessionState.localG = row.team_a_goals;
+                        this.matchSessionState.visitG = row.team_b_goals;
                     }
                     
-                    this.currentSession.possL = row.possession_a;
-                    this.currentSession.iaDataPayload = row.full_data || { players: [], positions: [] };
+                    this.matchSessionState.possessionL = row.possession_a;
+                    this.matchSessionState.iaDataStore = row.full_data || { players: [], positions: [] };
                     this.renderUIMetrics(row);
                 }
             },
 
             renderUIMetrics: function(data) {
-                // Sincronizar Marcador en Pantalla
-                document.getElementById('ui-val-score-local').innerText = this.currentSession.goalsL;
-                document.getElementById('ui-val-score-visit').innerText = this.currentSession.goalsV;
+                // Sincronizar Marcadores
+                document.getElementById('ui-score-val-local').innerText = this.matchSessionState.localG;
+                document.getElementById('ui-score-val-visit').innerText = this.matchSessionState.visitG;
                 
-                // REGLA: POSESIÓN EN VALOR ABSOLUTO (ENTERO)
-                const localInt = Math.round(this.currentSession.possL || 50);
-                const visitInt = 100 - localInt;
+                // REGLA DE PRECISIÓN: POSESIÓN VALOR ENTERO
+                const pLocalInt = Math.round(this.matchSessionState.possessionL || 50);
+                const pVisitInt = 100 - pLocalInt;
                 
-                document.getElementById('ui-bar-poss-local').style.width = localInt + '%';
-                document.getElementById('ui-bar-poss-visit').style.width = visitInt + '%';
-                document.getElementById('ui-txt-poss-local').innerText = localInt + '%';
-                document.getElementById('ui-txt-poss-visit').innerText = visitInt + '%';
+                document.getElementById('ui-bar-poss-l').style.width = pLocalInt + '%';
+                document.getElementById('ui-bar-poss-v').style.width = pVisitInt + '%';
+                document.getElementById('ui-label-poss-l').innerText = pLocalInt + '%';
+                document.getElementById('ui-label-poss-v').innerText = pVisitInt + '%';
 
-                // RENDERIZADO DEL RADAR SVG (JUGADORES IA)
+                // RENDERIZADO DEL RADAR (POSICIONES IA)
                 if (data.full_data && data.full_data.positions) {
-                    const layer = document.getElementById('ui-dynamic-radar-layer');
+                    const layer = document.getElementById('ui-ia-radar-container-layer');
                     layer.innerHTML = data.full_data.positions.map(function(p) {
-                        const teamColor = p.team === 'A' ? 'var(--af-color-local)' : 'var(--af-color-visit)';
-                        return `<div class="ia-player-dot" style="left:${p.x}%; top:${p.y}%; background-color:${teamColor}">${p.id}</div>`;
+                        const col = p.team === 'A' ? 'var(--af-team-local)' : 'var(--af-team-visit)';
+                        return `<div class="ia-player-node" style="left:${p.x}%; top:${p.y}%; background-color:${col}">${p.id}</div>`;
                     }).join('');
                     
-                    // CÁLCULO DE MÉTRICAS TÁCTICAS (COMPACIDAD Y ALTURA)
-                    const playersLocal = data.full_data.positions.filter(p => p.team === 'A');
-                    if (playersLocal.length > 3) {
-                        const minX = Math.min(...playersLocal.map(p => p.x));
-                        const maxX = Math.max(...playersLocal.map(p => p.x));
-                        const avgX = playersLocal.reduce((sum, p) => sum + p.x, 0) / playersLocal.length;
+                    // MOTOR TÁCTICO: CÁLCULO DE MÉTRICAS EN TIEMPO REAL
+                    const localPlayers = data.full_data.positions.filter(p => p.team === 'A');
+                    if (localPlayers.length > 3) {
+                        const minX = Math.min(...localPlayers.map(p => p.x));
+                        const maxX = Math.max(...localPlayers.map(p => p.x));
+                        const avgX = localPlayers.reduce((acc, p) => acc + p.x, 0) / localPlayers.length;
                         
-                        // Inyectar en pestaña táctica
-                        document.getElementById('ui-val-tactical-compacity').innerText = Math.round(maxX - minX) + "m";
-                        document.getElementById('ui-val-tactical-height').innerText = Math.round(avgX) + "m";
+                        document.getElementById('ui-tactical-compacity-val').innerText = Math.round(maxX - minX) + "m";
+                        document.getElementById('ui-tactical-height-val').innerText = Math.round(avgX) + "m";
                     }
                 }
 
-                // REGLA: TABLA FÍSICA CON PRECISIÓN DE 1 DECIMAL
+                // REGLA DE PRECISIÓN: FÍSICO CON 1 DECIMAL MÁXIMO
                 if (data.full_data && data.full_data.players) {
-                    const tbody = document.getElementById('ui-tbody-physic-engine');
+                    const tbody = document.getElementById('ui-physic-engine-table-body');
                     tbody.innerHTML = data.full_data.players.slice(0, 22).map(function(p) {
-                        const distClean = parseFloat(p.dist || 0).toFixed(1);
-                        const spdClean = parseFloat(p.maxSpd || 0).toFixed(1);
-                        const teamHex = p.team === 'A' ? 'var(--af-color-local)' : 'var(--af-color-visit)';
+                        // Limpieza de datos asimétrica
+                        const dClean = parseFloat(p.dist || 0).toFixed(1);
+                        const vClean = parseFloat(p.maxSpd || 0).toFixed(1);
+                        const tColor = p.team === 'A' ? 'var(--af-team-local)' : 'var(--af-team-visit)';
                         return `
                         <tr>
-                            <td style="font-weight:800; color:${teamHex}">#${p.id}</td>
+                            <td style="font-weight:800; color:${tColor}">#${p.id}</td>
                             <td>${p.pos || 'MID'}</td>
-                            <td>${distClean} km</td>
-                            <td style="color:var(--af-color-accent)">${spdClean} km/h</td>
+                            <td>${dClean} km</td>
+                            <td style="color:var(--af-accent-glow)">${vClean} km/h</td>
                         </tr>`;
                     }).join('');
                 }
             },
 
-            /* 7. PIZARRA TÁCTICA (DIBUJO MANUAL) */
-            setupTacticalCanvasEngine: function() {
-                const can = document.getElementById('tactical-canvas-layer');
+            /* 7. CANVAS: MOTOR DE DIBUJO TÁCTICO MANUAL */
+            setupTacticalDrawingEngine: function() {
+                const can = document.getElementById('drawing-layer-canvas');
                 const ctx = can.getContext('2d');
-                let isDrawing = false;
+                let isUserPainting = false;
 
-                // Ajuste de resolución nativa del lienzo
+                // Resolución nativa del lienzo
                 can.width = can.offsetWidth;
                 can.height = can.offsetHeight;
 
-                const getCanvasCoords = (e) => {
+                const getCoords = (e) => {
                     const rect = can.getBoundingClientRect();
                     const x = e.touches ? e.touches[0].clientX : e.clientX;
                     const y = e.touches ? e.touches[0].clientY : e.clientY;
                     return { x: x - rect.left, y: y - rect.top };
                 };
 
-                const startStroke = (e) => {
-                    if (!this.isPizarraDrawing) return;
-                    isDrawing = true;
+                const startOp = (e) => {
+                    if (!this.isDrawingOverlayEnabled) return;
+                    isUserPainting = true;
                     ctx.beginPath();
-                    const pos = getCanvasCoords(e);
+                    const pos = getCoords(e);
                     ctx.moveTo(pos.x, pos.y);
                 };
 
-                const executeStroke = (e) => {
-                    if (!isDrawing) return;
-                    const pos = getCanvasCoords(e);
+                const moveOp = (e) => {
+                    if (!isUserPainting) return;
+                    const pos = getCoords(e);
                     ctx.lineTo(pos.x, pos.y);
                     ctx.strokeStyle = '#00d68f';
                     ctx.lineWidth = 4;
@@ -1007,90 +1071,82 @@
                     ctx.stroke();
                 };
 
-                can.addEventListener('mousedown', startStroke);
-                can.addEventListener('mousemove', executeStroke);
-                can.addEventListener('mouseup', function() { isDrawing = false; });
-                can.addEventListener('touchstart', startStroke);
-                can.addEventListener('touchmove', executeStroke);
-                can.addEventListener('touchend', function() { isDrawing = false; });
+                can.addEventListener('mousedown', startOp);
+                can.addEventListener('mousemove', moveOp);
+                can.addEventListener('mouseup', function() { isUserPainting = false; });
+                can.addEventListener('touchstart', startOp);
+                can.addEventListener('touchmove', moveOp);
+                can.addEventListener('touchend', function() { isUserPainting = false; });
             },
 
-            activateDrawingMode: function() {
-                this.isPizarraDrawing = !this.isPizarraDrawing;
-                document.getElementById('tactical-canvas-layer').classList.toggle('drawing-active', this.isPizarraDrawing);
+            toggleDrawingSystem: function() {
+                this.isDrawingOverlayEnabled = !this.isDrawingOverlayEnabled;
+                document.getElementById('drawing-layer-canvas').classList.toggle('active-pizarra', this.isDrawingOverlayEnabled);
             },
 
-            clearTacticalCanvas: function() {
-                const can = document.getElementById('tactical-canvas-layer');
+            resetTacticalCanvas: function() {
+                const can = document.getElementById('drawing-layer-canvas');
                 can.getContext('2d').clearRect(0, 0, can.width, can.height);
             },
 
-            /* 8. SIMULADOR (DEMO ENGINE v0.5.5) */
+            /* 8. SIMULATOR: MOTOR DE DEMOSTRACIÓN v0.5.6 */
             toggleFullSimulation: function() {
                 this.isSimulationModeActive = !this.isSimulationModeActive;
-                const simBtn = document.getElementById('ui-btn-sim-toggle');
-                simBtn.innerText = this.isSimulationModeActive ? "SIMULADOR: ON" : "SIMULADOR: OFF";
+                const btn = document.getElementById('ui-btn-engine-sim');
+                btn.innerText = this.isSimulationModeActive ? "SIMULADOR: ON" : "SIMULADOR: OFF";
                 
                 if (this.isSimulationModeActive) {
-                    this.simulationLoopId = setInterval(function() {
+                    this.simulationIntervalLoopId = setInterval(function() {
                         const now = Date.now() / 1000;
-                        const mockPosArray = [];
-                        // Generar 11 jugadores por equipo con movimiento sinusoidal
+                        const posArray = [];
+                        // Generación de bloque táctico dinámico (11 jugadores por equipo)
                         for(let i=1; i<=11; i++) {
-                            mockPosArray.push({ id:i, team:'A', x: 25+Math.sin(now+i)*12, y: 5+i*10 });
-                            mockPosArray.push({ id:i, team:'B', x: 75+Math.cos(now+i)*12, y: 5+i*10 });
+                            posArray.push({ id:i, team:'A', x: 25+Math.sin(now+i)*12, y: 5+i*10 });
+                            posArray.push({ id:i, team:'B', x: 75+Math.cos(now+i)*12, y: 5+i*10 });
                         }
-                        const mockPlayersStats = mockPosArray.map(function(p) {
-                            return { 
-                                id:p.id, team:p.team, pos:'MID',
-                                // DISTANCIA CONTROLADA: Evita el bug de millones de KM
-                                dist: ((now/500) % 10).toFixed(1), 
-                                maxSpd: (24+Math.random()*9).toFixed(1) 
-                            };
+                        const playerStats = posArray.map(function(p) {
+                            return { id:p.id, team:p.team, dist: (now/450).toFixed(1), maxSpd: (24+Math.random()*8).toFixed(1) };
                         });
                         
-                        // Ejecutar renderizado manual (bypass cloud)
+                        // Renderizado de bypass usando marcador real (No forzado)
                         App.renderUIMetrics({
-                            team_a_goals: App.currentSession.goalsL,
-                            team_b_goals: App.currentSession.goalsV,
-                            possession_a: 55+Math.sin(now)*6,
-                            full_data: { 
-                                positions: mockPosArray, 
-                                players: mockPlayersStats 
-                            }
+                            team_a_goals: App.matchSessionState.localG,
+                            team_b_goals: App.matchSessionState.visitG,
+                            possession_a: 54+Math.sin(now)*8,
+                            full_data: { positions: posArray, players: playerStats }
                         });
                     }, 150);
                 } else {
-                    clearInterval(this.simulationLoopId);
-                    this.syncCloudEngineData();
+                    clearInterval(this.simulationIntervalLoopId);
+                    this.performCloudSynchronization();
                 }
             },
 
-            /* 9. INFORME PDF: GENERACIÓN PROFESIONAL v0.5.5 */
+            /* 9. REPORT: GENERADOR DE INFORME TÉCNICO PDF v0.5.6 */
             generateFinalTechnicalReport: function() {
-                const s = this.currentSession;
-                const reportWindow = window.open('', '_blank');
+                const session = this.matchSessionState;
+                const pdfWindow = window.open('', '_blank');
                 
-                // Construcción de Tabla Física (Máxima precisión)
-                let tableHtml = '';
-                if (s.iaDataPayload?.players?.length > 0) {
-                    tableHtml = `
-                        <h2 style="margin-top:40px; color:#111; font-size:20px; border-left:6px solid #00d68f; padding-left:15px;">RENDIMIENTO FÍSICO INDIVIDUAL</h2>
+                // Construcción de tabla de rendimiento IA (1 decimal)
+                let physTableHTML = '';
+                if (session.iaDataStore?.players?.length > 0) {
+                    physTableHTML = `
+                        <h2 style="margin-top:40px; color:#111; border-left:6px solid #00d68f; padding-left:15px; font-size:20px;">REPORTÉ FÍSICO INDIVIDUAL</h2>
                         <table style="width:100%; border-collapse:collapse; margin-top:20px;">
                             <thead>
                                 <tr style="background:#222; color:#fff;">
-                                    <th style="padding:15px; text-align:center; font-size:12px;">DORSAL</th>
-                                    <th style="padding:15px; text-align:center; font-size:12px;">POSICIÓN</th>
-                                    <th style="padding:15px; text-align:center; font-size:12px;">DISTANCIA TOTAL (KM)</th>
-                                    <th style="padding:15px; text-align:center; font-size:12px;">VEL. MÁXIMA (KM/H)</th>
+                                    <th style="padding:15px; text-align:center;">DORSAL</th>
+                                    <th style="padding:15px; text-align:center;">POSICIÓN</th>
+                                    <th style="padding:15px; text-align:center;">DISTANCIA (KM)</th>
+                                    <th style="padding:15px; text-align:center;">VEL. MÁX (KM/H)</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                ${s.iaDataPayload.players.map(function(p) {
+                                ${session.iaDataStore.players.map(function(p) {
                                     return `
                                     <tr>
                                         <td style="padding:15px; border-bottom:1px solid #eee; text-align:center;"><b>#${p.id}</b></td>
-                                        <td style="padding:15px; border-bottom:1px solid #eee; text-align:center;">${p.pos || '---'}</td>
+                                        <td style="padding:15px; border-bottom:1px solid #eee; text-align:center;">${p.pos || 'MID'}</td>
                                         <td style="padding:15px; border-bottom:1px solid #eee; text-align:center;">${parseFloat(p.dist || 0).toFixed(1)}</td>
                                         <td style="padding:15px; border-bottom:1px solid #eee; text-align:center; color:#00d68f; font-weight:bold;">${parseFloat(p.maxSpd || 0).toFixed(1)}</td>
                                     </tr>`;
@@ -1100,65 +1156,74 @@
                     `;
                 }
 
-                const documentHTML = `
+                const docSkeleton = `
                     <html>
                     <head>
-                        <title>Reporte Técnico AnalyticsFutbol v0.5.5</title>
+                        <title>Reporte Elite AnalyticsFutbol v0.5.6</title>
                         <style>
                             body { font-family: 'Helvetica', Arial, sans-serif; padding: 50px; color: #222; line-height: 1.6; }
-                            .header-box { border-bottom: 6px solid #00d68f; padding-bottom: 25px; margin-bottom: 40px; display: flex; justify-content: space-between; align-items: center; }
-                            .summary-card { display: flex; justify-content: space-between; background: #f9f9f8; padding: 40px; border-radius: 15px; border: 1px solid #e0e0e0; }
+                            .header-banner { border-bottom: 6px solid #00d68f; padding-bottom: 25px; margin-bottom: 45px; display: flex; justify-content: space-between; align-items: center; }
+                            .stat-box-container { display: flex; justify-content: space-between; background: #f9f9f8; padding: 40px; border-radius: 15px; border: 1px solid #e5e5e5; }
+                            h2 { border-left: 6px solid #00d68f; padding-left: 15px; text-transform: uppercase; margin-bottom: 25px; font-size: 20px; }
+                            table { width: 100%; border-collapse: collapse; }
+                            th { text-align: left; font-size: 11px; color: #666; padding: 12px; }
+                            td { padding: 12px; font-size: 14px; border-bottom: 1px solid #efefef; }
                             .footer-note { margin-top: 80px; font-size: 11px; color: #999; text-align: center; border-top: 1px solid #eee; padding-top: 30px; }
                         </style>
                     </head>
                     <body>
-                        <div class="header-box">
+                        <div class="header-banner">
                             <div>
-                                <h1 style="margin:0; font-size:32px; letter-spacing:-1px; text-transform:uppercase;">ANALYTICSFUTBOL</h1>
-                                <p style="margin:5px 0; color:#666; font-weight:800;">INFORME TÉCNICO OFICIAL | GENERADO: ${new Date().toLocaleString()}</p>
+                                <h1 style="margin:0; font-size:32px; letter-spacing:-1px;">ANALYTICSFUTBOL</h1>
+                                <p style="margin:5px 0; color:#666; font-weight:800;">INFORME TÉCNICO OFICIAL | ${new Date().toLocaleString()}</p>
                             </div>
                             <div style="font-size:42px; font-weight:900; color:#00d68f;">AF</div>
                         </div>
                         
-                        <div class="summary-card">
+                        <div class="stat-box-container">
                             <div>
                                 <span style="font-size:12px; font-weight:800; color:#aaa; text-transform:uppercase;">Marcador Final Sincronizado</span>
-                                <div style="font-size:42px; font-weight:bold; margin-top:10px;">LOCAL ${s.goalsL} - ${s.goalsV} VISITANTE</div>
+                                <div style="font-size:44px; font-weight:bold; margin-top:10px;">LOCAL ${session.localG} - ${session.visitG} VISITANTE</div>
                             </div>
                             <div style="text-align:right;">
                                 <span style="font-size:12px; font-weight:800; color:#aaa; text-transform:uppercase;">Posesión Absoluta</span>
-                                <div style="font-size:42px; font-weight:bold; color:#00d68f; margin-top:10px;">${Math.round(s.possL)}% / ${100 - Math.round(s.possL)}%</div>
+                                <div style="font-size:44px; font-weight:bold; color:#00d68f; margin-top:10px;">${Math.round(session.possessionL)}% / ${100 - Math.round(session.possessionL)}%</div>
                             </div>
                         </div>
 
-                        ${tableHtml}
+                        ${physTableHTML}
 
-                        <h2 style="margin-top:50px; color:#111; font-size:20px; border-left:6px solid #00d68f; padding-left:15px;">CRONOLOGÍA DE ACCIONES TÁCTICAS</h2>
-                        <table style="width:100%; border-collapse:collapse; margin-top:20px;">
+                        <h2 style="margin-top:50px;">CRONOLOGÍA TÁCTICA DE EVENTOS</h2>
+                        <table>
                             <thead>
                                 <tr style="border-bottom:3px solid #222;">
-                                    <th style="text-align:left; padding:15px; font-size:13px;">MINUTO</th>
-                                    <th style="text-align:left; padding:15px; font-size:13px;">EQUIPO</th>
-                                    <th style="text-align:left; padding:15px; font-size:13px;">ACCIÓN REGISTRADA</th>
+                                    <th style="font-size:13px;">MINUTO</th>
+                                    <th style="font-size:13px;">EQUIPO</th>
+                                    <th style="font-size:13px;">ACCIÓN REGISTRADA</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                ${this.eventBufferHistory.map(function(ev) {
-                                    return `<tr><td style="padding:15px; border-bottom:1px solid #eee;">${ev.time}</td><td style="padding:15px; border-bottom:1px solid #eee;">Eq. ${ev.team}</td><td style="padding:15px; border-bottom:1px solid #eee;"><b style="color:#111;">${ev.type}</b></td></tr>`;
+                                ${this.historicalEventLog.map(function(ev) {
+                                    return `<tr><td style="font-family:monospace;">${ev.time}</td><td>Eq. ${ev.team}</td><td><b style="color:#111;">${ev.type}</b></td></tr>`;
                                 }).join('')}
                             </tbody>
                         </table>
 
                         <div class="footer-note">
-                            Documento Confidencial - Propiedad de AnalyticsFutbol System v0.5.5. Los datos físicos han sido procesados mediante Visión Artificial de alta precisión.
+                            Este documento es propiedad de AnalyticsFutbol v0.5.6 Beta Supreme. Generado por motor de Inteligencia Artificial para análisis de alta competición.
                         </div>
                     </body>
                     </html>
                 `;
-                reportWindow.document.write(documentHTML);
-                reportWindow.document.close();
-                setTimeout(function() { reportWindow.print(); }, 1200);
+                pdfWindow.document.write(docSkeleton);
+                pdfWindow.document.close();
+                setTimeout(function() { pdfWindow.print(); }, 1200);
             }
+        };
+
+        // LANZAR BOOTSTRAP AL CARGAR
+        window.onload = function() {
+            App.initializeSystem();
         };
     </script>
 </body>
