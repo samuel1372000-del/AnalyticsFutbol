@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Nanobanana Analytics Pro v22</title>
+    <title>Nanobanana Analytics v23 — Master Edition</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
@@ -21,6 +21,7 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         body { background: var(--bg); color: var(--th); font-family: var(--f-body); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
 
+        /* UI NAVEGACIÓN */
         header { padding: 55px 20px 15px; background: var(--surf); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
         .brand { font-size: 14px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); }
         .match-clock { font-family: var(--f-data); font-size: 14px; font-weight: 700; color: #fff; background: #1a1a1a; padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border); }
@@ -30,42 +31,42 @@
         .tab-btn { padding: 15px 20px; border: none; background: none; color: var(--tp); font-size: 9px; font-weight: 800; text-transform: uppercase; white-space: nowrap; border-bottom: 2px solid transparent; transition: 0.2s; }
         .tab-btn.active { color: var(--th); border-bottom-color: var(--accent); background: rgba(0,214,143,0.05); }
 
+        /* VISTAS */
         main { flex: 1; overflow-y: auto; padding: 15px; -webkit-overflow-scrolling: touch; }
         .view-section { display: none; }
         .view-section.active { display: block; animation: viewFadeIn 0.3s ease-out; }
         @keyframes viewFadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; } }
 
-        .card { background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 18px; margin-bottom: 15px; position: relative; }
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 18px; margin-bottom: 15px; }
         .card-label { font-family: var(--f-data); font-size: 9px; color: var(--tp); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 15px; display: block; }
 
-        /* KPI DISPLAY */
-        .score-display { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .score-unit { text-align: center; }
+        /* MARCADOR Y POSESIÓN */
+        .score-display { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .score-val { font-family: var(--f-data); font-size: 42px; font-weight: 700; line-height: 1; }
-        .poss-track { height: 6px; background: #222; border-radius: 3px; overflow: hidden; display: flex; margin-bottom: 10px; }
+        .poss-track { height: 6px; background: #222; border-radius: 3px; overflow: hidden; display: flex; margin-bottom: 8px; }
         .poss-fill { height: 100%; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
 
-        /* TACTICAL PIZARRA */
+        /* TACTICAL PIZARRA (FIDELIDAD REAL) */
         .pitch-svg-box { width: 100%; aspect-ratio: 105/68; background: #0a1808; position: relative; border: 1px solid var(--border); overflow: hidden; border-radius: 4px; }
-        .player-node { width: 18px; height: 18px; border-radius: 50%; position: absolute; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 800; border: 1.5px solid #fff; box-shadow: 0 3px 6px rgba(0,0,0,0.5); }
+        .player-node { width: 18px; height: 18px; border-radius: 50%; position: absolute; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 800; border: 1.5px solid #fff; box-shadow: 0 3px 6px rgba(0,0,0,0.5); transition: 0.5s; }
 
-        /* TAGGING PANEL */
+        /* PANEL ETIQUETADO (Hudl Style) */
         .tag-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .tag-btn { background: var(--surf); border: 1px solid var(--border); color: var(--th); padding: 14px; font-size: 10px; font-weight: 700; border-radius: 4px; text-align: left; border-left: 4px solid var(--tm); }
         .tag-btn:active { background: var(--border); transform: scale(0.98); }
         .team-sel { display: flex; gap: 6px; margin-bottom: 12px; }
         .t-opt { flex: 1; padding: 12px; border-radius: 4px; border: 1px solid var(--border); font-size: 11px; font-weight: 800; background: transparent; color: var(--tp); }
-        .t-opt.active.A { border-color: var(--tA); color: var(--tA); background: rgba(244,63,94,0.05); }
-        .t-opt.active.B { border-color: var(--tB); color: var(--tB); background: rgba(59,158,255,0.05); }
+        .t-opt.active.A { border-color: var(--tA); color: var(--tA); background: rgba(244,63,94,0.1); }
+        .t-opt.active.B { border-color: var(--tB); color: var(--tB); background: rgba(59,158,255,0.1); }
 
-        /* VIDEO */
+        /* VIDEO PLAYER */
         .video-wrap { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 4px; overflow: hidden; border: 1px solid var(--border); }
         video { width: 100%; height: 100%; object-fit: cover; }
 
-        /* ACTIONS */
+        /* BOTONES ACCIÓN */
         .btn-action { width: 100%; border: none; font-weight: 800; padding: 16px; border-radius: 4px; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; margin-bottom: 12px; }
         .btn-primary { background: var(--accent); color: #000; }
-        .btn-nanobanana { background: linear-gradient(135deg, #00d68f, #c084fc); color: #fff; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .btn-nanobanana { background: linear-gradient(135deg, #00d68f, #c084fc); color: #fff; }
 
         .ev-item { padding: 12px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
     </style>
@@ -73,7 +74,7 @@
 <body>
 
     <header>
-        <div class="brand">NANOBANANA ELITE</div>
+        <div class="brand">Nanobanana v23</div>
         <div class="match-clock" id="timer">00:00</div>
     </header>
 
@@ -90,20 +91,18 @@
         <section id="view-live" class="view-section active">
             <div class="card">
                 <div class="score-display">
-                    <div class="score-unit"><div class="score-val" style="color:var(--tA)" id="sA">0</div><div style="font-size:8px; color:var(--tp); margin-top:5px">LOCAL</div></div>
+                    <div style="text-align:center"><div class="score-val" style="color:var(--tA)" id="sA">0</div><div style="font-size:8px; color:var(--tp)">LOCAL</div></div>
                     <div style="font-weight:900; opacity:0.1; font-size:20px">VS</div>
-                    <div class="score-unit"><div class="score-val" style="color:var(--tB)" id="sB">0</div><div style="font-size:8px; color:var(--tp); margin-top:5px">VISITANTE</div></div>
+                    <div style="text-align:center"><div class="score-val" style="color:var(--tB)" id="sB">0</div><div style="font-size:8px; color:var(--tp)">VISITANTE</div></div>
                 </div>
-                <div class="poss-container">
-                    <div class="poss-track">
-                        <div id="pb-a" style="width:50%; background:var(--tA)" class="poss-fill"></div>
-                        <div id="pb-b" style="width:50%; background:var(--tB)" class="poss-fill"></div>
-                    </div>
-                    <div style="display:flex; justify-content:space-between; font-family:var(--f-data); font-size:11px; font-weight:700">
-                        <span id="tx-pa" style="color:var(--tA)">50%</span>
-                        <span style="color:var(--tm); letter-spacing:2px">POSESIÓN</span>
-                        <span id="tx-pb" style="color:var(--tB)">50%</span>
-                    </div>
+                <div class="poss-track">
+                    <div id="pb-a" style="width:50%; background:var(--tA)" class="poss-fill"></div>
+                    <div id="pb-b" style="width:50%; background:var(--tB)" class="poss-fill"></div>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-family:var(--f-data); font-size:11px; font-weight:700">
+                    <span id="tx-pa" style="color:var(--tA)">50%</span>
+                    <span style="color:var(--tm); letter-spacing:2px">POSESIÓN</span>
+                    <span id="tx-pb" style="color:var(--tB)">50%</span>
                 </div>
             </div>
             <div class="pitch-svg-box">
@@ -114,12 +113,16 @@
 
         <section id="view-tactical" class="view-section">
             <div class="card">
-                <span class="card-label">Análisis de Estructura (Metros)</span>
+                <span class="card-label">Análisis de Estructura (Eq. A)</span>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px">
                     <div style="background:#0f0f0f; padding:20px; border-radius:4px; text-align:center"><div style="font-family:var(--f-data); font-size:24px; font-weight:700" id="res-comp">--</div><div style="font-size:8px; color:var(--tp); margin-top:5px">COMPACIDAD</div></div>
                     <div style="background:#0f0f0f; padding:20px; border-radius:4px; text-align:center"><div style="font-family:var(--f-data); font-size:24px; font-weight:700; color:var(--accent)" id="res-press">--</div><div style="font-size:8px; color:var(--tp); margin-top:5px">ALT. PRESIÓN</div></div>
                 </div>
             </div>
+        </section>
+
+        <section id="view-physic" class="view-section">
+            <div class="card"><span class="card-label">Top Performance</span><div id="p-table" style="font-family:var(--f-data); font-size:11px; color:var(--tp); text-align:center; padding:20px">Esperando conexión de sensores...</div></div>
         </section>
 
         <section id="view-events" class="view-section">
@@ -140,25 +143,20 @@
         </section>
 
         <section id="view-videos" class="view-section">
-            <div class="card">
-                <div class="video-wrap"><video id="main-player" controls poster="https://via.placeholder.com/600x340/111/fff?text=SISTEMA+VIDEO+READY"></video></div>
-            </div>
+            <div class="card"><div class="video-wrap"><video id="vplayer" controls poster="https://via.placeholder.com/600x340/111/fff?text=VIDEO+MODULO+ACTIVE"></video></div></div>
         </section>
 
         <section id="view-report" class="view-section">
             <div class="card" style="text-align:center; padding:30px 20px;">
-                <div style="font-size:32px; margin-bottom:15px;">📊</div>
-                <div style="font-weight:800; font-size:18px; margin-bottom:10px;">Centro de Exportación</div>
-                <p style="font-size:11px; color:var(--tp); line-height:1.6; margin-bottom:25px;">Seleccione el formato de salida para sus datos tácticos analizados por IA.</p>
-                <button class="btn-action btn-primary" onclick="App.generateTechnicalPDF()">Generar Informe PDF Profesional</button>
-                <button class="btn-action btn-nanobanana" onclick="App.exportNanobananaElite()">Exportar Story Nanobanana Elite</button>
+                <button class="btn-action btn-primary" onclick="App.exportTechnicalPDF()">Generar Informe PDF Profesional</button>
+                <button class="btn-action btn-nanobanana" onclick="App.exportStoryElite()">Exportar Story Nanobanana Elite</button>
             </div>
         </section>
     </main>
 
     <script>
         const App = {
-            db: null, team: 'A', events: [], lastMatch: null,
+            db: null, team: 'A', events: [], lastMatch: { team_a_goals:0, team_b_goals:0, possession_a:50 },
             init: async () => {
                 App.db = window.supabase.createClient("https://zdckdlrgtoglmvgdrvcn.supabase.co", "sb_publishable_bGfCRIXGSuGb5XK_SJ0tdw_XYNIHW14");
                 App.sync(); setInterval(App.sync, 5000);
@@ -174,7 +172,7 @@
                 document.getElementById('selB').classList.toggle('active', t==='B');
             },
             log: (type) => {
-                const vid = document.getElementById('main-player');
+                const vid = document.getElementById('vplayer');
                 const e = { type, team: App.team, time: document.getElementById('timer').innerText, seconds: vid.currentTime, id: Date.now() };
                 App.events.unshift(e);
                 document.getElementById('log-list').innerHTML = App.events.map(ev => `
@@ -185,7 +183,7 @@
                 `).join('');
             },
             jumpTo: (sec) => {
-                const vid = document.getElementById('main-player');
+                const vid = document.getElementById('vplayer');
                 App.nav('videos', document.querySelector('[onclick*="videos"]'));
                 vid.currentTime = sec; vid.play();
             },
@@ -198,87 +196,25 @@
                     document.getElementById('pb-a').style.width = pa + "%"; document.getElementById('pb-b').style.width = (100 - pa) + "%";
                     document.getElementById('tx-pa').innerText = pa + "%"; document.getElementById('tx-pb').innerText = (100 - pa) + "%";
                     if (m.full_data?.positions) {
-                        document.getElementById('radar-layer').innerHTML = m.full_data.positions.map(p => `
-                            <div class="player-node" style="left:${p.x}%; top:${p.y}%; background-color:${p.team==='A'?'var(--tA)':'var(--tB)'}">${p.id}</div>
-                        `).join('');
-                        if (m.full_data.stats) {
-                            document.getElementById('res-comp').innerText = (m.full_data.stats.compacidad || '--') + "m";
-                            document.getElementById('res-press').innerText = (m.full_data.stats.presion || '--') + "m";
-                        }
+                        const pl = m.full_data.positions;
+                        document.getElementById('radar-layer').innerHTML = pl.map(p => `<div class="player-node" style="left:${p.x}%; top:${p.y}%; background-color:${p.team==='A'?'var(--tA)':'var(--tB)'}">${p.id}</div>`).join('');
+                        
+                        // Lógica original de cálculo táctico de App.jsx
+                        const lh = (line) => { const g = pl.filter(p => p.line === line && p.team === 'A'); return g.length ? (g.reduce((s,p)=>s+p.x, 0)/g.length).toFixed(0) : 0; };
+                        const dA=lh("DEF"), fA=lh("FWD");
+                        document.getElementById('res-comp').innerText = Math.abs(fA - dA) + "m";
+                        document.getElementById('res-press').innerText = (pl.filter(p=>p.team==='A').reduce((s,p)=>s+p.x,0)/11).toFixed(0) + "m";
                     }
                 }
             },
-            generateTechnicalPDF: () => {
-                if(!App.lastMatch) return;
-                const m = App.lastMatch;
-                const win = window.open('', '_blank');
-                win.document.write(`
-                    <html><head><title>Informe Técnico v22</title><style>
-                        body{font-family:Helvetica,Arial,sans-serif; padding:50px; color:#1a1a2e; line-height:1.5;}
-                        .header{border-bottom:3px solid #000; padding-bottom:20px; margin-bottom:40px; display:flex; justify-content:space-between; align-items:flex-end;}
-                        .title{font-size:28px; font-weight:900; margin:0;}
-                        .kpi-row{display:grid; grid-template-columns:repeat(4,1fr); gap:20px; margin-bottom:50px;}
-                        .kpi{background:#f8f9fa; border:1px solid #eee; padding:20px; border-radius:4px; text-align:center;}
-                        .kpi-v{font-size:24px; font-weight:800;}
-                        .kpi-l{font-size:10px; color:#666; text-transform:uppercase; margin-top:5px;}
-                        table{width:100%; border-collapse:collapse; margin-top:20px;}
-                        th{background:#000; color:#fff; padding:12px; text-align:left; font-size:11px;}
-                        td{padding:12px; border-bottom:1px solid #eee; font-size:13px;}
-                        .footer{margin-top:60px; font-size:10px; color:#aaa; text-align:center; border-top:1px solid #eee; padding-top:20px;}
-                    </style></head><body>
-                        <div class="header"><div><p style="font-size:11px; letter-spacing:2px; color:#666;">NANOBANANA ANALYTICS SYSTEM</p><h1 class="title">TECHNICAL REPORT</h1></div><div>${new Date().toLocaleDateString()}</div></div>
-                        <div class="kpi-row">
-                            <div class="kpi"><div class="kpi-v">${m.team_a_goals}-${m.team_b_goals}</div><div class="kpi-l">Resultado</div></div>
-                            <div class="kpi"><div class="kpi-v">${m.possession_a}%</div><div class="kpi-l">Posesión A</div></div>
-                            <div class="kpi"><div class="kpi-v">${App.events.length}</div><div class="kpi-l">Sucesos</div></div>
-                            <div class="kpi"><div class="kpi-v">${document.getElementById('res-comp').innerText}</div><div class="kpi-l">Compacidad</div></div>
-                        </div>
-                        <h3>CRONOLOGÍA DE EVENTOS TÁCTICOS</h3>
-                        <table><thead><tr><th>Tiempo</th><th>Equipo</th><th>Evento Detectado</th></tr></thead><tbody>
-                        ${App.events.map(e => `<tr><td>${e.time}</td><td>Eq. ${e.team}</td><td><b>${e.type}</b></td></tr>`).join('')}
-                        </tbody></table>
-                        <p class="footer">Este documento es confidencial y ha sido generado automáticamente por Nanobanana Elite v22.</p>
-                    </body></html>
-                `);
+            exportTechnicalPDF: () => {
+                const m = App.lastMatch; const win = window.open('', '_blank');
+                win.document.write(`<html><head><style>body{font-family:sans-serif;padding:40px;color:#1a1a2e} h1{border-bottom:3px solid #000;padding-bottom:10px} table{width:100%;border-collapse:collapse;margin-top:20px} th{background:#000;color:#fff;padding:12px;text-align:left} td{padding:12px;border-bottom:1px solid #eee}</style></head><body><h1>TECHNICAL REPORT</h1><p>Resultado: ${m.team_a_goals}-${m.team_b_goals} | Posesión: ${m.possession_a}%</p><h3>REGISTRO DE EVENTOS</h3><table><thead><tr><th>Tiempo</th><th>Equipo</th><th>Evento</th></tr></thead><tbody>${App.events.map(e => `<tr><td>${e.time}</td><td>Eq. ${e.team}</td><td><b>${e.type}</b></td></tr>`).join('')}</tbody></table></body></html>`);
                 win.document.close(); setTimeout(() => win.print(), 800);
             },
-            exportNanobananaElite: () => {
-                if(!App.lastMatch) return;
-                const m = App.lastMatch;
-                const win = window.open('', '_blank', 'width=375,height=812');
-                win.document.write(`
-                    <html><head><style>
-                        body{background:#000; color:#fff; font-family:'Manrope',sans-serif; padding:0; margin:0; overflow:hidden;}
-                        .container{padding:50px 30px; position:relative; height:100vh; display:flex; flex-direction:column; justify-content:space-between; background: radial-gradient(circle at top right, #111 0%, #000 60%);}
-                        .pattern{position:absolute; inset:0; opacity:0.05; background-image: linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px); background-size: 20px 20px;}
-                        .tag{font-size:12px; font-weight:800; letter-spacing:6px; color:var(--accent); background:#00d68f; color:#000; display:inline-block; padding:5px 15px; margin-bottom:40px;}
-                        .score-hero{font-size:160px; font-weight:900; line-height:0.75; letter-spacing:-12px; margin:40px 0; background: linear-gradient(135deg, #fff 30%, #444 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;}
-                        .teams{font-size:14px; color:#888; letter-spacing:5px; font-weight:600; margin-bottom:50px;}
-                        .kpi-box{display:grid; grid-template-columns:1fr 1fr; gap:30px;}
-                        .kpi-v{font-size:52px; font-weight:900; line-height:1;}
-                        .kpi-l{font-size:10px; color:#555; letter-spacing:2px; margin-top:8px; font-weight:700;}
-                        .bar-wrap{height:8px; background:#222; border-radius:4px; overflow:hidden; margin:40px 0;}
-                        .bar-fill{height:100%; background:#00d68f; box-shadow: 0 0 20px #00d68f;}
-                    </style></head><body>
-                        <div class="pattern"></div>
-                        <div class="container">
-                            <div>
-                                <div class="tag">NANOBANANA</div>
-                                <div style="font-size:14px; font-weight:600; color:#666">SESSION SUMMARY // ${new Date().toLocaleDateString()}</div>
-                                <div class="score-hero">${m.team_a_goals}<br/>${m.team_b_goals}</div>
-                                <div class="teams">TEAM A VS TEAM B</div>
-                            </div>
-                            <div>
-                                <div class="bar-wrap"><div class="bar-fill" style="width:${m.possession_a}%"></div></div>
-                                <div class="kpi-box">
-                                    <div><div class="kpi-v" style="color:#00d68f">${m.possession_a}%</div><div class="kpi-l">POSSESSION</div></div>
-                                    <div><div class="kpi-v" style="color:#c084fc">${App.events.length}</div><div class="kpi-l">TACTICAL EVENTS</div></div>
-                                </div>
-                                <div style="margin-top:60px; font-size:11px; color:#444; font-weight:600;">ELITE TACTICAL DATA ANALYSIS SYSTEM. POWERED BY YOLO11 & SUPABASE REALTIME CLOUD.</div>
-                            </div>
-                        </div>
-                    </body></html>
-                `);
+            exportStoryElite: () => {
+                const m = App.lastMatch; const win = window.open('', '_blank', 'width=375,height=812');
+                win.document.write(`<html><head><style>body{background:#000;color:#fff;font-family:'Manrope',sans-serif;padding:40px;margin:0;height:100vh;display:flex;flex-direction:column;justify-content:center;text-align:center} .hero{font-size:150px;font-weight:900;line-height:0.8;margin:40px 0;letter-spacing:-10px;background:linear-gradient(135deg,#fff,#444);-webkit-background-clip:text;-webkit-text-fill-color:transparent} .tag{font-size:12px;letter-spacing:6px;color:#00d68f;font-weight:800;margin-bottom:20px}</style></head><body><div class="tag">#NANOBANANA_ELITE</div><div style="font-size:14px;color:#666">FINAL RESULTS // ${new Date().toLocaleDateString()}</div><div class="hero">${m.team_a_goals}<br/>${m.team_b_goals}</div><div style="font-size:24px;font-weight:900;color:#00d68f">${m.possession_a}% POSSESSION</div><div style="margin-top:40px;font-size:10px;color:#444;font-weight:700">POWERED BY NANOBANANA REALTIME ANALYTICS</div></body></html>`);
                 win.document.close();
             }
         };
