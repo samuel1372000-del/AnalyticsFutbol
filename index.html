@@ -10,7 +10,7 @@
     
     <link rel="apple-touch-icon" href="https://img.everest.com/placeholder/180x180?text=AF&bg=000000&clr=00d68f">
     
-    <title>AnalyticsFutbol Elite v4.8</title>
+    <title>AnalyticsFutbol v0.4.8</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -433,7 +433,7 @@
     <header>
         <div class="brand-container">
             <div class="brand-name">AnalyticsFutbol</div>
-            <div class="brand-version">ELITE SYSTEM v4.8 FINAL</div>
+            <div class="brand-version">ELITE SYSTEM v0.4.8</div>
         </div>
         <div class="chrono-box">
             <button class="chrono-control" onclick="App.modifyTime(-1)">-</button>
@@ -478,7 +478,7 @@
                 </div>
                 <div class="possession-info">
                     <span id="txt-p-local" style="color:var(--team-a-color)">50%</span>
-                    <span style="color:var(--text-muted); letter-spacing:3px">POSESIÓN ABSOLUTA</span>
+                    <span style="color:var(--text-muted); letter-spacing:3px">POSESIÓN</span>
                     <span id="txt-p-visit" style="color:var(--team-b-color)">50%</span>
                 </div>
             </div>
@@ -513,7 +513,7 @@
 
         <section id="view-physic" class="view-section">
             <div class="card">
-                <span class="card-label">Rendimiento Físico (1 decimal máx.)</span>
+                <span class="card-label">Rendimiento Físico</span>
                 <table class="elite-table">
                     <thead>
                         <tr>
@@ -938,7 +938,7 @@
                 }
             },
 
-            /* 9. EXPORTACIÓN INFORME PROFESIONAL PDF v4.8 */
+            /* 9. EXPORTACIÓN INFORME PROFESIONAL PDF v0.4.8 */
             exportProfessionalPDF: function() {
                 const m = this.matchData;
                 const reportWin = window.open('', '_blank');
