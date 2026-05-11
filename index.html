@@ -8,7 +8,7 @@
     
     <link rel="apple-touch-icon" href="https://via.placeholder.com/180/00d68f/000000?text=AF">
     
-    <title>AnalyticsFutbol Elite v3.7</title>
+    <title>AnalyticsFutbol Elite v3.8</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -77,7 +77,7 @@
     <header>
         <div class="brand-container">
             <div class="brand">AnalyticsFutbol</div>
-            <div class="version-tag">ELITE v3.7</div>
+            <div class="version-tag">ELITE v3.8</div>
         </div>
         <div class="chrono-box">
             <button class="min-btn" onclick="App.adjTime(-1)">−</button>
@@ -146,13 +146,15 @@
                     <button class="tag-btn" style="border-left-color:var(--accent)" onclick="App.log('TIRO')">TIRO</button>
                     <button class="tag-btn" style="border-left-color:var(--tA)" onclick="App.log('FALTA')">FALTA</button>
                     <button class="tag-btn" style="border-left-color:var(--ball)" onclick="App.log('OFFSIDE')">OFFSIDE</button>
+                    <button class="tag-btn" style="border-left-color:var(--tB)" onclick="App.log('CÓRNER')">CÓRNER</button>
+                    <button class="tag-btn" style="border-left-color:var(--tm)" onclick="App.log('PARADA')">PARADA</button>
                 </div>
                 
                 <div class="clip-ctrl-box">
                     <button id="btn-clip-start" class="btn-clip" onclick="App.markClip('start')">Inicio Clip</button>
                     <button id="btn-clip-end" class="btn-clip" onclick="App.markClip('end')">Fin Clip</button>
                 </div>
-                <div id="clip-status" style="font-size:9px; color:var(--tp); margin-top:8px; text-align:center">Analizador v3.7 - Listo</div>
+                <div id="clip-status" style="font-size:9px; color:var(--tp); margin-top:8px; text-align:center">Analizador v3.8 - Listo</div>
             </div>
             <div class="card"><div id="log-list"></div></div>
         </section>
@@ -280,7 +282,7 @@
                 } else {
                     if(!App.clipMarkers.start) return;
                     document.getElementById('btn-clip-end').classList.add('active');
-                    status.innerText = `v3.7: Clip enviado`;
+                    status.innerText = `v3.8: Clip enviado`;
                     App.saveClip(App.clipMarkers.start, time);
                     setTimeout(() => {
                         App.clipMarkers = { start: null, end: null };
@@ -295,7 +297,7 @@
                     await App.db.from('clips_requests').insert([{ 
                         start_time: start, 
                         end_time: end, 
-                        match_id: App.lastM.id || 'v3.7_LIVE' 
+                        match_id: App.lastM.id || 'v3.8_LIVE' 
                     }]);
                 }
             },
@@ -317,7 +319,7 @@
                 
                 if(App.db) {
                     await App.db.from('tactical_events').insert([{ 
-                        match_id: App.lastM.id || 'v3.7_LIVE', 
+                        match_id: App.lastM.id || 'v3.8_LIVE', 
                         team: App.team, 
                         event_type: type, 
                         match_time: tStr, 
@@ -446,7 +448,6 @@
                 cv.getContext('2d').clearRect(0,0,cv.width,cv.height); 
             },
 
-            /* MOTOR DE PDF RESTAURADO A SU VERSIÓN ORIGINAL */
             exportProfessionalPDF: () => {
                 const m = App.lastM; 
                 const win = window.open('', '_blank');
