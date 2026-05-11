@@ -5,130 +5,257 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Football Tracker Elite v9.1</title>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;800&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
+    <title>Football Tracker Elite v10</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <style>
         :root {
-            --bg: #0c0c0c; --surf: #121212; --card: #181818; --border: #262626;
-            --accent: #00d68f; --tA: #f43f5e; --tB: #3b9eff; --th: #ebebeb; --tp: #7a7a7a;
+            /* Design Tokens del repositorio React */
+            --bg: #0c0c0c; --surf: #111111; --card: #161616; --border: #232323;
+            --accent: #00d68f; --tA: #f43f5e; --tB: #3b9eff; --ball: #f5a623;
+            --th: #ebebeb; --tp: #7a7a7a; --tm: #404040;
             --f-body: 'Manrope', sans-serif; --f-data: 'Roboto Mono', monospace;
         }
+
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-        body { background: var(--bg); color: var(--th); font-family: var(--f-body); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
-        
-        header { padding: 55px 20px 15px; background: var(--surf); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        .brand { font-family: var(--f-data); font-size: 10px; letter-spacing: 2px; color: var(--tp); text-transform: uppercase; }
-        .status { font-size: 9px; font-weight: 800; color: var(--accent); border: 1px solid var(--accent); padding: 3px 8px; border-radius: 4px; }
+        body { 
+            background: var(--bg); color: var(--th); font-family: var(--f-body); 
+            height: 100vh; overflow: hidden; display: flex; flex-direction: column;
+        }
 
-        nav { display: flex; background: var(--surf); border-bottom: 1px solid var(--border); overflow-x: auto; scrollbar-width: none; }
-        .tab-btn { padding: 14px 20px; border: none; background: none; color: var(--tp); font-size: 9px; font-weight: 800; text-transform: uppercase; white-space: nowrap; border-bottom: 2px solid transparent; }
-        .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); background: rgba(0,214,143,0.05); }
+        /* --- UI FRAMEWORK --- */
+        header { 
+            padding: 55px 20px 15px; background: var(--surf); border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;
+        }
+        .brand-box { line-height: 1.2; }
+        .brand-sub { font-family: var(--f-data); font-size: 7px; color: var(--tm); letter-spacing: 2px; text-transform: uppercase; }
+        .brand-main { font-size: 18px; font-weight: 800; letter-spacing: -0.5px; }
+        .status-pill { font-family: var(--f-data); font-size: 8px; font-weight: 600; color: var(--accent); padding: 4px 8px; border: 1px solid var(--accent); border-radius: 3px; }
 
+        .nav-scroller { display: flex; background: var(--surf); border-bottom: 1px solid var(--border); overflow-x: auto; scrollbar-width: none; }
+        .nav-scroller::-webkit-scrollbar { display: none; }
+        .tab-btn { 
+            padding: 15px 20px; border: none; background: none; color: var(--tp);
+            font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;
+            white-space: nowrap; border-bottom: 2px solid transparent; transition: 0.2s;
+        }
+        .tab-btn.active { color: var(--th); border-bottom-color: var(--accent); background: rgba(0,214,143,0.05); }
+
+        /* --- CONTENT ENGINE --- */
         main { flex: 1; overflow-y: auto; padding: 15px; -webkit-overflow-scrolling: touch; }
-        .view { display: none; animation: fadeIn 0.2s ease; }
+        .view { display: none; animation: viewSlide 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .view.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes viewSlide { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 12px; }
-        .card-label { font-family: var(--f-data); font-size: 9px; color: var(--tp); text-transform: uppercase; margin-bottom: 12px; display: block; }
+        /* --- DASHBOARD COMPONENTS --- */
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 16px; margin-bottom: 15px; }
+        .card-label { font-family: var(--f-data); font-size: 9px; color: var(--tp); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; display: block; }
 
-        .pitch { width: 100%; aspect-ratio: 105/68; background: #0d1a0d; position: relative; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
-        .player { width: 20px; height: 20px; border-radius: 50%; position: absolute; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 800; border: 1.5px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.5); transition: 0.5s; }
+        .score-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .score-val { font-family: var(--f-data); font-size: 36px; font-weight: 600; }
 
-        footer { padding: 15px 20px calc(15px + env(safe-area-inset-bottom)); background: var(--surf); border-top: 1px solid var(--border); }
-        .btn-main { width: 100%; background: var(--accent); border: none; color: #000; font-weight: 800; padding: 12px; border-radius: 6px; font-size: 12px; text-transform: uppercase; }
+        /* CAMPO FIFA 105x68 SVG */
+        .pitch-box { 
+            width: 100%; aspect-ratio: 105/68; background: #0a1808; border-radius: 4px; 
+            position: relative; border: 1px solid var(--border); overflow: hidden;
+        }
+        .pitch-svg { width: 100%; height: 100%; position: absolute; top: 0; left: 0; }
+        .players-layer { position: absolute; inset: 0; z-index: 10; }
+        
+        .player { 
+            width: 18px; height: 18px; border-radius: 50%; position: absolute;
+            transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center;
+            font-size: 8px; font-weight: 800; border: 1.5px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* --- TABLAS Y LISTAS --- */
+        .data-table { width: 100%; border-collapse: collapse; font-family: var(--f-data); font-size: 11px; }
+        .data-table th { text-align: left; color: var(--tp); padding: 8px 4px; border-bottom: 1px solid var(--border); text-transform: uppercase; font-size: 9px; }
+        .data-table td { padding: 12px 4px; border-bottom: 1px solid rgba(255,255,255,0.02); }
+
+        /* --- FOOTER ACTIONS --- */
+        footer { padding: 15px 20px calc(15px + env(safe-area-inset-bottom)); background: var(--surf); border-top: 1px solid var(--border); flex-shrink: 0; }
+        .btn-report { 
+            width: 100%; background: var(--accent); border: none; color: #000; font-weight: 800;
+            padding: 14px; border-radius: 4px; font-size: 11px; text-transform: uppercase; letter-spacing: 1px;
+        }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="brand">Tactical Blueprint v9.1</div>
-        <div id="status" class="status">LIVE</div>
+        <div class="brand-box">
+            <div class="brand-sub">Football Tracker v10</div>
+            <div class="brand-main">ANALYTICS</div>
+        </div>
+        <div class="status-pill" id="conn-tag">SYNCING...</div>
     </header>
 
-    <nav>
+    <div class="nav-scroller">
         <button class="tab-btn active" onclick="App.nav('live', this)">Dashboard</button>
         <button class="tab-btn" onclick="App.nav('physic', this)">Físico</button>
         <button class="tab-btn" onclick="App.nav('tactical', this)">Táctico</button>
         <button class="tab-btn" onclick="App.nav('events', this)">Eventos</button>
-    </nav>
+        <button class="tab-btn" onclick="App.nav('report', this)">Informe</button>
+    </div>
 
     <main>
         <section id="view-live" class="view active">
             <div class="card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <div style="text-align: center; width: 40%;"><div style="font-size: 32px; font-weight: 800; color: var(--tA)" id="score-a">0</div><div style="font-size: 9px; color: var(--tp)">EQUIPO A</div></div>
-                    <div style="font-weight: 900; opacity: 0.2;">VS</div>
-                    <div style="text-align: center; width: 40%;"><div style="font-size: 32px; font-weight: 800; color: var(--tB)" id="score-b">0</div><div style="font-size: 9px; color: var(--tp)">EQUIPO B</div></div>
+                <div class="score-row">
+                    <div style="text-align: center;"><div class="score-val" style="color: var(--tA)" id="score-a">0</div><div class="brand-sub">Equipo A</div></div>
+                    <div style="font-family: var(--f-data); opacity: 0.2; font-weight: 900;">VS</div>
+                    <div style="text-align: center;"><div class="score-val" style="color: var(--tB)" id="score-b">0</div><div class="brand-sub">Equipo B</div></div>
                 </div>
-                <div style="height: 4px; background: #222; border-radius: 2px; overflow: hidden; display: flex;">
-                    <div id="pb-a" style="width: 50%; background: var(--tA); transition: 0.5s;"></div>
-                    <div id="pb-b" style="width: 50%; background: var(--tB); transition: 0.5s;"></div>
+                <div style="height: 4px; background: var(--tm); border-radius: 2px; overflow: hidden; display: flex;">
+                    <div id="pb-a" style="width: 52%; background: var(--tA); transition: 0.8s;"></div>
+                    <div id="pb-b" style="width: 48%; background: var(--tB); transition: 0.8s;"></div>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-top: 8px; font-family: var(--f-data); font-size: 10px;">
+                    <span style="color: var(--tA)" id="txt-pa">52%</span><span style="color: var(--tp)">POSESIÓN</span><span style="color: var(--tB)" id="txt-pb">48%</span>
                 </div>
             </div>
 
-            <div class="pitch" id="pitch-main">
-                <svg viewBox="0 0 105 68" style="width: 100%; height: 100%; position: absolute;">
-                    <rect width="105" height="68" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/>
-                    <line x1="52.5" y1="0" x2="52.5" y2="68" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/>
-                    <circle cx="52.5" cy="34" r="9.15" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/>
-                    <rect x="0" y="13.84" width="16.5" height="40.32" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/>
-                    <rect x="88.5" y="13.84" width="16.5" height="40.32" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/>
+            <div class="pitch-box">
+                <svg class="pitch-svg" viewBox="0 0 105 68" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="105" height="68" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="0.5"/>
+                    <line x1="52.5" y1="0" x2="52.5" y2="68" stroke="rgba(255,255,255,0.25)" stroke-width="0.5"/>
+                    <circle cx="52.5" cy="34" r="9.15" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="0.5"/>
+                    <rect x="0" y="13.84" width="16.5" height="40.32" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="0.5"/>
+                    <rect x="88.5" y="13.84" width="16.5" height="40.32" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="0.5"/>
+                    <rect x="0" y="24.84" width="5.5" height="18.32" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/>
+                    <rect x="99.5" y="24.84" width="5.5" height="18.32" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/>
+                    <path d="M 16.5 24.85 A 9.15 9.15 0 0 1 16.5 43.15" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/>
+                    <path d="M 88.5 24.85 A 9.15 9.15 0 0 0 88.5 43.15" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/>
                 </svg>
-                <div id="players-layer"></div>
+                <div class="players-layer" id="players-radar"></div>
             </div>
         </section>
 
-        <section id="view-physic" class="view"><div class="card"><span class="card-label">Rendimiento Físico</span><div id="physic-content">Conectando...</div></div></section>
-        <section id="view-tactical" class="view"><div class="card"><span class="card-label">Análisis de Líneas</span><div id="tactical-content">Calculando...</div></div></section>
-        <section id="view-events" class="view"><div class="card"><span class="card-label">Registro de Eventos</span><div id="event-log">Sin eventos.</div></div></section>
+        <section id="view-physic" class="view">
+            <div class="card">
+                <span class="card-label">Rendimiento por Jugador</span>
+                <table class="data-table">
+                    <thead><tr><th>ID</th><th>POS</th><th>DIST (KM)</th><th>V. MÁX</th></tr></thead>
+                    <tbody id="physic-table"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="view-tactical" class="view">
+            <div class="card">
+                <span class="card-label">Métricas de Estructura</span>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div style="background: #0f0f0f; padding: 15px; border-radius: 4px;">
+                        <div class="score-val" id="tac-comp" style="font-size: 24px;">0m</div>
+                        <div class="brand-sub">Compacidad</div>
+                    </div>
+                    <div style="background: #0f0f0f; padding: 15px; border-radius: 4px;">
+                        <div class="score-val" id="tac-press" style="font-size: 24px; color: var(--accent);">0m</div>
+                        <div class="brand-sub">Alt. Presión</div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 
-    <footer><button class="btn-main" onclick="App.exportPDF()">Exportar Informe PDF</button></footer>
+    <footer>
+        <button class="btn-report" onclick="App.generatePDF()">Generar Informe PDF Oficial</button>
+    </footer>
 
     <script>
         const App = {
-            state: { db: null, refresh: 5000 },
+            state: { db: null, events: [], currentMatch: null },
+            
             init: async () => {
                 const url = "https://zdckdlrgtoglmvgdrvcn.supabase.co";
                 const key = "sb_publishable_bGfCRIXGSuGb5XK_SJ0tdw_XYNIHW14";
                 App.state.db = window.supabase.createClient(url, key);
-                App.sync(); setInterval(App.sync, App.state.refresh);
+                
+                document.getElementById('conn-tag').innerText = "ONLINE";
+                App.sync();
+                setInterval(App.sync, 5000);
             },
+
             nav: (id, btn) => {
                 document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
                 document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
                 document.getElementById('view-' + id).classList.add('active');
                 btn.classList.add('active');
             },
+
             sync: async () => {
-                try {
-                    const { data } = await App.state.db.from('matches').select('*').order('created_at', { ascending: false }).limit(1);
-                    if (data && data[0]) {
-                        const m = data[0];
-                        document.getElementById('score-a').innerText = m.team_a_goals;
-                        document.getElementById('score-b').innerText = m.team_b_goals;
-                        const pa = m.possession_a || 50;
-                        document.getElementById('pb-a').style.width = pa + '%';
-                        document.getElementById('pb-b').style.width = (100 - pa) + '%';
-                        
-                        const layer = document.getElementById('players-layer');
-                        layer.innerHTML = '';
-                        if (m.full_data?.positions) {
-                            m.full_data.positions.forEach(p => {
-                                const d = document.createElement('div');
-                                d.className = 'player';
-                                d.style.left = p.x + '%'; d.style.top = p.y + '%';
-                                d.style.backgroundColor = p.team === 'A' ? 'var(--tA)' : 'var(--tB)';
-                                d.innerText = p.id; layer.appendChild(d);
-                            });
-                        }
-                    }
-                } catch (e) { console.error("Sync error"); }
+                const { data } = await App.state.db.from('matches').select('*').order('created_at', { ascending: false }).limit(1);
+                if (data && data[0]) {
+                    App.state.currentMatch = data[0];
+                    App.render(data[0]);
+                }
             },
-            exportPDF: () => { window.print(); }
+
+            render: (match) => {
+                // Dashboard
+                document.getElementById('score-a').innerText = match.team_a_goals;
+                document.getElementById('score-b').innerText = match.team_b_goals;
+                const pa = match.possession_a || 50;
+                document.getElementById('pb-a').style.width = pa + "%";
+                document.getElementById('pb-b').style.width = (100 - pa) + "%";
+                document.getElementById('txt-pa').innerText = pa + "%";
+                document.getElementById('txt-pb').innerText = (100 - pa) + "%";
+
+                // Radar
+                const layer = document.getElementById('players-radar');
+                layer.innerHTML = '';
+                if (match.full_data?.positions) {
+                    match.full_data.positions.forEach(p => {
+                        const dot = document.createElement('div');
+                        dot.className = 'player';
+                        dot.style.left = p.x + "%";
+                        dot.style.top = p.y + "%";
+                        dot.style.backgroundColor = p.team === 'A' ? 'var(--tA)' : 'var(--tB)';
+                        dot.innerText = p.id;
+                        layer.appendChild(dot);
+                    });
+                }
+
+                // Tabla Física
+                const table = document.getElementById('physic-table');
+                if (match.full_data?.players) {
+                    table.innerHTML = match.full_data.players.map(p => `
+                        <tr>
+                            <td style="color: ${p.team === 'A' ? 'var(--tA)' : 'var(--tB)'}">#${p.id}</td>
+                            <td>${p.pos || 'MID'}</td>
+                            <td style="font-weight: 800;">${p.dist || '0.0'}</td>
+                            <td style="color: var(--accent)">${p.maxSpd || '0.0'}</td>
+                        </tr>
+                    `).join('');
+                }
+            },
+
+            generatePDF: () => {
+                const m = App.state.currentMatch;
+                const win = window.open('', '_blank');
+                win.document.write(`
+                    <html><head><title>Informe Elite</title>
+                    <style>
+                        body{font-family:sans-serif;background:#fff;padding:40px}
+                        header{background:#0c0c0c;color:#fff;padding:20px;border-radius:8px}
+                        .stat{font-size:24px;font-weight:bold;color:#00d68f}
+                    </style></head><body>
+                    <header><h1>REPORTE TÁCTICO: ${m.name || 'Jornada'}</h1></header>
+                    <p>Resultado: ${m.team_a_goals} - ${m.team_b_goals}</p>
+                    <div class="stat">Posesión: ${m.possession_a}%</div>
+                    <p>Informe generado desde Footbal Tracker Pro v10</p>
+                    </body></html>
+                `);
+                win.document.close();
+                win.print();
+            }
         };
+
         window.onload = App.init;
     </script>
 </body>
