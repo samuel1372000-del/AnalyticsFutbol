@@ -731,9 +731,12 @@
         <section id="view-report" class="view-section">
             <div class="af-card" style="text-align:center; padding-top:50px; padding-bottom:50px; padding-left:20px; padding-right:20px;">
                 <div style="font-size:50px; margin-bottom:25px;">📄📊</div>
-                <h2 style="margin-bottom:12px; letter-spacing:1.5px;">Cerrar Informe</h2>
-                <p style="font-size:12px; color:var(--af-text-low); margin-bottom:35px; line-height:1.6;">Este proceso generará un documento PDF técnico con estadísticas de posesión absoluta, rendimiento físico y cronología táctica completa.</p>
+                <h2 style="margin-bottom:12px; letter-spacing:1.5px;">Panel de Informe</h2>
+                <p style="font-size:12px; color:var(--af-text-low); margin-bottom:35px; line-height:1.6;">Descarga tu documento técnico con estadísticas y luego finaliza el partido para volver a la pantalla de inicio.</p>
+                
                 <button class="af-btn-primary" onclick="App.exportProfessionalPDF()">Descargar Informe Oficial PDF</button>
+                
+                <button onclick="App.resetMatchSystem()" style="width:100%; padding-top:20px; padding-bottom:20px; padding-left:20px; padding-right:20px; border-top-left-radius:8px; border-top-right-radius:8px; border-bottom-left-radius:8px; border-bottom-right-radius:8px; border-top-style:solid; border-bottom-style:solid; border-left-style:solid; border-right-style:solid; border-top-width:2px; border-bottom-width:2px; border-left-width:2px; border-right-width:2px; border-top-color:var(--af-border); border-bottom-color:var(--af-border); border-left-color:var(--af-border); border-right-color:var(--af-border); background-color:transparent; color:var(--af-text-high); font-weight:800; text-transform:uppercase; font-size:12px; cursor:pointer; margin-top:15px;">Finalizar y Volver al Inicio</button>
             </div>
         </section>
     </main>
@@ -1228,11 +1231,9 @@
                 win.document.write(docStructure);
                 win.document.close();
                 
-                // Imprimir PDF, cerrar ventana superpuesta y purgar los datos del sistema
+                // Simplemente ordenamos imprimir. El usuario cerrará la ventana en el iPhone al terminar.
                 setTimeout(function() { 
                     win.print(); 
-                    win.close(); // FIX iOS PWA: Destruye el WebView que atrapa al usuario
-                    App.resetMatchSystem(); 
                 }, 1200);
             },
 
@@ -1299,4 +1300,3 @@
     </script>
 </body>
 </html>
-
