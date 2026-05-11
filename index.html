@@ -605,9 +605,8 @@
         <section id="view-live" class="view-section active">
             <div class="af-card">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                    <span class="af-card-label">Sincronización en vivo</span>
+                    <span class="af-card-label">Sincronización Supabase en vivo</span>
                     <div style="display:flex; column-gap:10px;">
-                        <!-- BOTÓN NUEVO PARTIDO INYECTADO AQUÍ -->
                         <button onclick="App.resetMatchSystem()" style="background-color:transparent; border-top-width:1px; border-bottom-width:1px; border-left-width:1px; border-right-width:1px; border-top-style:solid; border-bottom-style:solid; border-left-style:solid; border-right-style:solid; border-top-color:var(--af-accent); border-bottom-color:var(--af-accent); border-left-color:var(--af-accent); border-right-color:var(--af-accent); color:var(--af-accent); padding-top:6px; padding-bottom:6px; padding-left:14px; padding-right:14px; font-size:9px; border-top-left-radius:20px; border-top-right-radius:20px; border-bottom-left-radius:20px; border-bottom-right-radius:20px; font-weight:800; cursor:pointer;">NUEVO PARTIDO</button>
                         
                         <button id="sim-btn" onclick="App.toggleSimMode()" style="background-color:transparent; border-top-width:1px; border-bottom-width:1px; border-left-width:1px; border-right-width:1px; border-top-style:solid; border-bottom-style:solid; border-left-style:solid; border-right-style:solid; border-top-color:var(--af-text-low); border-bottom-color:var(--af-text-low); border-left-color:var(--af-text-low); border-right-color:var(--af-text-low); color:var(--af-text-low); padding-top:6px; padding-bottom:6px; padding-left:14px; padding-right:14px; font-size:9px; border-top-left-radius:20px; border-top-right-radius:20px; border-bottom-left-radius:20px; border-bottom-right-radius:20px; font-weight:800; cursor:pointer;">SIMULADOR: OFF</button>
@@ -1229,9 +1228,10 @@
                 win.document.write(docStructure);
                 win.document.close();
                 
-                // Imprimir PDF y luego purgar los datos del sistema
+                // Imprimir PDF, cerrar ventana superpuesta y purgar los datos del sistema
                 setTimeout(function() { 
                     win.print(); 
+                    win.close(); // FIX iOS PWA: Destruye el WebView que atrapa al usuario
                     App.resetMatchSystem(); 
                 }, 1200);
             },
@@ -1272,8 +1272,6 @@
                 document.getElementById('radar-ui-layer').innerHTML = "";
                 
                 // 4. Inserción de nueva fila en Supabase (LA CLAVE DEL FIX)
-                // Al insertar una nueva fila con 0-0, la próxima vez que syncWithSupabase
-                // busque la "última" fila, encontrará este 0-0 en lugar de tu prueba anterior.
                 if (this.supabase) {
                     const { data, error } = await this.supabase
                         .from('matches')
@@ -1292,8 +1290,13 @@
                 } else {
                     this.matchState.id = "MATCH_" + Date.now();
                 }
+
+                // 5. Retorno Automático a la Pantalla Inicial (Marcador)
+                const mainTab = document.querySelectorAll('.nav-tab')[0];
+                this.switchView('live', mainTab);
             }
         };
     </script>
 </body>
 </html>
+
