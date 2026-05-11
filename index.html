@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>AnalyticsFutbol Elite v35</title>
+    
+    <link rel="apple-touch-icon" href="https://via.placeholder.com/180/00d68f/000000?text=AF">
+    
+    <title>AnalyticsFutbol Elite v3.6</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -23,7 +26,10 @@
         body { background: var(--bg); color: var(--th); font-family: var(--f-body); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
 
         header { padding: 55px 20px 15px; background: var(--surf); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+        .brand-container { display: flex; flex-direction: column; }
         .brand { font-size: 13px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); }
+        .version-tag { font-family: var(--f-data); font-size: 8px; color: var(--tm); font-weight: 700; margin-top: 2px; }
+        
         .chrono-box { display: flex; align-items: center; gap: 8px; background: #1a1a1a; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border); }
         .min-btn { background: none; border: none; color: var(--tp); font-size: 18px; padding: 0 8px; font-weight: 800; cursor: pointer; }
         #timer-display { font-family: var(--f-data); font-size: 14px; font-weight: 700; color: #fff; min-width: 45px; text-align: center; }
@@ -42,26 +48,14 @@
 
         .score-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .score-val { font-family: var(--f-data); font-size: 42px; font-weight: 700; }
-        .poss-track { height: 6px; background: #222; border-radius: 3px; overflow: hidden; display: flex; margin-bottom: 10px; }
-        .poss-fill { height: 100%; transition: width 0.8s ease; }
-
-        .pitch-container { width: 100%; aspect-ratio: 105/68; background: var(--grass); border: 1px solid #1a2e16; border-radius: 4px; position: relative; overflow: hidden; margin-top: 10px; box-shadow: inset 0 0 40px rgba(0,0,0,0.5); }
+        
+        .pitch-container { width: 100%; aspect-ratio: 105/68; background: var(--grass); border: 1px solid #1a2e16; border-radius: 4px; position: relative; overflow: hidden; margin-top: 10px; }
         .pitch-svg { position: absolute; width: 100%; height: 100%; top: 0; left: 0; }
-        .player-dot { width: 16px; height: 16px; border-radius: 50%; position: absolute; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; font-size: 7px; font-weight: 800; border: 1.5px solid #fff; box-shadow: 0 3px 6px rgba(0,0,0,0.4); z-index: 10; transition: 0.2s linear; }
-
-        table { width: 100%; border-collapse: collapse; font-family: var(--f-data); font-size: 11px; }
-        th { text-align: left; color: var(--tp); padding-bottom: 10px; border-bottom: 1px solid var(--border); font-size: 9px; text-transform: uppercase; }
-        td { padding: 12px 0; border-bottom: 1px solid #1a1a1a; }
+        .player-dot { width: 16px; height: 16px; border-radius: 50%; position: absolute; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; font-size: 7px; font-weight: 800; border: 1.5px solid #fff; z-index: 10; transition: 0.2s linear; }
 
         .tag-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .tag-btn { background: var(--surf); border: 1px solid var(--border); color: var(--th); padding: 14px; font-size: 10px; font-weight: 700; border-radius: 4px; text-align: left; border-left: 4px solid var(--tm); cursor: pointer; }
-        .tag-btn:active { background: #333; }
         
-        .team-sel { display: flex; gap: 6px; margin-bottom: 12px; }
-        .t-opt { flex: 1; padding: 14px; border-radius: 4px; border: 2px solid var(--border); font-size: 11px; font-weight: 800; background: transparent; color: var(--tp); transition: 0.2s; cursor: pointer; }
-        .t-opt.active-A { border-color: var(--tA); color: var(--tA); background: rgba(244,63,94,0.15); }
-        .t-opt.active-B { border-color: var(--tB); color: var(--tB); background: rgba(59,158,255,0.15); }
-
         .clip-ctrl-box { border-top: 1px solid var(--border); margin-top: 15px; padding-top: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .btn-clip { background: #222; border: 1px solid var(--border); color: #fff; padding: 12px; font-size: 10px; font-weight: 800; border-radius: 4px; cursor: pointer; text-transform: uppercase; }
         .btn-clip.active { background: var(--ball); color: #000; border-color: var(--ball); }
@@ -73,7 +67,7 @@
 
         .btn-action { width: 100%; border: none; font-weight: 800; padding: 16px; border-radius: 4px; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; margin-bottom: 12px; }
         .btn-p { background: var(--accent); color: #000; }
-        .demo-btn { background: transparent; border: 1px solid var(--tp); color: var(--tp); padding: 6px 12px; font-size: 9px; font-weight: 800; border-radius: 20px; cursor: pointer; transition: 0.2s; }
+        .demo-btn { background: transparent; border: 1px solid var(--tp); color: var(--tp); padding: 6px 12px; font-size: 9px; font-weight: 800; border-radius: 20px; cursor: pointer; }
         .demo-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
 
         .ev-item { padding: 14px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
@@ -82,7 +76,10 @@
 <body>
 
     <header>
-        <div class="brand">AnalyticsFutbol</div>
+        <div class="brand-container">
+            <div class="brand">AnalyticsFutbol</div>
+            <div class="version-tag">ELITE v3.6</div>
+        </div>
         <div class="chrono-box">
             <button class="min-btn" onclick="App.adjTime(-1)">−</button>
             <span id="timer-display">00:00</span>
@@ -104,7 +101,7 @@
         <section id="view-live" class="view-section active">
             <div class="card">
                 <div style="display:flex; justify-content:space-between; margin-bottom:15px; align-items:center;">
-                    <span class="card-label" style="margin:0">Estado de Partido</span>
+                    <span class="card-label" style="margin:0">Estado Realtime</span>
                     <button id="demo-btn" class="demo-btn" onclick="App.toggleDemo()">SIMULADOR: OFF</button>
                 </div>
                 <div class="score-row">
@@ -112,11 +109,9 @@
                     <div style="font-weight:900; opacity:0.1; font-size:20px">VS</div>
                     <div style="text-align:center"><div class="score-val" style="color:var(--tB)" id="sB">0</div><div style="font-size:8px; color:var(--tp)">VISITANTE</div></div>
                 </div>
-                <div class="poss-track"><div id="pb-a" style="width:50%; background:var(--tA)" class="poss-fill"></div><div id="pb-b" style="width:50%; background:var(--tB)" class="poss-fill"></div></div>
-                <div style="display:flex; justify-content:space-between; font-family:var(--f-data); font-size:11px; font-weight:700">
-                    <span id="tx-pa" style="color:var(--tA)">50%</span>
-                    <span style="color:var(--tm); letter-spacing:2px">POSESIÓN</span>
-                    <span id="tx-pb" style="color:var(--tB)">50%</span>
+                <div style="height:6px; background:#222; border-radius:3px; overflow:hidden; display:flex">
+                    <div id="pb-a" style="width:50%; background:var(--tA); transition:0.5s"></div>
+                    <div id="pb-b" style="width:50%; background:var(--tB); transition:0.5s"></div>
                 </div>
             </div>
             
@@ -129,10 +124,6 @@
                     <rect x="88.5" y="13.84" width="16.5" height="40.32" fill="none" stroke="var(--grass-lines)" stroke-width="0.5"/>
                     <rect x="0" y="24.84" width="5.5" height="18.32" fill="none" stroke="var(--grass-lines)" stroke-width="0.5"/>
                     <rect x="99.5" y="24.84" width="5.5" height="18.32" fill="none" stroke="var(--grass-lines)" stroke-width="0.5"/>
-                    <circle cx="11" cy="34" r="0.3" fill="var(--grass-lines)"/>
-                    <circle cx="94" cy="34" r="0.3" fill="var(--grass-lines)"/>
-                    <path d="M 16.5,26.75 A 9.15,9.15 0 0,1 16.5,41.25" fill="none" stroke="var(--grass-lines)" stroke-width="0.5"/>
-                    <path d="M 88.5,26.75 A 9.15,9.15 0 0,0 88.5,41.25" fill="none" stroke="var(--grass-lines)" stroke-width="0.5"/>
                 </svg>
                 <div id="radar-layer"></div>
             </div>
@@ -140,10 +131,9 @@
 
         <section id="view-events" class="view-section">
             <div class="card">
-                <span class="card-label">Panel de Etiquetado y Recorte</span>
-                <div class="team-sel">
-                    <button id="selA" class="t-opt active-A" onclick="App.setTeam('A')">EQUIPO A</button>
-                    <button id="selB" class="t-opt" onclick="App.setTeam('B')">EQUIPO B</button>
+                <div style="display:flex; gap:6px; margin-bottom:12px">
+                    <button id="selA" class="t-opt active-A" style="flex:1; padding:14px; border-radius:4px; border:2px solid var(--border); font-size:11px; font-weight:800; background:transparent; color:var(--tp);" onclick="App.setTeam('A')">EQUIPO A</button>
+                    <button id="selB" class="t-opt" style="flex:1; padding:14px; border-radius:4px; border:2px solid var(--border); font-size:11px; font-weight:800; background:transparent; color:var(--tp);" onclick="App.setTeam('B')">EQUIPO B</button>
                 </div>
                 <div class="tag-grid">
                     <button class="tag-btn" style="border-left-color:var(--ball)" onclick="App.log('GOL')">GOL</button>
@@ -152,23 +142,21 @@
                     <button class="tag-btn" style="border-left-color:var(--accent)" onclick="App.log('TIRO')">TIRO</button>
                     <button class="tag-btn" style="border-left-color:var(--tA)" onclick="App.log('FALTA')">FALTA</button>
                     <button class="tag-btn" style="border-left-color:var(--ball)" onclick="App.log('OFFSIDE')">OFFSIDE</button>
-                    <button class="tag-btn" style="border-left-color:var(--tB)" onclick="App.log('CÓRNER')">CÓRNER</button>
-                    <button class="tag-btn" style="border-left-color:var(--tm)" onclick="App.log('PARADA')">PARADA</button>
                 </div>
                 
                 <div class="clip-ctrl-box">
-                    <button id="btn-clip-start" class="btn-clip" onclick="App.markClip('start')">Marcar Inicio Clip</button>
-                    <button id="btn-clip-end" class="btn-clip" onclick="App.markClip('end')">Marcar Fin Clip</button>
+                    <button id="btn-clip-start" class="btn-clip" onclick="App.markClip('start')">Inicio Clip</button>
+                    <button id="btn-clip-end" class="btn-clip" onclick="App.markClip('end')">Fin Clip</button>
                 </div>
-                <div id="clip-status" style="font-size:9px; color:var(--tp); margin-top:8px; text-align:center">Sin marca de clip activa</div>
+                <div id="clip-status" style="font-size:9px; color:var(--tp); margin-top:8px; text-align:center">Analizador v3.6 - Listo</div>
             </div>
             <div class="card"><div id="log-list"></div></div>
         </section>
 
-        <section id="view-tactical" class="view-section"><div class="card"><span class="card-label">Estructura Dinámica</span><div style="display:grid; grid-template-columns:1fr 1fr; gap:12px"><div style="background:#0f0f0f; padding:20px; border-radius:4px; text-align:center"><div id="res-comp" style="font-family:var(--f-data); font-size:24px; font-weight:700">--</div><div style="font-size:8px; color:var(--tp)">COMPACIDAD</div></div><div style="background:#0f0f0f; padding:20px; border-radius:4px; text-align:center"><div id="res-press" style="font-family:var(--f-data); font-size:24px; font-weight:700; color:var(--accent)">--</div><div style="font-size:8px; color:var(--tp)">ALT. PRESIÓN</div></div></div></div></section>
-        <section id="view-physic" class="view-section"><div class="card"><span class="card-label">Rendimiento Físico Individual</span><table id="p-table"><thead><tr><th>DORSAL</th><th>POS</th><th>DIST</th><th>V.MAX</th></tr></thead><tbody id="p-body"></tbody></table></div></section>
-        <section id="view-clips" class="view-section"><div class="card"><span class="card-label">Video Análisis IA</span><div class="video-box" id="v-wrap"><video id="vplayer" controls poster="https://via.placeholder.com/600x340/111/fff?text=VIDEO+ANALYSIS+READY"></video><canvas id="canvas-tactico"></canvas></div><div style="display:flex; gap:8px; margin-top:15px"><button class="btn-action btn-p" style="flex:1" onclick="App.toggleDraw()">Lápiz Táctico</button><button class="btn-action" style="flex:1; background:#333; color:#fff" onclick="App.clearCanvas()">Limpiar</button></div></div></section>
-        <section id="view-report" class="view-section"><div class="card" style="text-align:center"><div style="font-size:32px; margin-bottom:10px">📄</div><button class="btn-action btn-p" onclick="App.exportProfessionalPDF()">Generar Informe PDF Técnico</button></div></section>
+        <section id="view-tactical" class="view-section"><div class="card"><div style="display:grid; grid-template-columns:1fr 1fr; gap:12px"><div style="background:#0f0f0f; padding:20px; border-radius:4px; text-align:center"><div id="res-comp" style="font-family:var(--f-data); font-size:24px; font-weight:700">--</div><div style="font-size:8px; color:var(--tp)">COMPACIDAD</div></div><div style="background:#0f0f0f; padding:20px; border-radius:4px; text-align:center"><div id="res-press" style="font-family:var(--f-data); font-size:24px; font-weight:700; color:var(--accent)">--</div><div style="font-size:8px; color:var(--tp)">ALT. PRESIÓN</div></div></div></div></section>
+        <section id="view-physic" class="view-section"><div class="card"><table id="p-table" style="width:100%; border-collapse:collapse;"><thead><tr><th style="color:var(--tp); font-size:9px; text-align:left;">DORSAL</th><th style="color:var(--tp); font-size:9px; text-align:left;">POS</th><th style="color:var(--tp); font-size:9px; text-align:left;">DIST</th><th style="color:var(--tp); font-size:9px; text-align:left;">V.MAX</th></tr></thead><tbody id="p-body"></tbody></table></div></section>
+        <section id="view-clips" class="view-section"><div class="card"><div class="video-box"><video id="vplayer" controls poster="https://via.placeholder.com/600x340/111/fff?text=VIDEO+ANALYSIS"></video><canvas id="canvas-tactico"></canvas></div><div style="display:flex; gap:8px; margin-top:15px"><button class="btn-action btn-p" style="flex:1" onclick="App.toggleDraw()">Dibujar</button><button class="btn-action" style="flex:1; background:#333; color:#fff" onclick="App.clearCanvas()">Limpiar</button></div></div></section>
+        <section id="view-report" class="view-section"><div class="card" style="text-align:center"><button class="btn-action btn-p" onclick="App.exportProfessionalPDF()">Generar Informe PDF</button></div></section>
     </main>
 
     <script>
@@ -202,72 +190,43 @@
                 App.team = t;
                 document.getElementById('selA').className = t === 'A' ? 't-opt active-A' : 't-opt';
                 document.getElementById('selB').className = t === 'B' ? 't-opt active-B' : 't-opt';
+                document.getElementById('selA').style.borderColor = t === 'A' ? 'var(--tA)' : 'var(--border)';
+                document.getElementById('selB').style.borderColor = t === 'B' ? 'var(--tB)' : 'var(--border)';
             },
             markClip: (type) => {
                 const vid = document.getElementById('vplayer');
                 const time = vid.currentTime > 0 ? vid.currentTime : App.totalSecs;
                 App.clipMarkers[type] = time;
-                
-                const startBtn = document.getElementById('btn-clip-start');
-                const endBtn = document.getElementById('btn-clip-end');
                 const status = document.getElementById('clip-status');
-                
                 if(type === 'start') {
-                    startBtn.classList.add('active');
-                    status.innerText = `Inicio marcado: ${App.formatTime(time)}`;
+                    document.getElementById('btn-clip-start').classList.add('active');
+                    status.innerText = `Inicio: ${App.fmtT(time)}`;
                 } else {
-                    if(App.clipMarkers.start === null) { alert("Marca primero el inicio"); return; }
-                    endBtn.classList.add('active');
-                    status.innerText = `Clip completo: ${App.formatTime(App.clipMarkers.start)} - ${App.formatTime(time)}`;
+                    if(!App.clipMarkers.start) return;
+                    document.getElementById('btn-clip-end').classList.add('active');
+                    status.innerText = `v3.6: Clip enviado`;
                     App.saveClip(App.clipMarkers.start, time);
                     setTimeout(() => {
                         App.clipMarkers = { start: null, end: null };
-                        startBtn.classList.remove('active'); endBtn.classList.remove('active');
-                        status.innerText = "Clip enviado al PC";
+                        document.getElementById('btn-clip-start').classList.remove('active');
+                        document.getElementById('btn-clip-end').classList.remove('active');
                     }, 2000);
                 }
             },
             saveClip: async (start, end) => {
-                if(!App.db) return;
-                const matchId = App.lastM.id || 'DEFAULT_MATCH';
-                await App.db.from('clips_requests').insert([{ start_time: start, end_time: end, match_id: matchId }]);
+                if(App.db) await App.db.from('clips_requests').insert([{ start_time: start, end_time: end, match_id: App.lastM.id || 'v3.6_LIVE' }]);
             },
-            formatTime: (s) => {
-                const m = Math.floor(s / 60).toString().padStart(2,'0');
-                const sec = Math.floor(s % 60).toString().padStart(2,'0');
-                return `${m}:${sec}`;
-            },
-            
-            // EL MOTOR DE EVENTOS CORREGIDO Y BLINDADO
+            fmtT: (s) => `${Math.floor(s/60).toString().padStart(2,'0')}:${Math.floor(s%60).toString().padStart(2,'0')}`,
             log: async (type) => {
                 const vid = document.getElementById('vplayer');
-                const timeStr = document.getElementById('timer-display').innerText;
-                const videoS = vid.currentTime || 0;
-                
-                const e = { type, team: App.team, time: timeStr, videoSec: videoS, id: Date.now() };
-                App.events.unshift(e);
-                
-                document.getElementById('log-list').innerHTML = App.events.map(ev => `
-                    <div class="ev-item" onclick="App.jumpTo(${ev.videoSec})">
-                        <b>${ev.type} EQ.${ev.team}</b> <span>${ev.time} ➔</span>
-                    </div>
-                `).join('');
-
-                if(App.db) {
-                    const matchId = App.lastM.id || 'DEFAULT_MATCH';
-                    await App.db.from('tactical_events').insert([{
-                        match_id: matchId,
-                        team: App.team,
-                        event_type: type,
-                        match_time: timeStr,
-                        video_second: videoS
-                    }]);
-                }
+                const tStr = document.getElementById('timer-display').innerText;
+                const vSec = vid.currentTime || 0;
+                App.events.unshift({ type, team: App.team, time: tStr, videoSec: vSec });
+                document.getElementById('log-list').innerHTML = App.events.map(ev => `<div class="ev-item" onclick="App.jumpTo(${ev.videoSec})"><b>${ev.type} EQ.${ev.team}</b> <span>${ev.time} ➔</span></div>`).join('');
+                if(App.db) await App.db.from('tactical_events').insert([{ match_id: App.lastM.id || 'v3.6_LIVE', team: App.team, event_type: type, match_time: tStr, video_second: vSec }]);
             },
-            
             jumpTo: (sec) => {
-                const v = document.getElementById('vplayer');
-                App.nav('clips', document.querySelector('[onclick*="clips"]'));
+                const v = document.getElementById('vplayer'); App.nav('clips', document.querySelector('[onclick*="clips"]'));
                 v.currentTime = sec; v.play();
             },
             toggleDemo: () => {
@@ -275,74 +234,44 @@
                 const btn = document.getElementById('demo-btn');
                 btn.innerText = App.isDemo ? "SIMULADOR: ON" : "SIMULADOR: OFF";
                 btn.classList.toggle('active', App.isDemo);
-                
-                if(App.isDemo) {
-                    App.demoInterval = setInterval(App.engineLoop, 100);
-                } else {
-                    clearInterval(App.demoInterval);
-                    App.sync();
-                }
+                if(App.isDemo) App.demoInterval = setInterval(App.engineLoop, 100);
+                else { clearInterval(App.demoInterval); App.sync(); }
             },
             engineLoop: () => {
-                const t = Date.now() / 1000;
-                const mockPositions = [];
+                const t = Date.now() / 1000; const mockPos = [];
                 for(let i=1; i<=11; i++){
-                    mockPositions.push({ id:i, team:'A', x: 20 + Math.sin(t + i)*5, y: 15 + i*4, line: i<5?'DEF':i<9?'MID':'FWD', pos:'CT' });
-                    mockPositions.push({ id:i, team:'B', x: 80 + Math.cos(t + i)*5, y: 15 + i*4, line: 'DEF', pos:'CT' });
+                    mockPos.push({ id:i, team:'A', x: 20 + Math.sin(t + i)*5, y: 15 + i*4, line: i<5?'DEF':i<9?'MID':'FWD' });
+                    mockPos.push({ id:i, team:'B', x: 80 + Math.cos(t + i)*5, y: 15 + i*4 });
                 }
-                App.renderData({ 
-                    team_a_goals: App.lastM.team_a_goals, team_b_goals: App.lastM.team_b_goals, 
-                    possession_a: 50 + Math.sin(t*0.5)*10,
-                    full_data: { positions: mockPositions, players: mockPositions.map(p=>({ id:p.id, team:p.team, pos:p.pos, dist:(t/20).toFixed(2), maxSpd:(25+Math.random()*7).toFixed(1) })) }
-                });
+                App.render({ team_a_goals:0, team_b_goals:0, possession_a: 50 + Math.sin(t*0.5)*10, full_data: { positions: mockPos, players: mockPos.map(p=>({ id:p.id, team:p.team, pos:'MID', dist:(t/20).toFixed(2), maxSpd:(25+Math.random()*7).toFixed(1) })) } });
             },
             sync: async () => {
                 if(App.isDemo) return;
                 const { data } = await App.db.from('matches').select('*').order('created_at', { ascending: false }).limit(1);
-                if (data && data[0]) {
-                    App.lastM = data[0];
-                    App.renderData(data[0]);
-                }
+                if (data && data[0]) { App.lastM = data[0]; App.render(data[0]); }
             },
-            renderData: (m) => {
+            render: (m) => {
                 document.getElementById('sA').innerText = m.team_a_goals; document.getElementById('sB').innerText = m.team_b_goals;
                 const pa = Math.round(m.possession_a || 50);
                 document.getElementById('pb-a').style.width = pa + "%"; document.getElementById('pb-b').style.width = (100 - pa) + "%";
-                document.getElementById('tx-pa').innerText = pa + "%"; document.getElementById('tx-pb').innerText = (100 - pa) + "%";
-                
                 if (m.full_data?.positions) {
                     document.getElementById('radar-layer').innerHTML = m.full_data.positions.map(p => `<div class="player-dot" style="left:${p.x}%; top:${p.y}%; background-color:${p.team==='A'?'var(--tA)':'var(--tB)'}">${p.id}</div>`).join('');
-                    const lh = (line) => { const g = m.full_data.positions.filter(p => p.line === line && p.team === 'A'); return g.length ? (g.reduce((s,p)=>s+p.x, 0)/g.length).toFixed(0) : 0; };
-                    const dA=lh("DEF"), fA=lh("FWD");
-                    document.getElementById('res-comp').innerText = Math.abs(fA - dA) + "m";
-                    document.getElementById('res-press').innerText = (m.full_data.positions.filter(p=>p.team==='A').reduce((s,p)=>s+p.x,0)/11).toFixed(0) + "m";
                 }
                 if (m.full_data?.players) {
-                    document.getElementById('p-body').innerHTML = m.full_data.players.slice(0,10).map(p => `<tr><td style="color:${p.team==='A'?'var(--tA)':'var(--tB)'}; font-weight:800">#${p.id}</td><td>${p.pos || 'MID'}</td><td>${p.dist || '0.00'}</td><td style="color:var(--accent)">${p.maxSpd || '0.0'}</td></tr>`).join('');
+                    document.getElementById('p-body').innerHTML = m.full_data.players.slice(0,10).map(p => `<tr><td>#${p.id}</td><td>${p.pos}</td><td>${p.dist}</td><td>${p.maxSpd}</td></tr>`).join('');
                 }
             },
             initCanvas: () => {
                 const cv = document.getElementById('canvas-tactico'); const ctx = cv.getContext('2d'); let draw = false;
                 cv.width = cv.offsetWidth; cv.height = cv.offsetHeight;
-                const getPos = (e) => {
-                    const rect = cv.getBoundingClientRect();
-                    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-                    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-                    return { x: clientX - rect.left, y: clientY - rect.top };
-                };
+                const getPos = (e) => { const r = cv.getBoundingClientRect(); const cx = e.touches ? e.touches[0].clientX : e.clientX; const cy = e.touches ? e.touches[0].clientY : e.clientY; return { x: cx - r.left, y: cy - r.top }; };
                 const start = (e) => { if(!App.isDrawing) return; draw = true; const p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); };
                 const move = (e) => { if(!draw) return; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.strokeStyle = '#00d68f'; ctx.lineWidth = 3; ctx.stroke(); };
-                const end = () => draw = false;
-                cv.addEventListener('touchstart', start); cv.addEventListener('touchmove', move); cv.addEventListener('touchend', end);
-                cv.addEventListener('mousedown', start); cv.addEventListener('mousemove', move); cv.addEventListener('mouseup', end);
+                cv.addEventListener('touchstart', start); cv.addEventListener('touchmove', move); cv.addEventListener('touchend', () => draw = false);
             },
             toggleDraw: () => { App.isDrawing = !App.isDrawing; document.getElementById('canvas-tactico').classList.toggle('active', App.isDrawing); },
             clearCanvas: () => { const cv = document.getElementById('canvas-tactico'); cv.getContext('2d').clearRect(0,0,cv.width,cv.height); },
-            exportProfessionalPDF: () => {
-                const m = App.lastM; const win = window.open('', '_blank');
-                win.document.write(`<html><head><title>Technical Report</title><style>body{font-family:sans-serif;padding:40px;color:#333} h1{border-bottom:2px solid #000;padding-bottom:10px} table{width:100%;border-collapse:collapse;margin-top:20px} th{background:#eee;padding:10px;text-align:left} td{padding:10px;border-bottom:1px solid #eee}</style></head><body><h1>AnalyticsFutbol - Technical Report</h1><p>Resultado: ${m.team_a_goals}-${m.team_b_goals} | Posesión: ${m.possession_a}%</p><h3>REGISTRO DE SUCESOS</h3><table><thead><tr><th>Tiempo</th><th>Equipo</th><th>Evento</th></tr></thead><tbody>${App.events.map(e => `<tr><td>${e.time}</td><td>Eq. ${e.team}</td><td><b>${e.type}</b></td></tr>`).join('')}</tbody></table></body></html>`);
-                win.document.close(); setTimeout(() => win.print(), 800);
-            }
+            exportProfessionalPDF: () => { window.print(); }
         };
         window.onload = App.init;
     </script>
