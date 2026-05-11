@@ -949,12 +949,24 @@
                     this.simulationInterval = setInterval(function() {
                         const now = Date.now() / 1000;
                         const mockPos = [];
+                        
+                        // Cálculo realista: ~10km en 90 min (5400s) = 0.00185 km/s
+                        // Usamos App.secondsCounter para que avance con el partido.
+                        const baseDist = App.secondsCounter * 0.00185; 
+
                         for(let i=1; i<=11; i++) {
                             mockPos.push({ id:i, team:'A', x: 25+Math.sin(now+i)*12, y: 5+i*10 });
                             mockPos.push({ id:i, team:'B', x: 75+Math.cos(now+i)*12, y: 5+i*10 });
                         }
                         const mockPlayers = mockPos.map(function(p) {
-                            return { id:p.id, team:p.team, dist: (now/300).toFixed(1), maxSpd: (26+Math.random()*9).toFixed(1) };
+                            // Añadimos una mínima variación basada en el ID del jugador
+                            const playerDist = baseDist + (p.id * 0.02); 
+                            return { 
+                                id: p.id, 
+                                team: p.team, 
+                                dist: playerDist.toFixed(1), // REGLA: Máximo 1 decimal
+                                maxSpd: (26+Math.random()*9).toFixed(1) 
+                            };
                         });
                         App.renderEngineData({
                             team_a_goals: App.matchState.localScore,
@@ -1064,7 +1076,51 @@
                 `;
                 win.document.write(docStructure);
                 win.document.close();
-                setTimeout(function() { win.print(); }, 1200);
+                
+                // Imprimir PDF y luego purgar los datos del sistema
+                setTimeout(function() { 
+                    win.print(); 
+                    App.resetMatchSystem(); 
+                }, 1200);
+            },
+
+            /* 10. LIMPIEZA TOTAL: PREPARACIÓN PARA NUEVO PARTIDO */
+            resetMatchSystem: function() {
+                console.log("[MOTOR] Reseteando estado del partido para nuevo encuentro...");
+                
+                // 1. Limpiar Variables de Estado
+                this.matchState.localScore = 0;
+                this.matchState.visitScore = 0;
+                this.matchState.localPossession = 50;
+                this.matchState.fullIAData = { players: [], positions: [] };
+                this.eventCache = [];
+                this.secondsCounter = 0;
+                
+                // 2. Limpiar Cronómetro si está activo
+                if (this.chronoInterval) {
+                    clearInterval(this.chronoInterval);
+                    this.chronoInterval = null;
+                    const chronoBtn = document.getElementById('chrono-toggle');
+                    chronoBtn.innerText = 'START';
+                    chronoBtn.style.color = 'var(--af-accent)';
+                }
+                
+                // 3. Restaurar Interfaz de Usuario Visual (UI)
+                document.getElementById('ui-score-local').innerText = "0";
+                document.getElementById('ui-score-visit').innerText = "0";
+                
+                document.getElementById('ui-poss-bar-local').style.width = "50%";
+                document.getElementById('ui-poss-bar-visit').style.width = "50%";
+                document.getElementById('ui-poss-txt-local').innerText = "50%";
+                document.getElementById('ui-poss-txt-visit').innerText = "50%";
+                
+                document.getElementById('chrono-display').innerText = "00:00";
+                document.getElementById('ui-event-log-container').innerHTML = "";
+                document.getElementById('ui-physic-body').innerHTML = "";
+                document.getElementById('radar-ui-layer').innerHTML = "";
+                
+                // Opcional: Generar un nuevo ID de partido
+                this.matchState.id = "MATCH_" + Date.now();
             }
         };
     </script>
