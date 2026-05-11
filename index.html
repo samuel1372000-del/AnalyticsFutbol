@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Nanobanana Analytics v24 — Ultimate</title>
+    <title>AnalyticsFutbol Pro v26</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -35,29 +35,37 @@
         .view-section.active { display: block; animation: viewFadeIn 0.3s ease-out; }
         @keyframes viewFadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; } }
 
-        .card { background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 18px; margin-bottom: 15px; }
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 18px; margin-bottom: 15px; position: relative; }
         .card-label { font-family: var(--f-data); font-size: 9px; color: var(--tp); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 15px; display: block; }
 
-        /* KPI DISPLAY */
+        /* KPI & POSSESSION */
         .score-display { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .score-val { font-family: var(--f-data); font-size: 42px; font-weight: 700; line-height: 1; }
         .poss-track { height: 6px; background: #222; border-radius: 3px; overflow: hidden; display: flex; margin-bottom: 8px; }
         .poss-fill { height: 100%; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
 
-        /* TACTICAL PIZARRA */
-        .pitch-svg-box { width: 100%; aspect-ratio: 105/68; background: #0a1808; position: relative; border: 1px solid var(--border); overflow: hidden; border-radius: 4px; }
+        /* PITCH */
+        .pitch-box { width: 100%; aspect-ratio: 105/68; background: #0a1808; position: relative; border: 1px solid var(--border); overflow: hidden; border-radius: 4px; }
         .player-node { width: 18px; height: 18px; border-radius: 50%; position: absolute; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 800; border: 1.5px solid #fff; box-shadow: 0 3px 6px rgba(0,0,0,0.5); transition: 0.5s; }
 
-        /* PANEL ETIQUETADO */
+        /* TABLE */
+        table { width: 100%; border-collapse: collapse; font-family: var(--f-data); font-size: 11px; }
+        th { text-align: left; color: var(--tp); padding-bottom: 10px; border-bottom: 1px solid var(--border); font-size: 9px; text-transform: uppercase; }
+        td { padding: 12px 0; border-bottom: 1px solid #1a1a1a; }
+
+        /* TAGGING */
         .tag-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .tag-btn { background: var(--surf); border: 1px solid var(--border); color: var(--th); padding: 14px; font-size: 10px; font-weight: 700; border-radius: 4px; text-align: left; border-left: 4px solid var(--tm); }
-        .tag-btn:active { background: var(--border); transform: scale(0.98); }
-        
         .team-sel { display: flex; gap: 6px; margin-bottom: 12px; }
         .t-opt { flex: 1; padding: 14px; border-radius: 4px; border: 2px solid var(--border); font-size: 11px; font-weight: 800; background: transparent; color: var(--tp); transition: 0.2s; }
-        .t-opt.active-A { border-color: var(--tA); color: var(--tA); background: rgba(244,63,94,0.1); }
-        .t-opt.active-B { border-color: var(--tB); color: var(--tB); background: rgba(59,158,255,0.1); }
+        .t-opt.active-A { border-color: var(--tA); color: var(--tA); background: rgba(244,63,94,0.15); }
+        .t-opt.active-B { border-color: var(--tB); color: var(--tB); background: rgba(59,158,255,0.15); }
 
+        /* VIDEO */
+        .video-wrap { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 4px; overflow: hidden; border: 1px solid var(--border); }
+        video { width: 100%; height: 100%; object-fit: cover; }
+
+        /* ACTIONS */
         .btn-action { width: 100%; border: none; font-weight: 800; padding: 16px; border-radius: 4px; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; margin-bottom: 12px; }
         .btn-primary { background: var(--accent); color: #000; }
         .btn-nanobanana { background: linear-gradient(135deg, #00d68f, #c084fc); color: #fff; }
@@ -68,7 +76,7 @@
 <body>
 
     <header>
-        <div class="brand">NANOBANANA ELITE</div>
+        <div class="brand">AnalyticsFutbol</div>
         <div class="match-clock" id="timer">00:00</div>
     </header>
 
@@ -99,36 +107,15 @@
                     <span id="tx-pb" style="color:var(--tB)">50%</span>
                 </div>
             </div>
-            <div class="pitch-svg-box">
+            <div class="pitch-box">
                 <svg style="position:absolute; width:100%; height:100%" viewBox="0 0 105 68"><rect width="105" height="68" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/><line x1="52.5" y1="0" x2="52.5" y2="68" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/><circle cx="52.5" cy="34" r="9.15" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/></svg>
                 <div id="radar-layer"></div>
             </div>
         </section>
 
-        <section id="view-events" class="view-section">
-            <div class="card">
-                <span class="card-label">Etiquetado Pro</span>
-                <div class="team-sel">
-                    <button id="selA" class="t-opt active-A" onclick="App.setTeam('A')">EQUIPO A</button>
-                    <button id="selB" class="t-opt" onclick="App.setTeam('B')">EQUIPO B</button>
-                </div>
-                <div class="tag-grid">
-                    <button class="tag-btn" style="border-left-color:var(--ball)" onclick="App.log('GOL')">GOL</button>
-                    <button class="tag-btn" style="border-left-color:var(--accent)" onclick="App.log('RECUPERACIÓN')">RECUPERACIÓN</button>
-                    <button class="tag-btn" style="border-left-color:var(--tA)" onclick="App.log('PÉRDIDA')">PÉRDIDA</button>
-                    <button class="tag-btn" style="border-left-color:var(--accent)" onclick="App.log('TIRO')">TIRO</button>
-                    <button class="tag-btn" style="border-left-color:var(--tA)" onclick="App.log('FALTA')">FALTA</button>
-                    <button class="tag-btn" style="border-left-color:var(--ball)" onclick="App.log('OFFSIDE')">OFFSIDE</button>
-                    <button class="tag-btn" style="border-left-color:var(--tB)" onclick="App.log('CÓRNER')">CÓRNER</button>
-                    <button class="tag-btn" style="border-left-color:var(--tp)" onclick="App.log('PARADA')">PARADA</button>
-                </div>
-            </div>
-            <div class="card"><div id="log-list"></div></div>
-        </section>
-
         <section id="view-tactical" class="view-section">
             <div class="card">
-                <span class="card-label">Métricas de Cohesión (Eq. A)</span>
+                <span class="card-label">Análisis de Estructura (Metros)</span>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px">
                     <div style="background:#0f0f0f; padding:20px; border-radius:4px; text-align:center"><div style="font-family:var(--f-data); font-size:24px; font-weight:700" id="res-comp">--</div><div style="font-size:8px; color:var(--tp); margin-top:5px">COMPACIDAD</div></div>
                     <div style="background:#0f0f0f; padding:20px; border-radius:4px; text-align:center"><div style="font-family:var(--f-data); font-size:24px; font-weight:700; color:var(--accent)" id="res-press">--</div><div style="font-size:8px; color:var(--tp); margin-top:5px">ALT. PRESIÓN</div></div>
@@ -136,10 +123,46 @@
             </div>
         </section>
 
+        <section id="view-physic" class="view-section">
+            <div class="card">
+                <span class="card-label">Top Performance Individual</span>
+                <table id="physical-table">
+                    <thead><tr><th>JERSEY</th><th>POS</th><th>DIST (KM)</th><th>V.MÁX</th></tr></thead>
+                    <tbody id="p-body"></tbody>
+                </table>
+                <div id="p-msg" style="text-align:center; padding:30px; font-size:11px; color:var(--tp)">Esperando conexión con Tracker Python...</div>
+            </div>
+        </section>
+
+        <section id="view-videos" class="view-section">
+            <div class="card"><div class="video-wrap"><video id="vplayer" controls poster="https://via.placeholder.com/600x340/111/fff?text=MODULO+VIDEO+READY"></video></div></div>
+        </section>
+
+        <section id="view-events" class="view-section">
+            <div class="card">
+                <span class="card-label">Tagging Panel</span>
+                <div class="team-sel">
+                    <button id="selA" class="t-opt active-A" onclick="App.setTeam('A')">EQUIPO A</button>
+                    <button id="selB" class="t-opt" onclick="App.setTeam('B')">EQUIPO B</button>
+                </div>
+                <div class="tag-grid">
+                    <button class="tag-btn" style="border-left-color:var(--ball)" onclick="App.log('GOL', '#f5a623')">GOL</button>
+                    <button class="tag-btn" style="border-left-color:var(--accent)" onclick="App.log('RECUPERACIÓN', '#00d68f')">RECUPERACIÓN</button>
+                    <button class="tag-btn" style="border-left-color:var(--tA)" onclick="App.log('PÉRDIDA', '#f43f5e')">PÉRDIDA</button>
+                    <button class="tag-btn" style="border-left-color:var(--accent)" onclick="App.log('TIRO', '#00d68f')">TIRO</button>
+                    <button class="tag-btn" style="border-left-color:var(--tA)" onclick="App.log('FALTA', '#f43f5e')">FALTA</button>
+                    <button class="tag-btn" style="border-left-color:var(--ball)" onclick="App.log('OFFSIDE', '#f5a623')">OFFSIDE</button>
+                    <button class="tag-btn" style="border-left-color:var(--tB)" onclick="App.log('CÓRNER', '#3b9eff')">CÓRNER</button>
+                    <button class="tag-btn" style="border-left-color:var(--tp)" onclick="App.log('PARADA', '#7a7a7a')">PARADA</button>
+                </div>
+            </div>
+            <div class="card"><div id="log-list"></div></div>
+        </section>
+
         <section id="view-report" class="view-section">
             <div class="card" style="text-align:center; padding:30px 20px;">
-                <button class="btn-action btn-primary" onclick="App.exportTechnicalPDF()">Generar Informe PDF Editorial</button>
-                <button class="btn-action btn-nanobanana" onclick="App.exportStoryGold()">Exportar Story Nanobanana Gold</button>
+                <button class="btn-action btn-primary" onclick="App.exportEditorialPDF()">Generar Informe Editorial</button>
+                <button class="btn-action btn-nanobanana" onclick="App.exportStoryNanobanana()">Exportar Story Nanobanana Gold</button>
             </div>
         </section>
     </main>
@@ -161,27 +184,27 @@
 
             setTeam: (t) => {
                 App.team = t;
-                const btnA = document.getElementById('selA');
-                const btnB = document.getElementById('selB');
-                if(t === 'A') {
-                    btnA.className = 't-opt active-A';
-                    btnB.className = 't-opt';
-                } else {
-                    btnA.className = 't-opt';
-                    btnB.className = 't-opt active-B';
-                }
+                const btnA = document.getElementById('selA'); const btnB = document.getElementById('selB');
+                btnA.className = t === 'A' ? 't-opt active-A' : 't-opt';
+                btnB.className = t === 'B' ? 't-opt active-B' : 't-opt';
             },
 
-            log: (type) => {
-                const vid = document.getElementById('vplayer') || { currentTime: 0 };
-                const e = { type, team: App.team, time: document.getElementById('timer').innerText, seconds: vid.currentTime, id: Date.now() };
+            log: (label, color) => {
+                const vid = document.getElementById('vplayer');
+                const e = { label, team: App.team, time: document.getElementById('timer').innerText, seconds: vid.currentTime || 0, color, id: Date.now() };
                 App.events.unshift(e);
                 document.getElementById('log-list').innerHTML = App.events.map(ev => `
-                    <div class="ev-item">
-                        <div style="font-weight:700; color:${ev.team==='A'?'var(--tA)':'var(--tB)'}">${ev.type} EQ.${ev.team}</div>
-                        <div style="font-family:var(--f-data); font-size:11px; color:var(--accent)">${ev.time}</div>
+                    <div class="ev-item" onclick="App.jumpTo(${ev.seconds})">
+                        <div style="font-weight:700; color:${ev.team==='A'?'var(--tA)':'var(--tB)'}">${ev.label} EQ.${ev.team}</div>
+                        <div style="font-family:var(--f-data); font-size:11px; color:var(--accent)">${ev.time} ➔</div>
                     </div>
                 `).join('');
+            },
+
+            jumpTo: (sec) => {
+                const vid = document.getElementById('vplayer');
+                App.nav('videos', document.querySelector('[onclick*="videos"]'));
+                vid.currentTime = sec; vid.play();
             },
 
             sync: async () => {
@@ -201,18 +224,25 @@
                         document.getElementById('res-comp').innerText = Math.abs(fA - dA) + "m";
                         document.getElementById('res-press').innerText = (pl.filter(p=>p.team==='A').reduce((s,p)=>s+p.x,0)/11).toFixed(0) + "m";
                     }
+
+                    if (m.full_data?.players) {
+                        document.getElementById('p-msg').style.display = 'none';
+                        document.getElementById('p-body').innerHTML = m.full_data.players.map(p => `
+                            <tr><td style="color:${p.team==='A'?'var(--tA)':'var(--tB)'}; font-weight:800">#${p.id}</td><td>${p.pos || 'MID'}</td><td>${p.dist || '0.00'}</td><td style="color:var(--accent)">${p.maxSpd || '0.0'}</td></tr>
+                        `).join('');
+                    }
                 }
             },
 
-            exportTechnicalPDF: () => {
+            exportEditorialPDF: () => {
                 const m = App.lastMatch; const win = window.open('', '_blank');
-                win.document.write(`<html><head><style>body{font-family:Helvetica,Arial,sans-serif;padding:60px;color:#1a1a2e;line-height:1.4} h1{font-size:32px;border-bottom:4px solid #000;padding-bottom:15px;margin-bottom:40px} table{width:100%;border-collapse:collapse;margin-top:30px} th{background:#000;color:#fff;padding:15px;text-align:left;font-size:11px;text-transform:uppercase} td{padding:15px;border-bottom:1px solid #eee;font-size:14px} .kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-bottom:50px} .box{background:#f8f9fa;padding:20px;border-radius:4px;text-align:center} .box b{font-size:24px;display:block}</style></head><body><p style="text-transform:uppercase;letter-spacing:2px;color:#888">Nanobanana Analytics</p><h1>TECHNICAL MATCH REPORT</h1><div class="kpi"><div class="box"><b>${m.team_a_goals}-${m.team_b_goals}</b>Score</div><div class="box"><b>${m.possession_a}%</b>Possession A</div><div class="box"><b>${App.events.length}</b>Events</div><div class="box"><b>${document.getElementById('res-comp').innerText}</b>Block Compact.</div></div><h3>CHRONOLOGICAL EVENT LOG</h3><table><thead><tr><th>Time</th><th>Team</th><th>Event</th></tr></thead><tbody>${App.events.map(e => `<tr><td>${e.time}</td><td>Eq. ${e.team}</td><td><b>${e.type}</b></td></tr>`).join('')}</tbody></table></body></html>`);
+                win.document.write(`<html><head><style>body{font-family:Helvetica,Arial,sans-serif;padding:60px;color:#1a1a2e} h1{font-size:32px;border-bottom:4px solid #000;padding-bottom:10px} table{width:100%;border-collapse:collapse;margin-top:30px} th{background:#000;color:#fff;padding:15px;text-align:left;font-size:11px} td{padding:15px;border-bottom:1px solid #eee} .box{background:#f8f9fa;padding:20px;text-align:center;border-radius:4px}</style></head><body><h1>TECHNICAL MATCH REPORT</h1><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-bottom:40px"><div class="box"><b>${m.team_a_goals}-${m.team_b_goals}</b>Score</div><div class="box"><b>${m.possession_a}%</b>Possession A</div><div class="box"><b>${App.events.length}</b>Events</div><div class="box"><b>${document.getElementById('res-comp').innerText}</b>Compactness</div></div><h3>EVENT LOG</h3><table><thead><tr><th>Time</th><th>Team</th><th>Event</th></tr></thead><tbody>${App.events.map(e => `<tr><td>${e.time}</td><td>Eq. ${e.team}</td><td><b>${e.label}</b></td></tr>`).join('')}</tbody></table></body></html>`);
                 win.document.close(); setTimeout(() => win.print(), 800);
             },
 
-            exportStoryGold: () => {
+            exportStoryNanobanana: () => {
                 const m = App.lastMatch; const win = window.open('', '_blank', 'width=375,height=812');
-                win.document.write(`<html><head><style>body{background:#000;color:#fff;font-family:'Manrope',sans-serif;padding:0;margin:0;height:100vh;overflow:hidden;} .c{padding:50px 30px;height:100%;display:flex;flex-direction:column;justify-content:space-between;background:radial-gradient(circle at top right, #1a1a1a 0%, #000 70%)} .h1{font-size:160px;font-weight:900;line-height:0.75;letter-spacing:-12px;margin:30px 0;background:linear-gradient(135deg,#fff 20%,#555 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent} .tag{font-size:12px;letter-spacing:6px;color:#00d68f;font-weight:800;border:1px solid #00d68f;display:inline-block;padding:5px 15px} .bar{height:4px;background:#222;width:100%;margin:30px 0} .f{height:100%;background:#00d68f;width:${m.possession_a}%}</style></head><body><div class="c"><div><div class="tag">#NANOBANANA_GOLD</div><p style="color:#666;font-weight:600;margin-top:20px">ANALYSIS SUMMARY // ${new Date().toLocaleDateString()}</p><div class="h1">${m.team_a_goals}<br/>${m.team_b_goals}</div></div><div><div class="bar"><div class="f"></div></div><div style="display:flex;justify-content:space-between"><div><div style="font-size:42px;font-weight:900">${m.possession_a}%</div><div style="font-size:9px;color:#555;letter-spacing:2px">POSSESSION</div></div><div><div style="font-size:42px;font-weight:900">${App.events.length}</div><div style="font-size:9px;color:#555;letter-spacing:2px">TAGGED EVENTS</div></div></div><p style="margin-top:50px;font-size:10px;color:#444;font-weight:700">REALTIME TACTICAL TRACKING POWERED BY YOLO11 & SUPABASE</p></div></div></body></html>`);
+                win.document.write(`<html><head><style>body{background:#000;color:#fff;font-family:'Manrope',sans-serif;padding:0;margin:0;height:100vh;overflow:hidden;} .c{padding:50px 30px;height:100%;display:flex;flex-direction:column;justify-content:space-between;background:radial-gradient(circle at top right, #1a1a1a 0%, #000 70%)} .h1{font-size:160px;font-weight:900;line-height:0.75;letter-spacing:-12px;margin:30px 0;background:linear-gradient(135deg,#fff 20%,#555 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent} .tag{font-size:12px;letter-spacing:6px;color:#00d68f;font-weight:800;border:1px solid #00d68f;display:inline-block;padding:5px 15px}</style></head><body><div class="c"><div><div class="tag">NANOBANANA GOLD</div><p style="color:#666;font-weight:600;margin-top:20px">SUMMARY // ${new Date().toLocaleDateString()}</p><div class="h1">${m.team_a_goals}<br/>${m.team_b_goals}</div></div><div><div style="font-size:42px;font-weight:900;color:#00d68f">${m.possession_a}% POSSESSION</div><div style="font-size:42px;font-weight:900;color:#c084fc">${App.events.length} EVENTS</div><p style="margin-top:50px;font-size:10px;color:#444;font-weight:700">POWERED BY ANALYTICSFUTBOL REALTIME CLOUD</p></div></div></body></html>`);
                 win.document.close();
             }
         };
