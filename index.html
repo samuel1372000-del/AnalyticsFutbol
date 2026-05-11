@@ -6,38 +6,40 @@
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="AnalyticsAF">
+    <meta name="apple-mobile-web-app-title" content="AF Elite">
     
     <link rel="apple-touch-icon" href="https://img.everest.com/placeholder/180x180?text=AF&bg=000000&clr=00d68f">
     
-    <title>AnalyticsFutbol Elite v4.5</title>
+    <title>AnalyticsFutbol Elite v4.7</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
-        /* SISTEMA DE DISEÑO: COLORES Y VARIABLES TÉCNICAS
-           Se utiliza una paleta de alto contraste para visibilidad en estadios con luz solar.
-        */
+        /* =========================================
+           SISTEMA DE VARIABLES DE DISEÑO (UI/UX)
+           ========================================= */
         :root {
-            --bg-color: #0c0c0c;          /* Fondo oscuro profundo */
-            --surface-color: #111111;     /* Superficie de paneles */
-            --card-color: #161616;        /* Color de tarjetas */
-            --border-color: #232323;      /* Bordes sutiles */
-            --accent-color: #00d68f;      /* Verde analítico (AF) */
-            --team-a-color: #f43f5e;      /* Rojo Local */
-            --team-b-color: #3b9eff;      /* Azul Visitante */
-            --ball-color: #f5a623;        /* Naranja evento especial */
-            --text-high: #ebebeb;         /* Texto principal */
-            --text-low: #7a7a7a;          /* Texto secundario */
-            --text-muted: #404040;        /* Texto desactivado */
-            --pitch-grass: #0a1b07;       /* Verde césped */
-            --pitch-lines: rgba(255, 255, 255, 0.4); /* Líneas de campo */
+            --bg-color: #0c0c0c;
+            --surface-color: #111111;
+            --card-color: #161616;
+            --border-color: #232323;
+            --accent-color: #00d68f;
+            --team-a-color: #f43f5e;
+            --team-b-color: #3b9eff;
+            --ball-color: #f5a623;
+            --text-high: #ebebeb;
+            --text-low: #7a7a7a;
+            --text-muted: #404040;
+            --pitch-grass: #0a1b07;
+            --pitch-lines: rgba(255, 255, 255, 0.4);
             --font-main: 'Manrope', sans-serif;
             --font-data: 'Roboto Mono', monospace;
         }
 
-        /* RESET DE ESTILOS Y COMPORTAMIENTO TÁCTIL */
+        /* =========================================
+           RESET Y ESTILOS BASE
+           ========================================= */
         * {
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
@@ -55,7 +57,9 @@
             flex-direction: column;
         }
 
-        /* HEADER: IDENTIDAD Y RELOJ */
+        /* =========================================
+           CABECERA (HEADER)
+           ========================================= */
         header {
             padding: 55px 20px 15px;
             background-color: var(--surface-color);
@@ -66,7 +70,7 @@
             flex-shrink: 0;
         }
 
-        .brand-container {
+        .brand-box {
             display: flex;
             flex-direction: column;
         }
@@ -87,8 +91,10 @@
             margin-top: 2px;
         }
 
-        /* CRONÓMETRO AJUSTABLE */
-        .chrono-box {
+        /* =========================================
+           CRONÓMETRO TÉCNICO
+           ========================================= */
+        .chrono-container {
             display: flex;
             align-items: center;
             gap: 12px;
@@ -107,7 +113,7 @@
             text-align: center;
         }
 
-        .chrono-control {
+        .chrono-btn {
             background: none;
             border: none;
             color: var(--text-low);
@@ -116,8 +122,10 @@
             cursor: pointer;
         }
 
-        /* BARRA DE NAVEGACIÓN SUPERIOR */
-        .navigation {
+        /* =========================================
+           NAVEGACIÓN POR PESTAÑAS
+           ========================================= */
+        .nav-scroller {
             display: flex;
             background-color: var(--surface-color);
             border-bottom: 1px solid var(--border-color);
@@ -126,9 +134,11 @@
             flex-shrink: 0;
         }
 
-        .navigation::-webkit-scrollbar { display: none; }
+        .nav-scroller::-webkit-scrollbar {
+            display: none;
+        }
 
-        .nav-item {
+        .tab-button {
             padding: 18px 22px;
             border: none;
             background: none;
@@ -142,13 +152,15 @@
             transition: all 0.3s ease;
         }
 
-        .nav-item.active {
+        .tab-button.active {
             color: #ffffff;
             border-bottom-color: var(--accent-color);
             background-color: rgba(0, 214, 143, 0.05);
         }
 
-        /* CONTENEDOR DE VISTAS */
+        /* =========================================
+           CONTENEDOR DE VISTAS (MAIN)
+           ========================================= */
         main {
             flex: 1;
             overflow-y: auto;
@@ -162,15 +174,17 @@
 
         .view-section.active {
             display: block;
-            animation: viewTransition 0.4s ease-out;
+            animation: viewFadeIn 0.4s ease-out;
         }
 
-        @keyframes viewTransition {
-            from { opacity: 0; transform: translateY(8px); }
+        @keyframes viewFadeIn {
+            from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* ESTILO DE TARJETAS (CARDS) */
+        /* =========================================
+           ESTILOS DE TARJETAS (CARDS)
+           ========================================= */
         .card {
             background-color: var(--card-color);
             border: 1px solid var(--border-color);
@@ -180,7 +194,7 @@
             position: relative;
         }
 
-        .label-card {
+        .card-label {
             font-family: var(--font-data);
             font-size: 10px;
             color: var(--text-low);
@@ -190,18 +204,24 @@
             display: block;
         }
 
-        /* SCORE Y POSESIÓN */
-        .score-display {
+        /* =========================================
+           DASHBOARD: MARCADOR Y POSESIÓN
+           ========================================= */
+        .scoreboard {
             display: flex;
             justify-content: space-around;
             align-items: center;
             margin-bottom: 25px;
         }
 
-        .score-val {
+        .score-digit {
             font-family: var(--font-data);
             font-size: 52px;
             font-weight: 700;
+        }
+
+        .possession-container {
+            margin-bottom: 15px;
         }
 
         .possession-track {
@@ -218,8 +238,18 @@
             transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* CAMPO VISUAL (PITCH) */
-        .pitch-box {
+        .possession-labels {
+            display: flex;
+            justify-content: space-between;
+            font-family: var(--font-data);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        /* =========================================
+           CAMPO DE JUEGO (PITCH) Y RADAR
+           ========================================= */
+        .pitch-container {
             width: 100%;
             aspect-ratio: 105/68;
             background-color: var(--pitch-grass);
@@ -230,7 +260,7 @@
             box-shadow: inset 0 0 60px rgba(0,0,0,0.7);
         }
 
-        .svg-lines {
+        .pitch-lines-svg {
             position: absolute;
             width: 100%;
             height: 100%;
@@ -238,7 +268,7 @@
             left: 0;
         }
 
-        .player-dot {
+        .player-node {
             width: 18px;
             height: 18px;
             border-radius: 50%;
@@ -255,14 +285,16 @@
             transition: all 0.4s cubic-bezier(0.1, 0.7, 0.1, 1);
         }
 
-        /* PANEL DE EVENTOS TÁCTICOS */
-        .selector-equipo {
+        /* =========================================
+           PANEL DE EVENTOS Y ETIQUETADO
+           ========================================= */
+        .team-toggle-box {
             display: flex;
             gap: 12px;
             margin-bottom: 15px;
         }
 
-        .btn-equipo {
+        .btn-team-select {
             flex: 1;
             padding: 18px;
             border-radius: 8px;
@@ -273,18 +305,28 @@
             font-size: 11px;
             text-transform: uppercase;
             cursor: pointer;
+            transition: 0.3s;
         }
 
-        .btn-equipo.active-local { border-color: var(--team-a-color); color: var(--team-a-color); background-color: rgba(244,63,94,0.1); }
-        .btn-equipo.active-visit { border-color: var(--team-b-color); color: var(--team-b-color); background-color: rgba(59,158,255,0.1); }
+        .btn-team-select.active-local { 
+            border-color: var(--team-a-color); 
+            color: var(--team-a-color); 
+            background-color: rgba(244,63,94,0.1); 
+        }
 
-        .grid-eventos {
+        .btn-team-select.active-visitante { 
+            border-color: var(--team-b-color); 
+            color: var(--team-b-color); 
+            background-color: rgba(59,158,255,0.1); 
+        }
+
+        .event-buttons-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 12px;
         }
 
-        .btn-evento {
+        .btn-tag {
             background-color: var(--surface-color);
             border: 1px solid var(--border-color);
             color: #ffffff;
@@ -297,8 +339,10 @@
             cursor: pointer;
         }
 
-        /* RECORTE DE CLIPS */
-        .contenedor-clips {
+        /* =========================================
+           RECORTE DE CLIPS
+           ========================================= */
+        .clip-control-group {
             margin-top: 25px;
             padding-top: 20px;
             border-top: 1px solid var(--border-color);
@@ -307,7 +351,7 @@
             gap: 12px;
         }
 
-        .btn-clip {
+        .btn-clip-action {
             background-color: #222;
             border: 1px solid var(--border-color);
             color: #ffffff;
@@ -316,16 +360,19 @@
             font-weight: 800;
             border-radius: 8px;
             text-transform: uppercase;
+            cursor: pointer;
         }
 
-        .btn-clip.active {
+        .btn-clip-action.active {
             background-color: var(--ball-color);
             color: #000;
             border-color: var(--ball-color);
         }
 
-        /* ANALIZADOR DE VIDEO Y PIZARRA */
-        .video-container {
+        /* =========================================
+           ANALIZADOR DE VIDEO Y CANVA DE DIBUJO
+           ========================================= */
+        .video-player-box {
             width: 100%;
             aspect-ratio: 16/9;
             background-color: #000;
@@ -335,9 +382,13 @@
             border: 1px solid var(--border-color);
         }
 
-        video { width: 100%; height: 100%; object-fit: cover; }
+        video#v-engine {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
 
-        canvas {
+        canvas#tactical-overlay {
             position: absolute;
             top: 0;
             left: 0;
@@ -346,15 +397,19 @@
             pointer-events: none;
         }
 
-        canvas.enabled { pointer-events: all; }
+        canvas#tactical-overlay.drawing-enabled {
+            pointer-events: all;
+        }
 
-        /* TABLAS DE DATOS FISICOS */
-        .data-table {
+        /* =========================================
+           TABLAS DE RENDIMIENTO FÍSICO
+           ========================================= */
+        .performance-table {
             width: 100%;
             border-collapse: collapse;
         }
 
-        .data-table th {
+        .performance-table th {
             text-align: left;
             color: var(--text-low);
             font-size: 9px;
@@ -363,7 +418,7 @@
             text-transform: uppercase;
         }
 
-        .data-table td {
+        .performance-table td {
             padding: 16px 0;
             border-bottom: 1px solid #1a1a1a;
             font-family: var(--font-data);
@@ -371,8 +426,10 @@
             color: #ffffff;
         }
 
-        /* BOTONES DE ACCIÓN GLOBAL */
-        .btn-primary {
+        /* =========================================
+           BOTONES DE ACCIÓN (INFORME / LIMPIAR)
+           ========================================= */
+        .btn-full-width {
             width: 100%;
             padding: 20px;
             border-radius: 8px;
@@ -386,12 +443,25 @@
             cursor: pointer;
         }
 
-        .log-entry {
+        .btn-secondary {
+            background-color: #333;
+            color: #fff;
+        }
+
+        /* =========================================
+           REGISTRO DE SUCESOS (LOG)
+           ========================================= */
+        .log-row {
             padding: 15px;
             border-bottom: 1px solid #222;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            cursor: pointer;
+        }
+
+        .log-row b {
+            color: var(--accent-color);
         }
 
     </style>
@@ -399,58 +469,62 @@
 <body>
 
     <header>
-        <div class="brand-container">
+        <div class="brand-box">
             <div class="brand-name">AnalyticsFutbol</div>
-            <div class="brand-version">ELITE SHIELD v4.5</div>
+            <div class="brand-version">ELITE SYSTEM v4.7</div>
         </div>
-        <div class="chrono-box">
-            <button class="chrono-control" onclick="App.adjTime(-1)">-</button>
+        <div class="chrono-container">
+            <button class="chrono-btn" onclick="App.adjustTime(-1)">-</button>
             <span id="timer-display">00:00</span>
-            <button class="chrono-control" onclick="App.adjTime(1)">+</button>
-            <button id="main-play-btn" onclick="App.toggleTimer()" style="background:none; border:none; color:var(--accent-color); font-weight:900; font-size:11px; margin-left:8px;">START</button>
+            <button class="chrono-btn" onclick="App.adjustTime(1)">+</button>
+            <button id="timer-toggle-btn" onclick="App.toggleTimer()" style="background:none; border:none; color:var(--accent-color); font-weight:900; font-size:11px; margin-left:8px;">START</button>
         </div>
     </header>
 
-    <nav class="navigation">
-        <button class="nav-item active" onclick="App.nav('live', this)">Dashboard</button>
-        <button class="nav-item" onclick="App.nav('tactical', this)">Táctico</button>
-        <button class="nav-item" onclick="App.nav('physic', this)">Físico</button>
-        <button class="nav-item" onclick="App.nav('clips', this)">Clips</button>
-        <button class="nav-item" onclick="App.nav('events', this)">Eventos</button>
-        <button class="nav-item" onclick="App.nav('report', this)">Informe</button>
+    <nav class="nav-scroller">
+        <button class="tab-button active" onclick="App.switchTab('live', this)">Dashboard</button>
+        <button class="tab-button" onclick="App.switchTab('tactical', this)">Táctico</button>
+        <button class="tab-button" onclick="App.switchTab('physic', this)">Físico</button>
+        <button class="tab-button" onclick="App.switchTab('clips', this)">Clips</button>
+        <button class="tab-button" onclick="App.switchTab('events', this)">Eventos</button>
+        <button class="tab-button" onclick="App.switchTab('report', this)">Informe</button>
     </nav>
 
     <main>
         <section id="view-live" class="view-section active">
             <div class="card">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                    <span class="label-card">Estado del Partido</span>
-                    <button id="btn-simulation" onclick="App.toggleSimulation()" style="background:transparent; border:1px solid var(--text-low); color:var(--text-low); padding:6px 14px; font-size:9px; border-radius:20px; font-weight:800;">SIMULADOR: OFF</button>
+                    <span class="card-label">Estado Realtime</span>
+                    <button id="sim-toggle" onclick="App.toggleSimulation()" style="background:transparent; border:1px solid var(--text-low); color:var(--text-low); padding:6px 14px; font-size:9px; border-radius:20px; font-weight:800;">SIMULADOR: OFF</button>
                 </div>
-                <div class="score-display">
+                
+                <div class="scoreboard">
                     <div style="text-align:center">
-                        <div class="score-val" style="color:var(--team-a-color)" id="score-local">0</div>
+                        <div class="score-digit" style="color:var(--team-a-color)" id="score-local">0</div>
                         <div style="font-size:9px; color:var(--text-low)">LOCAL</div>
                     </div>
-                    <div style="font-size:24px; font-weight:900; opacity:0.15">VS</div>
+                    <div style="font-size:24px; font-weight:900; opacity:0.2">VS</div>
                     <div style="text-align:center">
-                        <div class="score-val" style="color:var(--team-b-color)" id="score-visit">0</div>
+                        <div class="score-digit" style="color:var(--team-b-color)" id="score-visit">0</div>
                         <div style="font-size:9px; color:var(--text-low)">VISITANTE</div>
                     </div>
                 </div>
-                <div class="possession-track">
-                    <div id="bar-local" style="width:50%; background-color:var(--team-a-color);" class="possession-fill"></div>
-                    <div id="bar-visit" style="width:50%; background-color:var(--team-b-color);" class="possession-fill"></div>
-                </div>
-                <div style="display:flex; justify-content:space-between; font-family:var(--font-data); font-size:12px; font-weight:700;">
-                    <span id="txt-poss-local" style="color:var(--team-a-color)">50%</span>
-                    <span style="color:var(--text-muted); letter-spacing:3px">POSESIÓN</span>
-                    <span id="txt-poss-visit" style="color:var(--team-b-color)">50%</span>
+
+                <div class="possession-container">
+                    <div class="possession-track">
+                        <div id="bar-local" style="width:50%; background-color:var(--team-a-color);" class="possession-fill"></div>
+                        <div id="bar-visit" style="width:50%; background-color:var(--team-b-color);" class="possession-fill"></div>
+                    </div>
+                    <div class="possession-labels">
+                        <span id="label-poss-local" style="color:var(--team-a-color)">50%</span>
+                        <span style="color:var(--text-muted); letter-spacing:3px">POSESIÓN ABSOLUTA</span>
+                        <span id="label-poss-visit" style="color:var(--team-b-color)">50%</span>
+                    </div>
                 </div>
             </div>
 
-            <div class="pitch-box">
-                <svg class="svg-lines" viewBox="0 0 105 68" xmlns="http://www.w3.org/2000/svg">
+            <div class="pitch-container">
+                <svg class="pitch-lines-svg" viewBox="0 0 105 68" xmlns="http://www.w3.org/2000/svg">
                     <rect width="105" height="68" fill="none" stroke="var(--pitch-lines)" stroke-width="0.6"/>
                     <line x1="52.5" y1="0" x2="52.5" y2="68" stroke="var(--pitch-lines)" stroke-width="0.6"/>
                     <circle cx="52.5" cy="34" r="9.15" fill="none" stroke="var(--pitch-lines)" stroke-width="0.6"/>
@@ -463,15 +537,15 @@
 
         <section id="view-tactical" class="view-section">
             <div class="card">
-                <span class="label-card">Métricas de Bloque</span>
+                <span class="card-label">Análisis de Bloque Táctico</span>
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px">
                     <div style="background:#0f0f0f; padding:25px; border-radius:10px; text-align:center">
-                        <div id="val-compacity" style="font-family:var(--font-data); font-size:30px; font-weight:800">--</div>
-                        <div style="font-size:9px; color:var(--text-low); margin-top:5px">COMPACIDAD</div>
+                        <div id="metric-compacity" style="font-family:var(--font-data); font-size:30px; font-weight:800">--</div>
+                        <div style="font-size:9px; color:var(--text-low); margin-top:5px">COMPACIDAD (m)</div>
                     </div>
                     <div style="background:#0f0f0f; padding:25px; border-radius:10px; text-align:center">
-                        <div id="val-pressure" style="font-family:var(--font-data); font-size:30px; font-weight:800; color:var(--accent-color)">--</div>
-                        <div style="font-size:9px; color:var(--text-low); margin-top:5px">ALTURA MEDIA</div>
+                        <div id="metric-pressure" style="font-family:var(--font-data); font-size:30px; font-weight:800; color:var(--accent-color)">--</div>
+                        <div style="font-size:9px; color:var(--text-low); margin-top:5px">ALTURA MEDIA (m)</div>
                     </div>
                 </div>
             </div>
@@ -479,17 +553,17 @@
 
         <section id="view-physic" class="view-section">
             <div class="card">
-                <span class="label-card">Rendimiento Individual (Un decimal máx.)</span>
-                <table class="data-table">
+                <span class="card-label">Rendimiento Físico (Precisión: 1 decimal)</span>
+                <table class="performance-table">
                     <thead>
                         <tr>
                             <th>DORSAL</th>
                             <th>POSICIÓN</th>
-                            <th>DISTANCIA</th>
-                            <th>V. MÁXIMA</th>
+                            <th>DISTANCIA (km)</th>
+                            <th>V. MÁX (km/h)</th>
                         </tr>
                     </thead>
-                    <tbody id="physic-body">
+                    <tbody id="table-physic-body">
                         </tbody>
                 </table>
             </div>
@@ -497,365 +571,435 @@
 
         <section id="view-clips" class="view-section">
             <div class="card">
-                <span class="label-card">Visión Artificial y Dibujo</span>
-                <div class="video-container">
-                    <video id="v-player" controls poster="https://via.placeholder.com/800x450/111/fff?text=CONECTANDO+CON+PC"></video>
-                    <canvas id="t-canvas"></canvas>
+                <span class="card-label">Pizarra de Video Inteligente</span>
+                <div class="video-player-box">
+                    <video id="v-engine" controls poster="https://via.placeholder.com/800x450/111/fff?text=CONEXIÓN+ESTABLECIDA+CON+IA"></video>
+                    <canvas id="tactical-overlay"></canvas>
                 </div>
                 <div style="display:flex; gap:12px; margin-top:20px">
-                    <button class="btn-primary" style="flex:2" onclick="App.toggleDrawing()">Activar Lápiz Táctico</button>
-                    <button class="btn-primary" style="flex:1; background-color:#333; color:#fff" onclick="App.clearCanvas()">Limpiar</button>
+                    <button class="btn-full-width" style="flex:2" onclick="App.toggleCanvasMode()">Activar Pizarra</button>
+                    <button class="btn-full-width btn-secondary" style="flex:1" onclick="App.clearTacticalCanvas()">Limpiar</button>
                 </div>
             </div>
         </section>
 
         <section id="view-events" class="view-section">
             <div class="card">
-                <span class="label-card">Control de Etiquetado</span>
-                <div class="selector-equipo">
-                    <button id="team-a-btn" class="btn-equipo active-local" onclick="App.setTeam('A')">EQUIPO LOCAL</button>
-                    <button id="team-b-btn" class="btn-equipo" onclick="App.setTeam('B')">EQUIPO VISITANTE</button>
+                <span class="card-label">Panel de Etiquetado y Marcador</span>
+                <div class="team-toggle-box">
+                    <button id="btn-context-a" class="btn-team-select active-local" onclick="App.setTeamContext('A')">LOCAL</button>
+                    <button id="btn-context-b" class="btn-team-select" onclick="App.setTeamContext('B')">VISITANTE</button>
                 </div>
-                <div class="grid-eventos">
-                    <button class="btn-evento" style="border-left-color:var(--ball-color)" onclick="App.logEvent('GOL')">GOL</button>
-                    <button class="btn-evento" style="border-left-color:var(--accent-color)" onclick="App.logEvent('RECUPERACIÓN')">RECUPERACIÓN</button>
-                    <button class="btn-evento" style="border-left-color:var(--team-a-color)" onclick="App.logEvent('PÉRDIDA')">PÉRDIDA</button>
-                    <button class="btn-evento" style="border-left-color:var(--accent-color)" onclick="App.logEvent('TIRO')">TIRO</button>
-                    <button class="btn-evento" style="border-left-color:var(--team-a-color)" onclick="App.logEvent('FALTA')">FALTA</button>
-                    <button class="btn-evento" style="border-left-color:var(--ball-color)" onclick="App.logEvent('OFFSIDE')">OFFSIDE</button>
-                    <button class="btn-evento" style="border-left-color:var(--team-b-color)" onclick="App.logEvent('CÓRNER')">CÓRNER</button>
-                    <button class="btn-evento" style="border-left-color:var(--text-muted)" onclick="App.logEvent('PARADA')">PARADA</button>
+                <div class="event-buttons-grid">
+                    <button class="btn-tag" style="border-left-color:var(--ball-color)" onclick="App.triggerEvent('GOL')">GOL</button>
+                    <button class="btn-tag" style="border-left-color:var(--accent-color)" onclick="App.triggerEvent('RECUPERACIÓN')">RECUPERACIÓN</button>
+                    <button class="btn-tag" style="border-left-color:var(--team-a-color)" onclick="App.triggerEvent('PÉRDIDA')">PÉRDIDA</button>
+                    <button class="btn-tag" style="border-left-color:var(--accent-color)" onclick="App.triggerEvent('TIRO')">TIRO</button>
+                    <button class="btn-tag" style="border-left-color:var(--team-a-color)" onclick="App.triggerEvent('FALTA')">FALTA</button>
+                    <button class="btn-tag" style="border-left-color:var(--ball-color)" onclick="App.triggerEvent('OFFSIDE')">OFFSIDE</button>
+                    <button class="btn-tag" style="border-left-color:var(--team-b-color)" onclick="App.triggerEvent('CÓRNER')">CÓRNER</button>
+                    <button class="btn-tag" style="border-left-color:var(--text-muted)" onclick="App.triggerEvent('PARADA')">PARADA</button>
                 </div>
 
-                <div class="contenedor-clips">
-                    <button id="clip-start-btn" class="btn-clip" onclick="App.markClip('start')">Marcar Inicio</button>
-                    <button id="clip-end-btn" class="btn-clip" onclick="App.markClip('end')">Marcar Fin</button>
+                <div class="clip-control-group">
+                    <button id="btn-mark-start" class="btn-clip-action" onclick="App.handleClipMarking('start')">Inicio Clip</button>
+                    <button id="btn-mark-end" class="btn-clip-action" onclick="App.handleClipMarking('end')">Fin Clip</button>
                 </div>
-                <div id="clip-status" style="font-size:10px; color:var(--text-low); text-align:center; margin-top:10px;">Analizador de clips listo</div>
+                <div id="status-clip-label" style="font-size:10px; color:var(--text-low); text-align:center; margin-top:10px;">Analizador v4.7: Sistema en reposo</div>
             </div>
+            
             <div class="card">
-                <span class="label-card">Línea de Tiempo</span>
-                <div id="event-list-container">
+                <span class="card-label">Registro Cronológico</span>
+                <div id="event-log-container">
                     </div>
             </div>
         </section>
 
         <section id="view-report" class="view-section">
             <div class="card" style="text-align:center; padding:50px 20px;">
-                <div style="font-size:45px; margin-bottom:25px;">📊</div>
-                <h2 style="margin-bottom:12px; letter-spacing:1px;">Generar Informe Elite</h2>
-                <p style="font-size:12px; color:var(--text-low); margin-bottom:35px; line-height:1.6;">Este proceso consolidará todos los datos de posesión absoluta, métricas físicas de un decimal y eventos tácticos en un documento oficial.</p>
-                <button class="btn-primary" onclick="App.printFullReport()">Descargar Informe Técnico PDF</button>
+                <div style="font-size:45px; margin-bottom:25px;">📄</div>
+                <h2 style="margin-bottom:12px; letter-spacing:1px;">Cerrar Informe Elite</h2>
+                <p style="font-size:12px; color:var(--text-low); margin-bottom:35px; line-height:1.6;">Generación de reporte oficial con métricas físicas (1 decimal) y eventos tácticos sincronizados.</p>
+                <button class="btn-full-width" onclick="App.generateProfessionalPDF()">Descargar Informe Oficial PDF</button>
             </div>
         </section>
     </main>
 
     <script>
         const App = {
-            // ESTADO INTERNO DEL SISTEMA
-            db: null,
-            team: 'A',
-            events: [],
-            secs: 0,
-            clock: null,
-            canvasActive: false,
-            simActive: false,
-            simTimer: null,
-            match: { id: null, goalsA: 0, scoreB: 0, possA: 50, fullData: { players: [], positions: [] } },
-            clip: { start: null, end: null },
+            // ESTADO MAESTRO DE LA APLICACIÓN
+            supabase: null,
+            currentActiveTeam: 'A',
+            storedEvents: [],
+            totalElapsedSeconds: 0,
+            masterInterval: null,
+            isDrawingEnabled: false,
+            isSimulating: false,
+            simulationInterval: null,
+            
+            // DATOS DEL PARTIDO (SINCRONIZADOS)
+            partido: {
+                id: null,
+                golesLocal: 0,
+                golesVisita: 0,
+                posesionLocal: 50,
+                datosIA: { players: [], positions: [] }
+            },
+            
+            clipBuffer: {
+                inicio: null,
+                fin: null
+            },
 
-            // 1. INICIALIZACIÓN DEL SISTEMA
-            init: async () => {
-                console.log("[SISTEMA] AnalyticsFutbol inicializando...");
+            /* 1. INICIALIZACIÓN: ARRANQUE DEL MOTOR Y CONEXIÓN A NUBE */
+            init: async function() {
+                console.log("[INICIO] Configurando AnalyticsFutbol v4.7...");
                 
-                // Configuración de Cliente Supabase
-                App.db = window.supabase.createClient(
+                // Conector oficial a Supabase
+                this.supabase = window.supabase.createClient(
                     "https://zdckdlrgtoglmvgdrvcn.supabase.co", 
                     "sb_publishable_bGfCRIXGSuGb5XK_SJ0tdw_XYNIHW14"
                 );
 
-                App.initTacticalCanvas();
-                App.syncEngine();
+                this.setupTacticalCanvas();
+                this.syncWithDatabase();
                 
-                // Intervalo de sincronización con la nube (5 seg)
-                setInterval(App.syncEngine, 5000);
+                // Sincronización continua cada 5 segundos
+                setInterval(() => this.syncWithDatabase(), 5000);
             },
 
-            // 2. NAVEGACIÓN ENTRE PESTAÑAS
-            nav: (id, btn) => {
-                const views = document.querySelectorAll('.view-section');
-                const tabs = document.querySelectorAll('.nav-item');
+            /* 2. NAVEGACIÓN: GESTIÓN DE PESTAÑAS (EXPANDIDO) */
+            switchTab: function(id, btnElement) {
+                const allSections = document.querySelectorAll('.view-section');
+                const allTabs = document.querySelectorAll('.tab-button');
                 
-                views.forEach(v => v.classList.remove('active'));
-                tabs.forEach(t => t.classList.remove('active'));
+                // Limpiar estados activos
+                allSections.forEach(sec => { sec.classList.remove('active'); });
+                allTabs.forEach(tab => { tab.classList.remove('active'); });
                 
+                // Activar nueva vista
                 document.getElementById('view-' + id).classList.add('active');
-                btn.classList.add('active');
+                btnElement.classList.add('active');
             },
 
-            // 3. CONTROL DEL CRONÓMETRO
-            adjTime: (m) => {
-                App.secs = Math.max(0, App.secs + (m * 60));
-                App.updateClockUI();
+            /* 3. RELOJ: CONTROL DEL TIEMPO DE JUEGO */
+            adjustTime: function(minutes) {
+                this.totalElapsedSeconds = Math.max(0, this.totalElapsedSeconds + (minutes * 60));
+                this.refreshClockUI();
             },
 
-            toggleTimer: () => {
-                const btn = document.getElementById('main-play-btn');
-                if (App.clock) {
-                    clearInterval(App.clock);
-                    App.clock = null;
+            toggleTimer: function() {
+                const btn = document.getElementById('timer-toggle-btn');
+                if (this.masterInterval) {
+                    // Pausar
+                    clearInterval(this.masterInterval);
+                    this.masterInterval = null;
                     btn.innerText = 'START';
                     btn.style.color = 'var(--accent-color)';
                 } else {
-                    App.clock = setInterval(() => {
-                        App.secs++;
-                        App.updateClockUI();
+                    // Iniciar
+                    this.masterInterval = setInterval(() => {
+                        this.totalElapsedSeconds++;
+                        this.refreshClockUI();
                     }, 1000);
                     btn.innerText = 'PAUSE';
                     btn.style.color = '#ff4444';
                 }
             },
 
-            updateClockUI: () => {
-                const m = Math.floor(App.secs / 60).toString().padStart(2, '0');
-                const s = (App.secs % 60).toString().padStart(2, '0');
-                document.getElementById('timer-display').innerText = `${m}:${s}`;
+            refreshClockUI: function() {
+                const mins = Math.floor(this.totalElapsedSeconds / 60).toString().padStart(2, '0');
+                const secs = (this.totalElapsedSeconds % 60).toString().padStart(2, '0');
+                document.getElementById('timer-display').innerText = `${mins}:${secs}`;
             },
 
-            // 4. REGISTRO DE EVENTOS TÁCTICOS
-            setTeam: (t) => {
-                App.team = t;
-                const bA = document.getElementById('team-a-btn');
-                const bB = document.getElementById('team-b-btn');
-                if (t === 'A') {
-                    bA.classList.add('active-local');
-                    bB.classList.remove('active-visit');
+            /* 4. EVENTOS: ETIQUETADO Y SINCRONIZACIÓN DE MARCADOR */
+            setTeamContext: function(teamCode) {
+                this.currentActiveTeam = teamCode;
+                const btnA = document.getElementById('btn-context-a');
+                const btnB = document.getElementById('btn-context-b');
+                
+                if (teamCode === 'A') {
+                    btnA.classList.add('active-local');
+                    btnB.classList.remove('active-visitante');
                 } else {
-                    bB.classList.add('active-visit');
-                    bA.classList.remove('active-local');
+                    btnB.classList.add('active-visitante');
+                    btnA.classList.remove('active-local');
                 }
             },
 
-            logEvent: async (type) => {
-                const vid = document.getElementById('v-player');
-                const tStr = document.getElementById('timer-display').innerText;
-                const vSec = vid.currentTime || 0;
+            triggerEvent: async function(eventType) {
+                const vElement = document.getElementById('v-engine');
+                const timeString = document.getElementById('timer-display').innerText;
+                const videoSec = vElement.currentTime || 0;
 
-                const e = { id: Date.now(), type, team: App.team, time: tStr, vSec };
-                App.events.unshift(e);
-                App.updateEventsUI();
+                // Crear objeto evento
+                const eventObj = {
+                    id: Date.now(),
+                    type: eventType,
+                    team: this.currentActiveTeam,
+                    time: timeString,
+                    vSec: videoSec
+                };
 
-                // Envío a tabla tactical_events de Supabase
-                if (App.db) {
-                    const mId = App.match.id || 'LIVE_SESSION';
-                    await App.db.from('tactical_events').insert([{
+                this.storedEvents.unshift(eventObj);
+                this.renderEventsLog();
+
+                // LÓGICA CRÍTICA: SI ES GOL, ACTUALIZAR TABLA 'MATCHES'
+                if (eventType === 'GOL') {
+                    if (this.currentActiveTeam === 'A') {
+                        this.partido.golesLocal++;
+                        document.getElementById('score-local').innerText = this.partido.golesLocal;
+                    } else {
+                        this.partido.golesVisita++;
+                        document.getElementById('score-visit').innerText = this.partido.golesVisita;
+                    }
+                    
+                    // Empujar cambio a Supabase (Persistencia marcador)
+                    if (this.supabase && this.partido.id) {
+                        await this.supabase.from('matches').update({
+                            team_a_goals: this.partido.golesLocal,
+                            team_b_goals: this.partido.golesVisita
+                        }).eq('id', this.partido.id);
+                    }
+                }
+
+                // Guardar en tabla de eventos
+                if (this.supabase) {
+                    const mId = this.partido.id || 'SESION_ACTIVA';
+                    await this.supabase.from('tactical_events').insert([{
                         match_id: mId,
-                        team: App.team,
-                        event_type: type,
-                        match_time: tStr,
-                        video_second: vSec
+                        team: this.currentActiveTeam,
+                        event_type: eventType,
+                        match_time: timeString,
+                        video_second: videoSec
                     }]);
                 }
             },
 
-            updateEventsUI: () => {
-                const list = document.getElementById('event-list-container');
-                list.innerHTML = App.events.map(ev => `
-                    <div class="log-entry" onclick="App.jumpToVideo(${ev.vSec})">
-                        <div><b>${ev.type}</b> (EQ. ${ev.team})</div>
-                        <div style="font-family:var(--font-data); font-size:10px; color:var(--text-low)">${ev.time} ➔</div>
+            renderEventsLog: function() {
+                const container = document.getElementById('event-log-container');
+                container.innerHTML = this.storedEvents.map(e => `
+                    <div class="log-row" onclick="App.seekVideoTo(${e.vSec})">
+                        <div><b>${e.type}</b> (EQ. ${e.team})</div>
+                        <div style="font-family:var(--font-data); font-size:10px; color:var(--text-low)">${e.time} ➔</div>
                     </div>
                 `).join('');
             },
 
-            jumpToVideo: (s) => {
-                const p = document.getElementById('v-player');
-                App.nav('clips', document.querySelector('[onclick*="clips"]'));
-                p.currentTime = s;
-                p.play();
+            seekVideoTo: function(seconds) {
+                const player = document.getElementById('v-engine');
+                this.switchTab('clips', document.querySelector('[onclick*="clips"]'));
+                player.currentTime = seconds;
+                player.play();
             },
 
-            // 5. GESTIÓN DE CLIPS (MARCAS DE TIEMPO)
-            markClip: (pos) => {
-                const p = document.getElementById('v-player');
-                const time = p.currentTime > 0 ? p.currentTime : App.secs;
-                const label = document.getElementById('clip-status');
+            /* 5. CLIPS: MARCAS DE TIEMPO PROFESIONALES */
+            handleClipMarking: function(point) {
+                const player = document.getElementById('v-engine');
+                const currentTime = player.currentTime > 0 ? player.currentTime : this.totalElapsedSeconds;
+                const label = document.getElementById('status-clip-label');
 
-                if (pos === 'start') {
-                    App.clip.start = time;
-                    document.getElementById('clip-start-btn').classList.add('active');
-                    label.innerText = `Inicio capturado: ${App.fmtSecs(time)}`;
+                if (point === 'start') {
+                    this.clipBuffer.inicio = currentTime;
+                    document.getElementById('btn-mark-start').classList.add('active');
+                    label.innerText = `Inicio capturado: ${this.formatSecs(currentTime)}`;
                 } else {
-                    if (App.clip.start === null) return;
-                    App.clip.end = time;
-                    document.getElementById('clip-end-btn').classList.add('active');
-                    App.saveClipCloud(App.clip.start, App.clip.end);
-                    label.innerText = "¡Clip enviado correctamente!";
+                    if (this.clipBuffer.inicio === null) return;
+                    this.clipBuffer.fin = currentTime;
+                    document.getElementById('btn-mark-end').classList.add('active');
+                    
+                    // Envío a Supabase
+                    this.sendClipRequest(this.clipBuffer.inicio, this.clipBuffer.fin);
+                    
+                    label.innerText = "¡Clip enviado con éxito!";
                     setTimeout(() => {
-                        App.clip = { start: null, end: null };
-                        document.getElementById('clip-start-btn').classList.remove('active');
-                        document.getElementById('clip-end-btn').classList.remove('active');
-                        label.innerText = "Analizador de clips listo";
+                        this.clipBuffer = { inicio: null, fin: null };
+                        document.getElementById('btn-mark-start').classList.remove('active');
+                        document.getElementById('btn-mark-end').classList.remove('active');
+                        label.innerText = "Analizador v4.7: Sistema en reposo";
                     }, 2000);
                 }
             },
 
-            saveClipCloud: async (s, e) => {
-                if (App.db) {
-                    await App.db.from('clips_requests').insert([{
-                        match_id: App.match.id || 'LIVE', start_time: s, end_time: e
+            sendClipRequest: async function(s, e) {
+                if (this.supabase) {
+                    await this.supabase.from('clips_requests').insert([{
+                        match_id: this.partido.id || 'SESION_ACTIVA',
+                        start_time: s,
+                        end_time: e
                     }]);
                 }
             },
 
-            fmtSecs: (s) => `${Math.floor(s/60).toString().padStart(2,'0')}:${Math.floor(s%60).toString().padStart(2,'0')}`,
+            formatSecs: function(s) {
+                return `${Math.floor(s/60).toString().padStart(2,'0')}:${Math.floor(s%60).toString().padStart(2,'0')}`;
+            },
 
-            // 6. SINCRONIZACIÓN CON MOTOR IA DE PC
-            syncEngine: async () => {
-                if (App.simActive) return;
-                const { data } = await App.db.from('matches').select('*').order('created_at', { ascending: false }).limit(1);
+            /* 6. IA SYNC: RECUPERACIÓN DE DATOS DEL MOTOR PC */
+            syncWithDatabase: async function() {
+                if (this.isSimulating) return;
+                
+                const { data, error } = await this.supabase
+                    .from('matches')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(1);
+
                 if (data && data[0]) {
                     const d = data[0];
-                    App.match.id = d.id;
-                    App.match.goalsA = d.team_a_goals;
-                    App.match.scoreB = d.team_b_goals;
-                    App.match.possA = d.possession_a;
-                    App.match.fullData = d.full_data || { players: [], positions: [] };
-                    App.renderEngineUI(d);
+                    this.partido.id = d.id;
+                    this.partido.golesLocal = d.team_a_goals;
+                    this.partido.golesVisita = d.team_b_goals;
+                    this.partido.posesionLocal = d.possession_a;
+                    this.partido.datosIA = d.full_data || { players: [], positions: [] };
+                    this.renderEngineUI(d);
                 }
             },
 
-            renderEngineUI: (data) => {
-                // ACTUALIZACIÓN DE MARCADOR
+            renderEngineUI: function(data) {
+                // Actualizar Marcador
                 document.getElementById('score-local').innerText = data.team_a_goals || 0;
                 document.getElementById('score-visit').innerText = data.team_b_goals || 0;
                 
-                // ACTUALIZACIÓN POSESIÓN: REGLA VALOR ABSOLUTO (SIN DECIMALES)
-                const pA = Math.round(data.possession_a || 50);
-                const pB = 100 - pA;
-                document.getElementById('bar-local').style.width = pA + '%';
-                document.getElementById('bar-visit').style.width = pB + '%';
-                document.getElementById('txt-poss-local').innerText = pA + '%';
-                document.getElementById('txt-poss-visit').innerText = pB + '%';
+                // REGLA: POSESIÓN VALOR ABSOLUTO (SIN DECIMALES)
+                const pLocal = Math.round(data.possession_a || 50);
+                const pVisit = 100 - pLocal;
+                document.getElementById('bar-local').style.width = pLocal + '%';
+                document.getElementById('bar-visit').style.width = pVisit + '%';
+                document.getElementById('label-poss-local').innerText = pLocal + '%';
+                document.getElementById('label-poss-visit').innerText = pVisit + '%';
 
-                // RENDERIZADO DE RADAR
+                // Renderizar Radar de Jugadores
                 if (data.full_data?.positions) {
-                    const layer = document.getElementById('radar-layer');
-                    layer.innerHTML = data.full_data.positions.map(p => `
-                        <div class="player-dot" style="left:${p.x}%; top:${p.y}%; background-color:${p.team === 'A' ? 'var(--team-a-color)' : 'var(--team-b-color)'}">
+                    const radar = document.getElementById('radar-layer');
+                    radar.innerHTML = data.full_data.positions.map(p => `
+                        <div class="player-node" style="left:${p.x}%; top:${p.y}%; background-color:${p.team === 'A' ? 'var(--team-a-color)' : 'var(--team-b-color)'}">
                             ${p.id}
                         </div>
                     `).join('');
                 }
 
-                // ACTUALIZACIÓN DE TABLA FÍSICA: REGLA UN DECIMAL MÁXIMO
+                // ACTUALIZAR TABLA FÍSICA: REGLA UN DECIMAL MÁXIMO
                 if (data.full_data?.players) {
-                    const body = document.getElementById('physic-body');
-                    body.innerHTML = data.full_data.players.slice(0, 22).map(p => `
+                    const tableBody = document.getElementById('table-physic-body');
+                    tableBody.innerHTML = data.full_data.players.slice(0, 22).map(p => {
+                        const dist = parseFloat(p.dist || 0).toFixed(1);
+                        const vel = parseFloat(p.maxSpd || 0).toFixed(1);
+                        return `
                         <tr>
                             <td style="font-weight:800; color:${p.team === 'A' ? 'var(--team-a-color)' : 'var(--team-b-color)'}">#${p.id}</td>
-                            <td>${p.pos || 'MID'}</td>
-                            <td>${parseFloat(p.dist || 0).toFixed(1)} km</td>
-                            <td style="color:var(--accent-color)">${parseFloat(p.maxSpd || 0).toFixed(1)} km/h</td>
-                        </tr>
-                    `).join('');
+                            <td>${p.pos || '---'}</td>
+                            <td>${dist} km</td>
+                            <td style="color:var(--accent-color)">${vel} km/h</td>
+                        </tr>`;
+                    }).join('');
                 }
             },
 
-            // 7. PIZARRA TÁCTICA (DIBUJO)
-            initTacticalCanvas: () => {
-                const canvas = document.getElementById('t-canvas');
+            /* 7. PIZARRA TÁCTICA: MOTOR DE DIBUJO */
+            setupTacticalCanvas: function() {
+                const canvas = document.getElementById('tactical-overlay');
                 const ctx = canvas.getContext('2d');
-                let drawing = false;
+                let isDrawing = false;
 
                 canvas.width = canvas.offsetWidth;
                 canvas.height = canvas.offsetHeight;
 
-                const start = (e) => {
-                    if (!App.canvasActive) return;
-                    drawing = true;
+                const startDrawing = (e) => {
+                    if (!this.isDrawingEnabled) return;
+                    isDrawing = true;
                     ctx.beginPath();
-                    const p = App.getCoords(canvas, e);
-                    ctx.moveTo(p.x, p.y);
+                    const coords = this.getCanvasCoords(canvas, e);
+                    ctx.moveTo(coords.x, coords.y);
                 };
 
-                const move = (e) => {
-                    if (!drawing) return;
-                    const p = App.getCoords(canvas, e);
-                    ctx.lineTo(p.x, p.y);
+                const executeDrawing = (e) => {
+                    if (!isDrawing) return;
+                    const coords = this.getCanvasCoords(canvas, e);
+                    ctx.lineTo(coords.x, coords.y);
                     ctx.strokeStyle = '#00d68f';
                     ctx.lineWidth = 4;
                     ctx.lineCap = 'round';
                     ctx.stroke();
                 };
 
-                canvas.addEventListener('mousedown', start);
-                canvas.addEventListener('mousemove', move);
-                canvas.addEventListener('mouseup', () => drawing = false);
-                canvas.addEventListener('touchstart', start);
-                canvas.addEventListener('touchmove', move);
-                canvas.addEventListener('touchend', () => drawing = false);
+                canvas.addEventListener('mousedown', startDrawing);
+                canvas.addEventListener('mousemove', executeDrawing);
+                canvas.addEventListener('mouseup', () => isDrawing = false);
+                canvas.addEventListener('touchstart', startDrawing);
+                canvas.addEventListener('touchmove', executeDrawing);
+                canvas.addEventListener('touchend', () => isDrawing = false);
             },
 
-            getCoords: (c, e) => {
-                const r = c.getBoundingClientRect();
-                const cx = e.touches ? e.touches[0].clientX : e.clientX;
-                const cy = e.touches ? e.touches[0].clientY : e.clientY;
-                return { x: cx - r.left, y: cy - r.top };
+            getCanvasCoords: function(c, e) {
+                const rect = c.getBoundingClientRect();
+                const x = e.touches ? e.touches[0].clientX : e.clientX;
+                const y = e.touches ? e.touches[0].clientY : e.clientY;
+                return { x: x - rect.left, y: y - rect.top };
             },
 
-            toggleDrawing: () => { 
-                App.canvasActive = !App.canvasActive; 
-                document.getElementById('t-canvas').classList.toggle('enabled', App.canvasActive); 
-            },
-            
-            clearCanvas: () => { 
-                const c = document.getElementById('t-canvas'); 
-                c.getContext('2d').clearRect(0, 0, c.width, c.height); 
+            toggleCanvasMode: function() {
+                this.isDrawingEnabled = !this.isDrawingEnabled;
+                document.getElementById('tactical-overlay').classList.toggle('drawing-enabled', this.isDrawingEnabled);
             },
 
-            // 8. SIMULADOR DE DATOS (TESTEO)
-            toggleSimulation: () => {
-                App.simActive = !App.simActive;
-                const btn = document.getElementById('btn-simulation');
-                btn.innerText = App.simActive ? "SIMULADOR: ON" : "SIMULADOR: OFF";
-                if (App.simActive) {
-                    App.simTimer = setInterval(() => {
+            clearTacticalCanvas: function() {
+                const c = document.getElementById('tactical-overlay');
+                c.getContext('2d').clearRect(0, 0, c.width, c.height);
+            },
+
+            /* 8. SIMULADOR: TESTEO DE FLUJO DE DATOS */
+            toggleSimulation: function() {
+                this.isSimulating = !this.isSimulating;
+                const btn = document.getElementById('sim-toggle');
+                btn.innerText = this.isSimulating ? "SIMULADOR: ON" : "SIMULADOR: OFF";
+                if (this.isSimulating) {
+                    this.simulationInterval = setInterval(() => {
                         const t = Date.now() / 1000;
                         const pos = [];
-                        for(let i=1; i<=5; i++) {
-                            pos.push({ id:i, team:'A', x: 20+Math.sin(t+i)*10, y: 10+i*10 });
-                            pos.push({ id:i, team:'B', x: 80+Math.cos(t+i)*10, y: 10+i*10 });
+                        for(let i=1; i<=6; i++) {
+                            pos.push({ id:i, team:'A', x: 20+Math.sin(t+i)*12, y: 5+i*10 });
+                            pos.push({ id:i, team:'B', x: 80+Math.cos(t+i)*12, y: 5+i*10 });
                         }
-                        const players = pos.map(p => ({ id:p.id, team:p.team, dist: (t/150).toFixed(1), maxSpd: (27+Math.random()*6).toFixed(1) }));
-                        App.renderEngineUI({ team_a_goals: 2, team_b_goals: 1, possession_a: 58+Math.sin(t)*5, full_data: { positions: pos, players } });
-                    }, 200);
+                        const players = pos.map(p => ({ 
+                            id:p.id, team:p.team, pos:'MID',
+                            dist: (t/200).toFixed(1), maxSpd: (26+Math.random()*8).toFixed(1) 
+                        }));
+                        this.renderEngineUI({ 
+                            team_a_goals: this.partido.golesLocal, 
+                            team_b_goals: this.partido.golesVisita, 
+                            possession_a: 55+Math.sin(t)*7, 
+                            full_data: { positions: pos, players } 
+                        });
+                    }, 150);
                 } else {
-                    clearInterval(App.simTimer);
-                    App.syncEngine();
+                    clearInterval(this.simulationInterval);
+                    this.syncWithDatabase();
                 }
             },
 
-            // 9. INFORME TÉCNICO PDF PROFESIONAL v4.5
-            printFullReport: () => {
-                const m = App.match;
-                const reportWindow = window.open('', '_blank');
+            /* 9. INFORME TÉCNICO: GENERACIÓN DE PDF PROFESIONAL v4.7 */
+            generateProfessionalPDF: function() {
+                const m = this.partido;
+                const win = window.open('', '_blank');
                 
-                let playersTable = '';
-                if (m.fullData?.players?.length > 0) {
-                    playersTable = `
-                        <h2 style="margin-top:40px; color:#111;">RENDIMIENTO FÍSICO INDIVIDUAL</h2>
-                        <table style="width:100%; border-collapse:collapse; margin-top:10px;">
+                // Construcción de tabla de jugadores para el reporte
+                let physicalTableHtml = '';
+                if (m.datosIA?.players?.length > 0) {
+                    physicalTableHtml = `
+                        <h2 style="margin-top:40px; color:#111;">RENDIMIENTO INDIVIDUAL (DATA IA)</h2>
+                        <table style="width:100%; border-collapse:collapse; margin-top:15px;">
                             <thead>
                                 <tr style="background:#222; color:#fff;">
-                                    <th style="padding:12px;">DORSAL</th>
-                                    <th style="padding:12px;">POSICIÓN</th>
-                                    <th style="padding:12px;">DISTANCIA (KM)</th>
-                                    <th style="padding:12px;">VEL. MÁXIMA (KM/H)</th>
+                                    <th style="padding:12px; text-align:center;">DORSAL</th>
+                                    <th style="padding:12px; text-align:center;">POSICIÓN</th>
+                                    <th style="padding:12px; text-align:center;">DISTANCIA (KM)</th>
+                                    <th style="padding:12px; text-align:center;">VEL. MÁX (KM/H)</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                ${m.fullData.players.map(p => `
+                                ${m.datosIA.players.map(p => `
                                     <tr>
                                         <td style="padding:12px; border-bottom:1px solid #eee; text-align:center;"><b>#${p.id}</b></td>
                                         <td style="padding:12px; border-bottom:1px solid #eee; text-align:center;">${p.pos || 'MID'}</td>
@@ -868,76 +1012,77 @@
                     `;
                 }
 
-                const reportHtml = `
+                const finalReportContent = `
                     <html>
                     <head>
-                        <title>AnalyticsFutbol Elite Report</title>
+                        <title>Reporte Técnico AnalyticsFutbol</title>
                         <style>
-                            body { font-family: 'Helvetica', sans-serif; padding: 45px; color: #222; line-height: 1.6; }
-                            .header { border-bottom: 5px solid #00d68f; padding-bottom: 20px; margin-bottom: 40px; display: flex; justify-content: space-between; align-items: center; }
-                            .summary-box { display: flex; justify-content: space-between; background: #f9f9f8; padding: 30px; border-radius: 12px; border: 1px solid #e0e0e0; }
-                            h2 { border-left: 6px solid #00d68f; padding-left: 12px; font-size: 20px; text-transform: uppercase; margin-bottom: 20px; }
+                            body { font-family: 'Helvetica', Arial, sans-serif; padding: 45px; color: #222; line-height: 1.6; }
+                            .header-banner { border-bottom: 6px solid #00d68f; padding-bottom: 20px; margin-bottom: 40px; display: flex; justify-content: space-between; align-items: center; }
+                            .summary-card { display: flex; justify-content: space-between; background: #f9f9f8; padding: 35px; border-radius: 12px; border: 1px solid #e0e0e0; }
+                            h2 { border-left: 6px solid #00d68f; padding-left: 15px; font-size: 20px; text-transform: uppercase; margin-bottom: 25px; }
                             table { width: 100%; border-collapse: collapse; }
-                            th { text-align: left; font-size: 11px; color: #555; padding: 10px; }
-                            td { padding: 10px; font-size: 14px; border-bottom: 1px solid #efefef; }
-                            .footer { margin-top: 80px; font-size: 10px; color: #999; text-align: center; border-top: 1px solid #eee; padding-top: 25px; }
+                            th { text-align: left; font-size: 11px; color: #555; padding: 12px; }
+                            td { padding: 12px; font-size: 14px; border-bottom: 1px solid #efefef; }
+                            .footer-note { margin-top: 80px; font-size: 10px; color: #999; text-align: center; border-top: 1px solid #eee; padding-top: 25px; }
                         </style>
                     </head>
                     <body>
-                        <div class="header">
+                        <div class="header-banner">
                             <div>
-                                <h1 style="margin:0; font-size:26px;">ANALYTICSFUTBOL ELITE</h1>
-                                <p style="margin:5px 0; color:#666;">INFORME TÉCNICO OFICIAL | ${new Date().toLocaleString()}</p>
+                                <h1 style="margin:0; font-size:28px;">ANALYTICSFUTBOL ELITE</h1>
+                                <p style="margin:5px 0; color:#666;">INFORME TÉCNICO OFICIAL | FECHA: ${new Date().toLocaleString()}</p>
                             </div>
-                            <div style="font-size:30px; font-weight:900; color:#00d68f;">AF</div>
+                            <div style="font-size:32px; font-weight:900; color:#00d68f;">AF</div>
                         </div>
                         
-                        <div class="summary-box">
+                        <div class="summary-card">
                             <div>
-                                <span style="font-size:10px; font-weight:800; color:#aaa; text-transform:uppercase;">Marcador Final</span>
-                                <div style="font-size:32px; font-weight:bold;">LOCAL ${m.goalsA} - ${m.scoreB} VISITANTE</div>
+                                <span style="font-size:11px; font-weight:800; color:#aaa; text-transform:uppercase;">Marcador Final</span>
+                                <div style="font-size:36px; font-weight:bold;">LOCAL ${m.golesLocal} - ${m.golesVisita} VISITANTE</div>
                             </div>
                             <div style="text-align:right;">
-                                <span style="font-size:10px; font-weight:800; color:#aaa; text-transform:uppercase;">Posesión Absoluta</span>
-                                <div style="font-size:32px; font-weight:bold; color:#00d68f;">${Math.round(m.possA)}% / ${100 - Math.round(m.possA)}%</div>
+                                <span style="font-size:11px; font-weight:800; color:#aaa; text-transform:uppercase;">Posesión Absoluta</span>
+                                <div style="font-size:36px; font-weight:bold; color:#00d68f;">${Math.round(m.posesionLocal)}% / ${100 - Math.round(m.posesionLocal)}%</div>
                             </div>
                         </div>
 
-                        ${playersTable}
+                        ${physicalTableHtml}
 
-                        <h2 style="margin-top:45px;">CRONOLOGÍA TÁCTICA</h2>
+                        <h2 style="margin-top:45px;">CRONOLOGÍA DE EVENTOS</h2>
                         <table>
                             <thead>
                                 <tr style="border-bottom:2px solid #222;">
-                                    <th>MINUTO</th>
+                                    <th>TIEMPO</th>
                                     <th>EQUIPO</th>
-                                    <th>EVENTO</th>
+                                    <th>ACCIÓN REGISTRADA</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                ${App.events.map(e => `
+                                ${this.storedEvents.map(ev => `
                                     <tr>
-                                        <td>${e.time}</td>
-                                        <td>Eq. ${e.team}</td>
-                                        <td><b style="color:#111;">${e.type}</b></td>
+                                        <td>${ev.time}</td>
+                                        <td>Eq. ${ev.team}</td>
+                                        <td><b style="color:#111;">${ev.type}</b></td>
                                     </tr>
                                 `).join('')}
                             </tbody>
                         </table>
 
-                        <div class="footer">
-                            Propiedad intelectual de AnalyticsFutbol Elite System. Documento generado para análisis de alto rendimiento.
+                        <div class="footer-note">
+                            Este documento es propiedad de AnalyticsFutbol Elite System. Generado automáticamente por el motor de análisis v4.7.
                         </div>
                     </body>
                     </html>
                 `;
-                reportWindow.document.write(reportHtml);
-                reportWindow.document.close();
-                setTimeout(() => reportWindow.print(), 800);
+                win.document.write(finalReportContent);
+                win.document.close();
+                setTimeout(() => win.print(), 1000);
             }
         };
 
-        window.onload = App.init;
+        // LANZAR INICIALIZACIÓN AL CARGAR LA VENTANA
+        window.onload = () => App.init();
     </script>
 </body>
 </html>
