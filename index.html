@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>AnalyticsFutbol Pro v26</title>
+    <title>AnalyticsFutbol v27 — Elite Simulator</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -23,7 +23,9 @@
 
         header { padding: 55px 20px 15px; background: var(--surf); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
         .brand { font-size: 14px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); }
-        .match-clock { font-family: var(--f-data); font-size: 14px; font-weight: 700; color: #fff; background: #1a1a1a; padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border); }
+        
+        .demo-toggle { font-family: var(--f-data); font-size: 9px; font-weight: 700; padding: 5px 12px; border-radius: 20px; border: 1px solid var(--tm); color: var(--tm); cursor: pointer; transition: 0.3s; }
+        .demo-toggle.active { background: var(--accent); border-color: var(--accent); color: #000; box-shadow: 0 0 15px rgba(0,214,143,0.3); }
 
         .nav-scroller { display: flex; background: var(--surf); border-bottom: 1px solid var(--border); overflow-x: auto; scrollbar-width: none; flex-shrink: 0; }
         .nav-scroller::-webkit-scrollbar { display: none; }
@@ -38,22 +40,18 @@
         .card { background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 18px; margin-bottom: 15px; position: relative; }
         .card-label { font-family: var(--f-data); font-size: 9px; color: var(--tp); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 15px; display: block; }
 
-        /* KPI & POSSESSION */
         .score-display { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .score-val { font-family: var(--f-data); font-size: 42px; font-weight: 700; line-height: 1; }
         .poss-track { height: 6px; background: #222; border-radius: 3px; overflow: hidden; display: flex; margin-bottom: 8px; }
         .poss-fill { height: 100%; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
 
-        /* PITCH */
-        .pitch-box { width: 100%; aspect-ratio: 105/68; background: #0a1808; position: relative; border: 1px solid var(--border); overflow: hidden; border-radius: 4px; }
-        .player-node { width: 18px; height: 18px; border-radius: 50%; position: absolute; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 800; border: 1.5px solid #fff; box-shadow: 0 3px 6px rgba(0,0,0,0.5); transition: 0.5s; }
+        .pitch-svg-box { width: 100%; aspect-ratio: 105/68; background: #0a1808; position: relative; border: 1px solid var(--border); overflow: hidden; border-radius: 4px; }
+        .player-node { width: 18px; height: 18px; border-radius: 50%; position: absolute; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 800; border: 1.5px solid #fff; box-shadow: 0 3px 6px rgba(0,0,0,0.5); transition: 0.1s linear; }
 
-        /* TABLE */
         table { width: 100%; border-collapse: collapse; font-family: var(--f-data); font-size: 11px; }
         th { text-align: left; color: var(--tp); padding-bottom: 10px; border-bottom: 1px solid var(--border); font-size: 9px; text-transform: uppercase; }
         td { padding: 12px 0; border-bottom: 1px solid #1a1a1a; }
 
-        /* TAGGING */
         .tag-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .tag-btn { background: var(--surf); border: 1px solid var(--border); color: var(--th); padding: 14px; font-size: 10px; font-weight: 700; border-radius: 4px; text-align: left; border-left: 4px solid var(--tm); }
         .team-sel { display: flex; gap: 6px; margin-bottom: 12px; }
@@ -61,11 +59,6 @@
         .t-opt.active-A { border-color: var(--tA); color: var(--tA); background: rgba(244,63,94,0.15); }
         .t-opt.active-B { border-color: var(--tB); color: var(--tB); background: rgba(59,158,255,0.15); }
 
-        /* VIDEO */
-        .video-wrap { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 4px; overflow: hidden; border: 1px solid var(--border); }
-        video { width: 100%; height: 100%; object-fit: cover; }
-
-        /* ACTIONS */
         .btn-action { width: 100%; border: none; font-weight: 800; padding: 16px; border-radius: 4px; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; margin-bottom: 12px; }
         .btn-primary { background: var(--accent); color: #000; }
         .btn-nanobanana { background: linear-gradient(135deg, #00d68f, #c084fc); color: #fff; }
@@ -77,7 +70,7 @@
 
     <header>
         <div class="brand">AnalyticsFutbol</div>
-        <div class="match-clock" id="timer">00:00</div>
+        <div id="demo-btn" class="demo-toggle" onclick="App.toggleDemo()">DEMO: OFF</div>
     </header>
 
     <nav class="nav-scroller">
@@ -103,11 +96,11 @@
                 </div>
                 <div style="display:flex; justify-content:space-between; font-family:var(--f-data); font-size:11px; font-weight:700">
                     <span id="tx-pa" style="color:var(--tA)">50%</span>
-                    <span style="color:var(--tm); letter-spacing:2px">POSESIÓN</span>
+                    <span id="timer" style="color:var(--th); background:#222; padding:2px 8px; border-radius:3px">00:00</span>
                     <span id="tx-pb" style="color:var(--tB)">50%</span>
                 </div>
             </div>
-            <div class="pitch-box">
+            <div class="pitch-svg-box">
                 <svg style="position:absolute; width:100%; height:100%" viewBox="0 0 105 68"><rect width="105" height="68" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/><line x1="52.5" y1="0" x2="52.5" y2="68" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/><circle cx="52.5" cy="34" r="9.15" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/></svg>
                 <div id="radar-layer"></div>
             </div>
@@ -115,7 +108,7 @@
 
         <section id="view-tactical" class="view-section">
             <div class="card">
-                <span class="card-label">Análisis de Estructura (Metros)</span>
+                <span class="card-label">Análisis de Estructura Dinámico</span>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px">
                     <div style="background:#0f0f0f; padding:20px; border-radius:4px; text-align:center"><div style="font-family:var(--f-data); font-size:24px; font-weight:700" id="res-comp">--</div><div style="font-size:8px; color:var(--tp); margin-top:5px">COMPACIDAD</div></div>
                     <div style="background:#0f0f0f; padding:20px; border-radius:4px; text-align:center"><div style="font-family:var(--f-data); font-size:24px; font-weight:700; color:var(--accent)" id="res-press">--</div><div style="font-size:8px; color:var(--tp); margin-top:5px">ALT. PRESIÓN</div></div>
@@ -125,17 +118,13 @@
 
         <section id="view-physic" class="view-section">
             <div class="card">
-                <span class="card-label">Top Performance Individual</span>
+                <span class="card-label">Rendimiento Individual Realtime</span>
                 <table id="physical-table">
-                    <thead><tr><th>JERSEY</th><th>POS</th><th>DIST (KM)</th><th>V.MÁX</th></tr></thead>
+                    <thead><tr><th>DORSAL</th><th>POS</th><th>DIST (KM)</th><th>V.MÁX</th></tr></thead>
                     <tbody id="p-body"></tbody>
                 </table>
-                <div id="p-msg" style="text-align:center; padding:30px; font-size:11px; color:var(--tp)">Esperando conexión con Tracker Python...</div>
+                <div id="p-msg" style="text-align:center; padding:30px; font-size:11px; color:var(--tp)">Esperando datos...</div>
             </div>
-        </section>
-
-        <section id="view-videos" class="view-section">
-            <div class="card"><div class="video-wrap"><video id="vplayer" controls poster="https://via.placeholder.com/600x340/111/fff?text=MODULO+VIDEO+READY"></video></div></div>
         </section>
 
         <section id="view-events" class="view-section">
@@ -152,8 +141,6 @@
                     <button class="tag-btn" style="border-left-color:var(--accent)" onclick="App.log('TIRO', '#00d68f')">TIRO</button>
                     <button class="tag-btn" style="border-left-color:var(--tA)" onclick="App.log('FALTA', '#f43f5e')">FALTA</button>
                     <button class="tag-btn" style="border-left-color:var(--ball)" onclick="App.log('OFFSIDE', '#f5a623')">OFFSIDE</button>
-                    <button class="tag-btn" style="border-left-color:var(--tB)" onclick="App.log('CÓRNER', '#3b9eff')">CÓRNER</button>
-                    <button class="tag-btn" style="border-left-color:var(--tp)" onclick="App.log('PARADA', '#7a7a7a')">PARADA</button>
                 </div>
             </div>
             <div class="card"><div id="log-list"></div></div>
@@ -169,11 +156,28 @@
 
     <script>
         const App = {
-            db: null, team: 'A', events: [], lastMatch: { team_a_goals:0, team_b_goals:0, possession_a:50 },
+            db: null, team: 'A', events: [], isDemo: false, lastMatch: { team_a_goals:0, team_b_goals:0, possession_a:50 },
             
+            // FORMACIONES DE REFERENCIA
+            TEAM_A: [
+                { id:1, x:5, y:32, line:"GK", pos:"PO" }, { id:5, x:20, y:25, line:"DEF", pos:"CT" }, { id:6, x:20, y:39, line:"DEF", pos:"CT" },
+                { id:4, x:40, y:32, line:"MID", pos:"MC" }, { id:9, x:72, y:32, line:"FWD", pos:"DC" }
+            ],
+            TEAM_B: [
+                { id:1, x:95, y:32, line:"GK", pos:"PO" }, { id:5, x:80, y:32, line:"DEF", pos:"CT" }, { id:10, x:58, y:32, line:"MID", pos:"MC" }
+            ],
+
             init: async () => {
                 App.db = window.supabase.createClient("https://zdckdlrgtoglmvgdrvcn.supabase.co", "sb_publishable_bGfCRIXGSuGb5XK_SJ0tdw_XYNIHW14");
+                setInterval(App.engineLoop, 100); // Bucle rápido para simulación fluida
                 App.sync(); setInterval(App.sync, 5000);
+            },
+
+            toggleDemo: () => {
+                App.isDemo = !App.isDemo;
+                const btn = document.getElementById('demo-btn');
+                btn.innerText = App.isDemo ? "DEMO: ON" : "DEMO: OFF";
+                btn.classList.toggle('active', App.isDemo);
             },
 
             nav: (id, btn) => {
@@ -184,65 +188,70 @@
 
             setTeam: (t) => {
                 App.team = t;
-                const btnA = document.getElementById('selA'); const btnB = document.getElementById('selB');
-                btnA.className = t === 'A' ? 't-opt active-A' : 't-opt';
-                btnB.className = t === 'B' ? 't-opt active-B' : 't-opt';
+                document.getElementById('selA').className = t === 'A' ? 't-opt active-A' : 't-opt';
+                document.getElementById('selB').className = t === 'B' ? 't-opt active-B' : 't-opt';
             },
 
             log: (label, color) => {
-                const vid = document.getElementById('vplayer');
-                const e = { label, team: App.team, time: document.getElementById('timer').innerText, seconds: vid.currentTime || 0, color, id: Date.now() };
+                const e = { label, team: App.team, time: document.getElementById('timer').innerText, color, id: Date.now() };
                 App.events.unshift(e);
-                document.getElementById('log-list').innerHTML = App.events.map(ev => `
-                    <div class="ev-item" onclick="App.jumpTo(${ev.seconds})">
-                        <div style="font-weight:700; color:${ev.team==='A'?'var(--tA)':'var(--tB)'}">${ev.label} EQ.${ev.team}</div>
-                        <div style="font-family:var(--f-data); font-size:11px; color:var(--accent)">${ev.time} ➔</div>
-                    </div>
-                `).join('');
+                document.getElementById('log-list').innerHTML = App.events.map(ev => `<div class="ev-item"><div><b style="color:${ev.team==='A'?'var(--tA)':'var(--tB)'}">${ev.label} EQ.${ev.team}</b></div><div>${ev.time}</div></div>`).join('');
             },
 
-            jumpTo: (sec) => {
-                const vid = document.getElementById('vplayer');
-                App.nav('videos', document.querySelector('[onclick*="videos"]'));
-                vid.currentTime = sec; vid.play();
+            // MOTOR DE SIMULACIÓN Y RENDERIZADO
+            engineLoop: () => {
+                if (!App.isDemo) return;
+                const t = Date.now() / 1000;
+                
+                // Simulación de posiciones con senos y cosenos orgánicos
+                const mockPositions = [
+                    ...App.TEAM_A.map(p => ({ ...p, team:'A', x: p.x + Math.sin(t + p.id)*3, y: p.y + Math.cos(t*0.5 + p.id)*5 })),
+                    ...App.TEAM_B.map(p => ({ ...p, team:'B', x: p.x + Math.sin(t*0.8 + p.id)*3, y: p.y + Math.cos(t*0.4 + p.id)*5 }))
+                ];
+
+                App.render({ 
+                    team_a_goals: App.lastMatch.team_a_goals, 
+                    team_b_goals: App.lastMatch.team_b_goals, 
+                    possession_a: 50 + Math.sin(t*0.2)*10,
+                    full_data: { 
+                        positions: mockPositions,
+                        players: mockPositions.map(p => ({ id: p.id, team: p.team, pos: p.pos, dist: (t/10).toFixed(2), maxSpd: (28 + Math.random()*5).toFixed(1) }))
+                    } 
+                });
             },
 
             sync: async () => {
+                if (App.isDemo) return;
                 const { data } = await App.db.from('matches').select('*').order('created_at', { ascending: false }).limit(1);
-                if (data && data[0]) {
-                    App.lastMatch = data[0]; const m = data[0];
-                    document.getElementById('sA').innerText = m.team_a_goals; document.getElementById('sB').innerText = m.team_b_goals;
-                    const pa = m.possession_a || 50;
-                    document.getElementById('pb-a').style.width = pa + "%"; document.getElementById('pb-b').style.width = (100 - pa) + "%";
-                    document.getElementById('tx-pa').innerText = pa + "%"; document.getElementById('tx-pb').innerText = (100 - pa) + "%";
-                    
-                    if (m.full_data?.positions) {
-                        const pl = m.full_data.positions;
-                        document.getElementById('radar-layer').innerHTML = pl.map(p => `<div class="player-node" style="left:${p.x}%; top:${p.y}%; background-color:${p.team==='A'?'var(--tA)':'var(--tB)'}">${p.id}</div>`).join('');
-                        const lh = (line) => { const g = pl.filter(p => p.line === line && p.team === 'A'); return g.length ? (g.reduce((s,p)=>s+p.x, 0)/g.length).toFixed(0) : 0; };
-                        const dA=lh("DEF"), fA=lh("FWD");
-                        document.getElementById('res-comp').innerText = Math.abs(fA - dA) + "m";
-                        document.getElementById('res-press').innerText = (pl.filter(p=>p.team==='A').reduce((s,p)=>s+p.x,0)/11).toFixed(0) + "m";
-                    }
+                if (data && data[0]) { App.lastMatch = data[0]; App.render(data[0]); }
+            },
 
-                    if (m.full_data?.players) {
-                        document.getElementById('p-msg').style.display = 'none';
-                        document.getElementById('p-body').innerHTML = m.full_data.players.map(p => `
-                            <tr><td style="color:${p.team==='A'?'var(--tA)':'var(--tB)'}; font-weight:800">#${p.id}</td><td>${p.pos || 'MID'}</td><td>${p.dist || '0.00'}</td><td style="color:var(--accent)">${p.maxSpd || '0.0'}</td></tr>
-                        `).join('');
-                    }
+            render: (m) => {
+                document.getElementById('sA').innerText = m.team_a_goals; document.getElementById('sB').innerText = m.team_b_goals;
+                const pa = Math.round(m.possession_a || 50);
+                document.getElementById('pb-a').style.width = pa + "%"; document.getElementById('pb-b').style.width = (100 - pa) + "%";
+                document.getElementById('tx-pa').innerText = pa + "%"; document.getElementById('tx-pb').innerText = (100 - pa) + "%";
+
+                if (m.full_data?.positions) {
+                    const pl = m.full_data.positions;
+                    document.getElementById('radar-layer').innerHTML = pl.map(p => `<div class="player-node" style="left:${p.x}%; top:${p.y}%; background-color:${p.team==='A'?'var(--tA)':'var(--tB)'}">${p.id}</div>`).join('');
+                    
+                    const lh = (line) => { const g = pl.filter(p => p.line === line && p.team === 'A'); return g.length ? (g.reduce((s,p)=>s+p.x, 0)/g.length).toFixed(0) : 0; };
+                    const dA=lh("DEF"), fA=lh("FWD");
+                    document.getElementById('res-comp').innerText = Math.abs(fA - dA) + "m";
+                    document.getElementById('res-press').innerText = (pl.filter(p=>p.team==='A').reduce((s,p)=>s+p.x,0)/pl.filter(p=>p.team==='A').length).toFixed(0) + "m";
+                }
+
+                if (m.full_data?.players) {
+                    document.getElementById('p-msg').style.display = 'none';
+                    document.getElementById('p-body').innerHTML = m.full_data.players.map(p => `<tr><td style="color:${p.team==='A'?'var(--tA)':'var(--tB)'}; font-weight:800">#${p.id}</td><td>${p.pos}</td><td>${p.dist}</td><td style="color:var(--accent)">${p.maxSpd}</td></tr>`).join('');
                 }
             },
 
-            exportEditorialPDF: () => {
-                const m = App.lastMatch; const win = window.open('', '_blank');
-                win.document.write(`<html><head><style>body{font-family:Helvetica,Arial,sans-serif;padding:60px;color:#1a1a2e} h1{font-size:32px;border-bottom:4px solid #000;padding-bottom:10px} table{width:100%;border-collapse:collapse;margin-top:30px} th{background:#000;color:#fff;padding:15px;text-align:left;font-size:11px} td{padding:15px;border-bottom:1px solid #eee} .box{background:#f8f9fa;padding:20px;text-align:center;border-radius:4px}</style></head><body><h1>TECHNICAL MATCH REPORT</h1><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-bottom:40px"><div class="box"><b>${m.team_a_goals}-${m.team_b_goals}</b>Score</div><div class="box"><b>${m.possession_a}%</b>Possession A</div><div class="box"><b>${App.events.length}</b>Events</div><div class="box"><b>${document.getElementById('res-comp').innerText}</b>Compactness</div></div><h3>EVENT LOG</h3><table><thead><tr><th>Time</th><th>Team</th><th>Event</th></tr></thead><tbody>${App.events.map(e => `<tr><td>${e.time}</td><td>Eq. ${e.team}</td><td><b>${e.label}</b></td></tr>`).join('')}</tbody></table></body></html>`);
-                win.document.close(); setTimeout(() => win.print(), 800);
-            },
-
+            exportEditorialPDF: () => { window.print(); },
             exportStoryNanobanana: () => {
                 const m = App.lastMatch; const win = window.open('', '_blank', 'width=375,height=812');
-                win.document.write(`<html><head><style>body{background:#000;color:#fff;font-family:'Manrope',sans-serif;padding:0;margin:0;height:100vh;overflow:hidden;} .c{padding:50px 30px;height:100%;display:flex;flex-direction:column;justify-content:space-between;background:radial-gradient(circle at top right, #1a1a1a 0%, #000 70%)} .h1{font-size:160px;font-weight:900;line-height:0.75;letter-spacing:-12px;margin:30px 0;background:linear-gradient(135deg,#fff 20%,#555 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent} .tag{font-size:12px;letter-spacing:6px;color:#00d68f;font-weight:800;border:1px solid #00d68f;display:inline-block;padding:5px 15px}</style></head><body><div class="c"><div><div class="tag">NANOBANANA GOLD</div><p style="color:#666;font-weight:600;margin-top:20px">SUMMARY // ${new Date().toLocaleDateString()}</p><div class="h1">${m.team_a_goals}<br/>${m.team_b_goals}</div></div><div><div style="font-size:42px;font-weight:900;color:#00d68f">${m.possession_a}% POSSESSION</div><div style="font-size:42px;font-weight:900;color:#c084fc">${App.events.length} EVENTS</div><p style="margin-top:50px;font-size:10px;color:#444;font-weight:700">POWERED BY ANALYTICSFUTBOL REALTIME CLOUD</p></div></div></body></html>`);
+                win.document.write(`<html><head><style>body{background:#000;color:#fff;font-family:'Manrope',sans-serif;padding:40px;display:flex;flex-direction:column;justify-content:center;text-align:center} .hero{font-size:150px;font-weight:900;letter-spacing:-10px;background:linear-gradient(135deg,#fff,#444);-webkit-background-clip:text;-webkit-text-fill-color:transparent} .tag{font-size:12px;letter-spacing:6px;color:#00d68f;font-weight:800;border:1px solid #00d68f;display:inline-block;padding:5px 15px}</style></head><body><div class="tag">#NANOBANANA_GOLD</div><div style="font-size:14px;color:#666;margin-top:20px">MATCH SUMMARY // ${new Date().toLocaleDateString()}</div><div class="hero">${m.team_a_goals}<br/>${m.team_b_goals}</div><div style="font-size:24px;font-weight:900;color:#00d68f">${Math.round(m.possession_a)}% POSSESSION</div></body></html>`);
                 win.document.close();
             }
         };
