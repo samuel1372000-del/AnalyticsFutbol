@@ -1288,24 +1288,21 @@
                                 right: 0;
                                 z-index: 9999;
                                 display: flex;
-                                gap: 10px;
                                 padding: 14px;
                                 background: #101419;
                                 border-bottom: 1px solid #28313a;
                             }
                             .pdf-actions button {
-                                flex: 1;
+                                width: 100%;
                                 border: 0;
                                 border-radius: 8px;
-                                padding: 14px 10px;
+                                padding: 16px 10px;
                                 font-size: 12px;
                                 font-weight: 800;
                                 text-transform: uppercase;
                                 cursor: pointer;
                             }
-                            .btn-print { background: #00d68f; color: #06120e; }
-                            .btn-back { background: #28313a; color: #ffffff; }
-                            .btn-close { background: #3a424b; color: #ffffff; }
+                            .btn-close { background: #00d68f; color: #06120e; }
                             .header-banner {
                                 border-bottom: 6px solid #00d68f;
                                 display: flex;
@@ -1400,15 +1397,13 @@
                             @media (max-width: 560px) {
                                 body { padding-left: 20px; padding-right: 20px; }
                                 .stat-card { grid-template-columns: 1fr; }
-                                .pdf-actions { gap: 6px; padding: 10px; }
-                                .pdf-actions button { font-size: 10px; padding: 12px 6px; }
+                                .pdf-actions { padding: 10px; }
+                                .pdf-actions button { font-size: 12px; padding: 14px 10px; }
                             }
                         </style>
                     </head>
                     <body>
                         <div class="pdf-actions">
-                            <button class="btn-print" onclick="window.print()">Generar PDF</button>
-                            <button class="btn-back" onclick="if (window.opener) { window.opener.focus(); }">Volver atrás</button>
                             <button class="btn-close" onclick="window.close()">Cerrar</button>
                         </div>
 
@@ -1548,3 +1543,5 @@
             }
         };
     </script>
+</body>
+</html>
