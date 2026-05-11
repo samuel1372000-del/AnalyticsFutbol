@@ -5,233 +5,73 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Analytics Total</title>
+    <title>FOOTBALL.TRACKER Elite</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
-            --bg: #0a0b10;
-            --card: #151720;
+            /* Elite Tactical Palette */
+            --bg-deep: #0a0b10;
+            --bg-card: #151720;
             --accent: #00e699;
             --teamA: #ff3366;
             --teamB: #3399ff;
-            --text: #ffffff;
-            --muted: #717686;
+            --text-main: #ffffff;
+            --text-muted: #717686;
             --border: rgba(255,255,255,0.08);
             --pitch: #1a3a2a;
+            --safe-area-bottom: env(safe-area-inset-bottom);
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: var(--text); font-family: -apple-system, sans-serif; margin: 0; padding-bottom: 90px; }
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            overflow-x: hidden;
+            padding-bottom: calc(100px + var(--safe-area-bottom));
+        }
 
-        /* HEADER & TABS */
+        /* --- Header con Menú Desplegable --- */
         header { 
-            padding: 50px 20px 0; background: rgba(10,11,16,0.95); backdrop-filter: blur(10px);
-            position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--border);
+            padding: 50px 20px 0px; background: rgba(10,11,16,0.95); backdrop-filter: blur(10px);
+            position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid var(--border);
         }
-        .logo-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .logo { font-size: 14px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; }
-        .status { font-size: 9px; font-weight: 800; color: var(--accent); border: 1px solid var(--accent); padding: 3px 8px; border-radius: 4px; }
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .logo { font-size: 14px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); }
+        .status-badge { font-size: 9px; font-weight: 800; color: var(--accent); border: 1px solid var(--accent); padding: 3px 8px; border-radius: 4px; background: rgba(0,230,153,0.1); }
 
-        .top-tabs { display: flex; gap: 10px; margin-bottom: 10px; }
-        .tab-btn { 
-            flex: 1; padding: 10px; border: none; background: none; color: var(--muted);
-            font-size: 10px; font-weight: 800; text-transform: uppercase; border-bottom: 2px solid transparent;
+        /* Dropdown Táctico */
+        .tactical-menu { position: relative; margin-bottom: 15px; }
+        .menu-trigger {
+            width: 100%; display: flex; justify-content: space-between; align-items: center;
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+            padding: 12px 15px; color: var(--text-main); font-size: 12px; font-weight: 700;
+            text-transform: uppercase; cursor: pointer;
         }
-        .tab-btn.active { color: var(--text); border-bottom-color: var(--accent); }
+        .menu-options {
+            display: none; position: absolute; top: calc(100% + 5px); left: 0; right: 0;
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+            overflow: hidden; z-index: 1010; transition: 0.2s;
+        }
+        .menu-options.open { display: block; animation: slideDown 0.3s; }
+        .menu-item { padding: 12px 15px; font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); border-bottom: 1px solid var(--border); }
+        .menu-item:last-child { border-bottom: none; }
+        .menu-item.active { color: var(--text-main); background: rgba(0,230,153,0.05); }
 
-        /* VISTAS */
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- Vistas y Layout --- */
         .content { padding: 15px; }
-        .view { display: none; animation: fadeIn 0.3s ease; }
-        .view.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; } }
+        .view-section { display: none; animation: fadeIn 0.4s ease; }
+        .view-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* CARDS */
-        .card { background: var(--card); border-radius: 16px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); }
-        .card-title { font-size: 10px; color: var(--muted); text-transform: uppercase; font-weight: 800; margin-bottom: 15px; display: block; }
+        /* --- Componentes Pro: Cards --- */
+        .card { background: var(--bg-card); border-radius: 16px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); position: relative; overflow: hidden; }
+        .card-header-muted { font-size: 10px; color: var(--text-muted); text-transform: uppercase; font-weight: 800; margin-bottom: 15px; display: block; }
 
-        /* MARCADOR */
-        .scoreboard { display: flex; justify-content: space-around; align-items: center; }
-        .score { font-size: 44px; font-weight: 900; }
-        .team-label { font-size: 10px; color: var(--muted); margin-top: 5px; }
-
-        /* CAMPO DE FÚTBOL REAL */
-        .pitch-container {
-            width: 100%; aspect-ratio: 0.7; background: var(--pitch); border-radius: 12px;
-            position: relative; border: 3px solid rgba(255,255,255,0.2); overflow: hidden;
-            background-image: 
-                linear-gradient(rgba(255,255,255,0.1) 2px, transparent 2px),
-                linear-gradient(90deg, rgba(255,255,255,0.1) 2px, transparent 2px);
-            background-size: 100% 10%, 50% 100%;
-        }
-        /* Líneas de áreas */
-        .pitch-container::before {
-            content: ''; position: absolute; top: 0; left: 20%; right: 20%; height: 15%;
-            border: 2px solid rgba(255,255,255,0.3); border-top: none;
-        }
-        .pitch-container::after {
-            content: ''; position: absolute; bottom: 0; left: 20%; right: 20%; height: 15%;
-            border: 2px solid rgba(255,255,255,0.3); border-bottom: none;
-        }
-        .player-dot {
-            width: 20px; height: 20px; border-radius: 50%; position: absolute;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 9px; font-weight: bold; border: 2px solid white; transform: translate(-50%, -50%);
-        }
-
-        /* BARRAS DE RENDIMIENTO */
-        .stat-bar-group { margin-bottom: 15px; }
-        .bar-labels { display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; margin-bottom: 6px; }
-        .bar-track { height: 8px; background: #232632; border-radius: 4px; overflow: hidden; display: flex; }
-        .bar-fill { height: 100%; transition: width 1s ease; }
-
-        /* VIDEOTECA */
-        .video-card { background: #000; border-radius: 12px; overflow: hidden; margin-bottom: 15px; }
-        .player-web { width: 100%; aspect-ratio: 16/9; background: #111; border: none; }
-        .video-info { padding: 15px; }
-        .video-tag { background: rgba(255,51,102,0.15); color: var(--teamA); padding: 4px 8px; border-radius: 4px; font-size: 9px; font-weight: 800; }
-
-        /* FOOTER NAV */
-        footer {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: rgba(10,11,16,0.98); border-top: 1px solid var(--border);
-            padding: 12px 0 calc(12px + env(safe-area-inset-bottom));
-            display: flex; justify-content: space-around;
-        }
-        .nav-link { 
-            text-decoration: none; color: var(--muted); font-size: 9px; 
-            font-weight: 800; text-transform: uppercase; display: flex; flex-direction: column; align-items: center; gap: 4px;
-        }
-        .nav-link.active { color: var(--accent); }
-    </style>
-</head>
-<body>
-
-<header>
-    <div class="logo-row">
-        <div class="logo">Analytics Pro</div>
-        <div id="status" class="status">ONLINE</div>
-    </div>
-    <div class="top-tabs">
-        <button class="tab-btn active" onclick="UI.switchView('live', this)">En Vivo</button>
-        <button class="tab-btn" onclick="UI.switchView('fisico', this)">Físico</button>
-        <button class="tab-btn" onclick="UI.switchView('tactico', this)">Táctico</button>
-    </div>
-</header>
-
-<div class="content">
-    <section id="view-live" class="view active">
-        <div class="card">
-            <span class="card-title">Marcador Actual</span>
-            <div class="scoreboard">
-                <div style="text-align:center"><div class="score" style="color:var(--teamA)" id="scoreA">0</div><div class="team-label">EQUIPO A</div></div>
-                <div style="font-weight:900; opacity:0.1; font-size:24px">VS</div>
-                <div style="text-align:center"><div class="score" style="color:var(--teamB)" id="scoreB">0</div><div class="team-label">EQUIPO B</div></div>
-            </div>
-        </div>
-        <div class="card">
-            <span class="card-title">Radar Táctico (Posiciones IA)</span>
-            <div class="pitch-container" id="pitch"></div>
-        </div>
-    </section>
-
-    <section id="view-fisico" class="view">
-        <div class="card">
-            <span class="card-title">Comparativa de Carga</span>
-            <div class="stat-bar-group">
-                <div class="bar-labels"><span>Eq. A</span><span>DISTANCIA (KM)</span><span>Eq. B</span></div>
-                <div class="bar-track">
-                    <div id="distFillA" style="width: 50%; background: var(--teamA);"></div>
-                    <div id="distFillB" style="width: 50%; background: var(--teamB);"></div>
-                </div>
-            </div>
-        </div>
-        <div class="card">
-            <span class="card-title">Rendimiento Individual</span>
-            <div id="player-stats">
-                <p style="font-size:11px; color:var(--muted); text-align:center">Conectando con base de datos de plantilla...</p>
-            </div>
-        </div>
-    </section>
-
-    <section id="view-tactico" class="view">
-        <div class="card">
-            <span class="card-title">Último Clip Detectado</span>
-            <div class="video-card">
-                <div class="player-web"><video width="100%" height="100%" controls poster="https://via.placeholder.com/640x360/151720/ffffff?text=ESPERANDO+CLIP+IA"></video></div>
-                <div class="video-info">
-                    <div style="margin-bottom:10px; font-weight:bold;">Transición Defensiva Lenta</div>
-                    <span class="video-tag">COMPACIDAD</span>
-                </div>
-            </div>
-        </div>
-        <div class="card">
-            <span class="card-title">Métricas de Líneas</span>
-            <div id="tactical-data">
-                <div class="bar-labels"><span>Presión</span><span id="pressVal">45m</span></div>
-                <div class="bar-track"><div style="width:45%; background:var(--accent);"></div></div>
-            </div>
-        </div>
-    </section>
-</div>
-
-<footer>
-    <a href="javascript:void(0)" class="nav-link active" onclick="UI.switchView('live', this)">Dashboard</a>
-    <a href="javascript:void(0)" class="nav-link" onclick="UI.switchView('tactico', this)">Clips</a>
-    <a href="javascript:void(0)" class="nav-link" onclick="UI.switchView('fisico', this)">Plantilla</a>
-</footer>
-
-<script>
-    const UI = {
-        switchView: (viewId, btn) => {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.querySelectorAll('.tab-btn, .nav-link').forEach(b => b.classList.remove('active'));
-            document.getElementById('view-' + viewId).classList.add('active');
-            
-            // Activar botón en el header y en el footer si coinciden
-            document.querySelectorAll(`[onclick*="${viewId}"]`).forEach(b => b.classList.add('active'));
-        },
-        renderPitch: (players = []) => {
-            const pitch = document.getElementById('pitch');
-            pitch.innerHTML = '';
-            // Demo dots if no data
-            const dots = players.length > 0 ? players : Array.from({length: 8}, (_, i) => ({
-                id: i+1, x: 20 + Math.random()*60, y: 15 + Math.random()*70, t: i<4?'A':'B'
-            }));
-            dots.forEach(p => {
-                const d = document.createElement('div');
-                d.className = 'player-dot';
-                d.style.left = p.x + '%'; d.style.top = p.y + '%';
-                d.style.backgroundColor = p.t === 'A' ? 'var(--teamA)' : 'var(--teamB)';
-                d.innerText = p.id;
-                pitch.appendChild(d);
-            });
-        }
-    };
-
-    const DATA = {
-        url: "https://zdckdlrgtoglmvgdrvcn.supabase.co",
-        key: "sb_publishable_bGfCRIXGSuGb5XK_SJ0tdw_XYNIHW14",
-        init: async () => {
-            const supabase = window.supabase.createClient(DATA.url, DATA.key);
-            const fetchUpdate = async () => {
-                const { data } = await supabase.from('matches').select('*').order('created_at', { ascending: false }).limit(1);
-                if (data && data[0]) {
-                    const m = data[0];
-                    document.getElementById('scoreA').innerText = m.team_a_goals;
-                    document.getElementById('scoreB').innerText = m.team_b_goals;
-                    if(m.full_data?.positions) UI.renderPitch(m.full_data.positions);
-                }
-            };
-            setInterval(fetchUpdate, 5000);
-            fetchUpdate();
-        }
-    };
-
-    window.onload = () => {
-        DATA.init();
-        UI.renderPitch();
-    };
-</script>
-
-</body>
-</html>
+        /* Marcador de Posesión y Goles (Simulado) */
+        .live-scoreboard { display: flex; justify-content: space-around; align-items: center; margin-bottom: 20px; }
+        .score-val { font-size: 48px; font-weight: 900; line-height: 1; }
+        .team-name-label { font-size:
