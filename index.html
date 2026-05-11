@@ -10,7 +10,7 @@
     
     <link rel="apple-touch-icon" href="icon.png">
     
-    <title>AnalyticsFutbol Elite v5.0</title>
+    <title>AnalyticsFutbol v0.1.5 BETA</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -434,7 +434,7 @@
     <header>
         <div class="header-brand">
             <h1>AnalyticsFutbol</h1>
-            <span>ELITE SYSTEM v5.0 FINAL</span>
+            <span>ELITE SYSTEM v0.1.5</span>
         </div>
         <div class="chrono-engine">
             <button class="chrono-btn" onclick="App.adjustTime(-1)">-</button>
@@ -458,7 +458,7 @@
         <section id="view-live" class="view-section active">
             <div class="af-card">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                    <span class="af-card-label">Sincronización Supabase Realtime</span>
+                    <span class="af-card-label">Sincronización Supabase en vivo</span>
                     <button id="sim-btn" onclick="App.toggleSimMode()" style="background:transparent; border:1px solid var(--af-text-low); color:var(--af-text-low); padding:6px 14px; font-size:9px; border-radius:20px; font-weight:800; cursor:pointer;">SIMULADOR: OFF</button>
                 </div>
                 
@@ -480,7 +480,7 @@
                 </div>
                 <div class="af-poss-labels">
                     <span id="ui-poss-txt-local" style="color:var(--af-local)">50%</span>
-                    <span style="color:var(--af-text-mute); letter-spacing:3px">POSESIÓN ABSOLUTA</span>
+                    <span style="color:var(--af-text-mute); letter-spacing:3px">POSESIÓN</span>
                     <span id="ui-poss-txt-visit" style="color:var(--af-visit)">50%</span>
                 </div>
             </div>
@@ -499,7 +499,7 @@
 
         <section id="view-tactical" class="view-section">
             <div class="af-card">
-                <span class="af-card-label">Análisis de Bloque IA (Metros)</span>
+                <span class="af-card-label">Análisis de Bloque IA</span>
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px">
                     <div style="background:#0f0f0f; padding:25px; border-radius:10px; text-align:center">
                         <div id="ui-tact-compacity" style="font-family:var(--af-font-data); font-size:30px; font-weight:800">--</div>
@@ -515,7 +515,7 @@
 
         <section id="view-physic" class="view-section">
             <div class="af-card">
-                <span class="af-card-label">Rendimiento Físico (1 decimal máx.)</span>
+                <span class="af-card-label">Rendimiento Físico</span>
                 <table class="af-table">
                     <thead>
                         <tr>
@@ -579,9 +579,9 @@
 
         <section id="view-report" class="view-section">
             <div class="af-card" style="text-align:center; padding:50px 20px;">
-                <div style="font-size:50px; margin-bottom:25px;">📊</div>
-                <h2 style="margin-bottom:12px; letter-spacing:1.5px;">Cerrar Informe Elite</h2>
-                <p style="font-size:12px; color:var(--af-text-low); margin-bottom:35px; line-height:1.6;">Este proceso generará un documento PDF técnico con estadísticas de posesión absoluta, rendimiento físico (1 decimal) y cronología táctica completa.</p>
+                <div style="font-size:50px; margin-bottom:25px;">📄📊</div>
+                <h2 style="margin-bottom:12px; letter-spacing:1.5px;">Cerrar Informe</h2>
+                <p style="font-size:12px; color:var(--af-text-low); margin-bottom:35px; line-height:1.6;">Este proceso generará un documento PDF técnico con estadísticas de posesión absoluta, rendimiento físico y cronología táctica completa.</p>
                 <button class="af-btn-primary" onclick="App.exportProfessionalPDF()">Descargar Informe Oficial PDF</button>
             </div>
         </section>
