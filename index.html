@@ -1358,6 +1358,25 @@
                     this.matchState.fullIAData = row.full_data || { players: [], positions: [] };
                     this.renderEngineData(row);
                     this.refreshReportPreview();
+
+                    // RECUPERAR LINKS DE VÍDEO (La Base Arquitectónica)
+                    const { data: dbEvents } = await this.supabase
+                        .from('tactical_events')
+                        .select('team, video_second, clip_url')
+                        .eq('match_id', this.matchState.id)
+                        .not('clip_url', 'is', null);
+
+                    if (dbEvents && dbEvents.length > 0) {
+                        let uiNeedsUpdate = false;
+                        dbEvents.forEach(dbEv => {
+                            const cached = App.eventCache.find(e => e.vSec === dbEv.video_second && e.team === dbEv.team);
+                            if (cached && cached.clipUrl !== dbEv.clip_url) {
+                                cached.clipUrl = dbEv.clip_url;
+                                uiNeedsUpdate = true;
+                            }
+                        });
+                        if (uiNeedsUpdate) App.refreshEventLogUI();
+                    }
                 }
             },
 
