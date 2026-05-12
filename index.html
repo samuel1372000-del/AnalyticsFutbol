@@ -685,6 +685,13 @@
                 <div class="af-panel-head">
                     <span class="af-card-label">Sincronización Supabase en vivo</span>
                     <div class="af-toolbar">
+                        <select id="match-category-sel" class="af-chip-btn" onchange="App.changeCategory(this.value)" style="outline:none; background:rgba(255,255,255,0.02); color:var(--af-text-mid);">
+                            <option value="30" style="color:#000">Alevín (30')</option>
+                            <option value="35" style="color:#000">Infantil (35')</option>
+                            <option value="40" style="color:#000">Cadete (40')</option>
+                            <option value="45" style="color:#000" selected>Juvenil/Abs (45')</option>
+                        </select>
+                        <button id="btn-half-toggle" class="af-chip-btn" onclick="App.nextHalf()">1ª Parte</button>
                         <button class="af-chip-btn accent" onclick="App.resetMatchSystem()">Nuevo partido</button>
                         <button id="sim-btn" class="af-chip-btn" onclick="App.toggleSimMode()">Simulador: OFF</button>
                     </div>
@@ -831,10 +838,12 @@
                     <video id="af-player-engine" controls poster="https://via.placeholder.com/800x450/111/fff?text=ESPERANDO+SINCRO+PC"></video>
                     <canvas id="af-drawing-canvas"></canvas>
                 </div>
-                <div class="af-actions-row" style="margin-top:14px;">
+                <div class="af-actions-row" style="margin-top:14px; grid-template-columns: 1fr 1fr 1fr;">
                     <button class="af-btn-primary" onclick="App.toggleDrawingMode()">Lápiz táctico</button>
                     <button class="af-btn-secondary" onclick="App.clearCanvas()">Limpiar</button>
+                    <button class="af-btn-secondary" onclick="App.captureTacticalFrame()" style="color:var(--af-accent); border-color:rgba(0, 214, 143, 0.45);">Capturar</button>
                 </div>
+                <div id="af-tactical-gallery" style="display:flex; gap:8px; overflow-x:auto; margin-top:14px; padding-bottom:4px;"></div>
                 
                 <div class="af-panel-head" style="margin-top: 24px;">
                     <span class="af-card-label">Gestión de Espacio (Nube -> Telegram)</span>
@@ -936,6 +945,8 @@
             rosterData: { 'A': {}, 'B': {} },
             secondsCounter: 0,
             chronoInterval: null,
+            currentHalf: 1,
+            halfDuration: 45,
             isDrawingActive: false,
             isSimulationActive: false,
             simulationInterval: null,
@@ -1067,7 +1078,7 @@
 
             triggerEvent: async function(type) {
                 const playerEl = document.getElementById('af-player-engine');
-                const timeString = document.getElementById('chrono-display').innerText;
+                const timeString = (this.currentHalf === 1 ? '1T ' : '2T ') + document.getElementById('chrono-display').innerText;
                 const currentVideoSec = playerEl.currentTime || 0;
 
                 let finalType = type;
@@ -1331,6 +1342,33 @@
                 return `${Math.floor(s / 60).toString().padStart(2, '0')}:${Math.floor(s % 60).toString().padStart(2, '0')}`;
             },
 
+            changeCategory: function(val) {
+                this.halfDuration = parseInt(val);
+            },
+
+            nextHalf: function() {
+                if (this.currentHalf === 1) {
+                    this.currentHalf = 2;
+                    this.secondsCounter = this.halfDuration * 60;
+                    const btn = document.getElementById('btn-half-toggle');
+                    if(btn) {
+                        btn.innerText = "2ª Parte";
+                        btn.style.color = "var(--af-accent)";
+                        btn.style.borderColor = "var(--af-accent)";
+                    }
+                } else {
+                    this.currentHalf = 1;
+                    this.secondsCounter = 0;
+                    const btn = document.getElementById('btn-half-toggle');
+                    if(btn) {
+                        btn.innerText = "1ª Parte";
+                        btn.style.color = "";
+                        btn.style.borderColor = "";
+                    }
+                }
+                this.updateUIChrono();
+            },
+
             syncWithSupabase: async function() {
                 if (this.isSimulationActive || !this.supabase) return;
 
@@ -1481,6 +1519,39 @@
             clearCanvas: function() {
                 const can = document.getElementById('af-drawing-canvas');
                 can.getContext('2d').clearRect(0, 0, can.width, can.height);
+            },
+            
+            captureTacticalFrame: function() {
+                const video = document.getElementById('af-player-engine');
+                const canvasLayer = document.getElementById('af-drawing-canvas');
+                const gallery = document.getElementById('af-tactical-gallery');
+                
+                if (!video.videoWidth) {
+                    alert("Aún no hay un clip de vídeo cargado para capturar.");
+                    return;
+                }
+
+                const offCanvas = document.createElement('canvas');
+                offCanvas.width = video.videoWidth;
+                offCanvas.height = video.videoHeight;
+                const ctx = offCanvas.getContext('2d');
+
+                ctx.drawImage(video, 0, 0, offCanvas.width, offCanvas.height);
+                ctx.drawImage(canvasLayer, 0, 0, offCanvas.width, offCanvas.height);
+
+                const dataUrl = offCanvas.toDataURL('image/jpeg', 0.85);
+
+                const imgWrapper = document.createElement('a');
+                imgWrapper.href = dataUrl;
+                imgWrapper.download = `tactica_${Date.now()}.jpg`;
+                imgWrapper.style.cssText = "flex-shrink:0; border: 1px solid var(--af-border); border-radius: var(--af-radius); overflow:hidden; width: 120px; aspect-ratio: 16/9; display:block;";
+                
+                const img = document.createElement('img');
+                img.src = dataUrl;
+                img.style.cssText = "width:100%; height:100%; object-fit:cover; display:block;";
+                
+                imgWrapper.appendChild(img);
+                gallery.prepend(imgWrapper);
             },
 
             toggleSimMode: function() {
@@ -1964,6 +2035,14 @@
                 this.simulatedPasses = [];
                 this.tacticalMode = 'none';
                 this.spatialStats = { left: 0, center: 0, right: 0 };
+                this.currentHalf = 1;
+                
+                const btnHalf = document.getElementById('btn-half-toggle');
+                if (btnHalf) {
+                    btnHalf.innerText = "1ª Parte";
+                    btnHalf.style.color = "";
+                    btnHalf.style.borderColor = "";
+                }
                 
                 this.activeModifier = '';
                 document.querySelectorAll('.mod-btn').forEach(function(b) {
@@ -2008,6 +2087,9 @@
                     elC.innerText = "0%";
                     elR.innerText = "0%";
                 }
+                
+                const gal = document.getElementById('af-tactical-gallery');
+                if(gal) gal.innerHTML = "";
 
                 this.updateRosterUI();
                 this.renderTacticalOverlay();
