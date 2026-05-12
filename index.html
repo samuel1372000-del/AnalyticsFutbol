@@ -838,7 +838,8 @@
                     <span class="af-card-label">Análisis de jugadas</span>
                 </div>
                 <div class="af-video-box">
-                    <video id="af-player-engine" controls ontimeupdate="App.syncRadarWithVideo(this.currentTime)" poster="https://via.placeholder.com/800x450/111/fff?text=ESPERANDO+SINCRO+PC" playsinline></video>
+                    <!-- Añadido crossorigin="anonymous" para evitar que Apple bloquee los videos que vienen del PC -->
+                    <video id="af-player-engine" controls crossorigin="anonymous" ontimeupdate="App.syncRadarWithVideo(this.currentTime)" poster="https://via.placeholder.com/800x450/111/fff?text=ESPERANDO+SINCRO+PC" playsinline></video>
                     <canvas id="af-drawing-canvas"></canvas>
                 </div>
                 <div class="af-actions-row" style="margin-top:14px; grid-template-columns: 1fr 1fr 1fr;">
@@ -1392,27 +1393,29 @@
                 const fileName = `manual_${Date.now()}.${fileExt}`;
 
                 try {
-                    // 1. Subir al Storage
+                    // BYPASS: Reproducimos el archivo directamente desde la memoria del iPhone
+                    // Esto es instantáneo y evita que Apple bloquee la captura de pantalla por CORS
+                    const localUrl = URL.createObjectURL(file);
+                    const player = document.getElementById('af-player-engine');
+                    player.src = localUrl;
+                    player.poster = "";
+                    player.load();
+                    player.play();
+
+                    // 1. Subir al Storage (en segundo plano)
                     const { data, error } = await this.supabase.storage
                         .from('clips')
                         .upload(fileName, file, { cacheControl: '3600', upsert: false });
 
                     if (error) throw error;
 
-                    // 2. Obtener URL pública
+                    // 2. Obtener URL pública para guardarla en base de datos
                     const { data: urlData } = this.supabase.storage.from('clips').getPublicUrl(fileName);
                     const publicUrl = urlData.publicUrl;
 
-                    // 3. Reproducir en el iPad
-                    const player = document.getElementById('af-player-engine');
-                    player.src = publicUrl;
-                    player.poster = "";
-                    player.load();
-                    player.play();
-
                     if (statusLabel) statusLabel.innerText = "✅ Vídeo cargado y listo para analizar.";
 
-                    // 4. Crear un evento táctico para que se quede guardado en el historial
+                    // 3. Crear un evento táctico para que se quede guardado en el historial
                     const timeString = (this.currentHalf === 1 ? '1T ' : '2T ') + document.getElementById('chrono-display').innerText;
                     const newEvent = {
                         id: Date.now(),
@@ -1445,7 +1448,6 @@
                     if (statusLabel) statusLabel.innerText = "❌ Error al subir: Comprueba tu conexión.";
                 }
 
-                // Resetear el input para permitir subir el mismo archivo dos veces si se quiere
                 event.target.value = '';
             },
             
@@ -1681,7 +1683,7 @@
                     e.preventDefault();
                     const p = getCoords(e);
                     ctx.lineTo(p.x, p.y);
-                    ctx.strokeStyle = '#00d68f';
+                    ctx.strokeStyle = '#cc0000'; // COLOR CAMBIADO A ROJO OSCURO
                     ctx.lineWidth = 4;
                     ctx.lineCap = 'round';
                     ctx.stroke();
@@ -1720,27 +1722,32 @@
                     return;
                 }
 
-                const offCanvas = document.createElement('canvas');
-                offCanvas.width = video.videoWidth;
-                offCanvas.height = video.videoHeight;
-                const ctx = offCanvas.getContext('2d');
+                try {
+                    const offCanvas = document.createElement('canvas');
+                    offCanvas.width = video.videoWidth;
+                    offCanvas.height = video.videoHeight;
+                    const ctx = offCanvas.getContext('2d');
 
-                ctx.drawImage(video, 0, 0, offCanvas.width, offCanvas.height);
-                ctx.drawImage(canvasLayer, 0, 0, offCanvas.width, offCanvas.height);
+                    ctx.drawImage(video, 0, 0, offCanvas.width, offCanvas.height);
+                    ctx.drawImage(canvasLayer, 0, 0, offCanvas.width, offCanvas.height);
 
-                const dataUrl = offCanvas.toDataURL('image/jpeg', 0.85);
+                    const dataUrl = offCanvas.toDataURL('image/jpeg', 0.85);
 
-                const imgWrapper = document.createElement('a');
-                imgWrapper.href = dataUrl;
-                imgWrapper.download = `tactica_${Date.now()}.jpg`;
-                imgWrapper.style.cssText = "flex-shrink:0; border: 1px solid var(--af-border); border-radius: var(--af-radius); overflow:hidden; width: 120px; aspect-ratio: 16/9; display:block;";
-                
-                const img = document.createElement('img');
-                img.src = dataUrl;
-                img.style.cssText = "width:100%; height:100%; object-fit:cover; display:block;";
-                
-                imgWrapper.appendChild(img);
-                gallery.prepend(imgWrapper);
+                    const imgWrapper = document.createElement('a');
+                    imgWrapper.href = dataUrl;
+                    imgWrapper.download = `tactica_${Date.now()}.jpg`;
+                    imgWrapper.style.cssText = "flex-shrink:0; border: 1px solid var(--af-border); border-radius: var(--af-radius); overflow:hidden; width: 120px; aspect-ratio: 16/9; display:block;";
+                    
+                    const img = document.createElement('img');
+                    img.src = dataUrl;
+                    img.style.cssText = "width:100%; height:100%; object-fit:cover; display:block;";
+                    
+                    imgWrapper.appendChild(img);
+                    gallery.prepend(imgWrapper);
+                } catch (error) {
+                    console.error("Error al capturar frame:", error);
+                    alert("⚠️ Bloqueo de seguridad de Apple (CORS). El vídeo subido externamente no permite capturas nativas. Usa los botones de tu móvil para hacer una captura de pantalla normal.");
+                }
             },
 
             toggleSimMode: function() {
