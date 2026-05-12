@@ -238,7 +238,8 @@
 
         .af-card-label {
             color: var(--af-text-low);
-            display: block;
+            display: flex;
+            align-items: center;
             font-family: var(--af-font-data);
             font-size: 10px;
             font-weight: 700;
@@ -682,7 +683,10 @@
         <section id="view-live" class="view-section active">
             <div class="af-card">
                 <div class="af-panel-head">
-                    <span class="af-card-label">Sincronización Supabase en vivo</span>
+                    <span class="af-card-label">
+                        Sincronización Supabase en vivo
+                        <span id="ia-status-badge" style="margin-left:10px; padding:2px 6px; border-radius:4px; background:rgba(255,255,255,0.05); color:var(--af-text-mute); text-transform:none; font-weight:600;">🤖 IA Inactiva</span>
+                    </span>
                     <div class="af-toolbar">
                         <select id="match-category-sel" class="af-chip-btn" onchange="App.changeCategory(this.value)" style="outline:none; background:rgba(255,255,255,0.02); color:var(--af-text-mid);">
                             <option value="30" style="color:#000">Alevín (30')</option>
@@ -1454,6 +1458,20 @@
                     this.renderEngineData(row);
                     this.refreshReportPreview();
 
+                    // MÁQUINA DE ESTADO DE LA IA (Feedback Visual Frontal)
+                    const badge = document.getElementById('ia-status-badge');
+                    if (badge && !this.isSimulationActive) {
+                        if (this.matchState.fullIAData && this.matchState.fullIAData.positions && this.matchState.fullIAData.positions.length > 0) {
+                            badge.innerText = "🟢 IA Tracking On";
+                            badge.style.color = "var(--af-accent)";
+                            badge.style.background = "var(--af-accent-soft)";
+                        } else {
+                            badge.innerText = "🤖 IA Inactiva";
+                            badge.style.color = "var(--af-text-mute)";
+                            badge.style.background = "rgba(255,255,255,0.05)";
+                        }
+                    }
+
                     // RECUPERAR LINKS DE VÍDEO (La Base Arquitectónica)
                     const { data: dbEvents } = await this.supabase
                         .from('tactical_events')
@@ -1616,8 +1634,15 @@
                 const btn = document.getElementById('sim-btn');
                 btn.innerText = this.isSimulationActive ? "Simulador: ON" : "Simulador: OFF";
                 btn.classList.toggle('accent', this.isSimulationActive);
+                
+                const badge = document.getElementById('ia-status-badge');
 
                 if (this.isSimulationActive) {
+                    if(badge) {
+                        badge.innerText = "⚠️ Simulador Local";
+                        badge.style.color = "var(--af-warning)";
+                        badge.style.background = "rgba(255, 204, 102, 0.12)";
+                    }
                     this.simulationInterval = setInterval(function() {
                         const now = Date.now() / 1000;
                         const mockPos = [];
@@ -1691,6 +1716,11 @@
                         App.refreshReportPreview();
                     }, 180);
                 } else {
+                    if(badge) {
+                        badge.innerText = "🤖 IA Inactiva";
+                        badge.style.color = "var(--af-text-mute)";
+                        badge.style.background = "rgba(255,255,255,0.05)";
+                    }
                     clearInterval(this.simulationInterval);
                     this.simulationInterval = null;
                     this.syncWithSupabase();
@@ -2133,6 +2163,13 @@
                     btnTg.innerText = "Auto-Envío: OFF";
                     btnTg.style.borderColor = "var(--af-border)";
                     btnTg.style.color = "var(--af-text-high)";
+                }
+                
+                const iaBadge = document.getElementById('ia-status-badge');
+                if (iaBadge) {
+                    iaBadge.innerText = "🤖 IA Inactiva";
+                    iaBadge.style.color = "var(--af-text-mute)";
+                    iaBadge.style.background = "rgba(255,255,255,0.05)";
                 }
 
                 if (this.chronoInterval) {
