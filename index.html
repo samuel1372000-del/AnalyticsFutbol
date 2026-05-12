@@ -14,6 +14,9 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
+        /* ==========================================================================
+           1. CORE DESIGN TOKENS & VARIABLES
+           ========================================================================== */
         :root {
             --af-bg-deep: #080a0c;
             --af-bg-soft: #0c1013;
@@ -36,10 +39,14 @@
             --af-text-mute: #4b5862;
             --af-grass: #0a1b10;
             --af-lines: rgba(255, 255, 255, 0.42);
-            --af-radius: 8px;
-            --af-shadow: 0 18px 48px rgba(0, 0, 0, 0.35);
+            --af-radius: 12px;
+            --af-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
+            --af-inner-glow: inset 0 1px 1px rgba(255, 255, 255, 0.05);
         }
 
+        /* ==========================================================================
+           2. GLOBAL RESETS & BASE TYPOGRAPHY
+           ========================================================================== */
         * {
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
@@ -75,6 +82,9 @@
             touch-action: manipulation;
         }
 
+        /* ==========================================================================
+           3. STRUCTURAL COMPONENTS (HEADER & NAV)
+           ========================================================================== */
         header {
             padding: calc(16px + env(safe-area-inset-top)) 16px 14px;
             background: rgba(12, 16, 19, 0.96);
@@ -114,10 +124,10 @@
             align-items: center;
             gap: 8px;
             background: var(--af-card);
-            border: 1px solid var(--af-border);
+            border: 1px solid rgba(255, 255, 255, 0.06);
             border-radius: var(--af-radius);
             padding: 6px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), var(--af-inner-glow);
         }
 
         #chrono-display {
@@ -182,6 +192,9 @@
             color: var(--af-text-high);
         }
 
+        /* ==========================================================================
+           4. MAIN CONTENT & PREMIUM UI CARDS
+           ========================================================================== */
         main {
             flex: 1;
             overflow-y: auto;
@@ -206,12 +219,13 @@
         }
 
         .af-card {
-            background: linear-gradient(180deg, rgba(255,255,255,0.025), transparent), var(--af-card);
-            border: 1px solid var(--af-border-soft);
+            background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.005)), var(--af-card);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: var(--af-radius);
-            box-shadow: var(--af-shadow);
+            box-shadow: var(--af-shadow), var(--af-inner-glow);
+            backdrop-filter: blur(12px);
             margin-bottom: 16px;
-            padding: 18px;
+            padding: 20px;
         }
 
         .af-panel-head {
@@ -257,6 +271,9 @@
             background: var(--af-accent-soft);
         }
 
+        /* ==========================================================================
+           5. METRICS, SCOREBOARD & PITCH
+           ========================================================================== */
         .af-scoreboard {
             display: grid;
             grid-template-columns: 1fr auto 1fr;
@@ -294,6 +311,7 @@
             display: flex;
             margin-bottom: 12px;
             overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
         }
 
         .af-poss-fill {
@@ -356,8 +374,9 @@
 
         .af-metric {
             background: var(--af-bg-soft);
-            border: 1px solid var(--af-border-soft);
+            border: 1px solid rgba(255, 255, 255, 0.06);
             border-radius: var(--af-radius);
+            box-shadow: var(--af-inner-glow);
             padding: 18px;
             text-align: center;
         }
@@ -427,6 +446,9 @@
             pointer-events: all;
         }
 
+        /* ==========================================================================
+           6. BUTTONS & INTERACTION
+           ========================================================================== */
         .af-btn-primary,
         .af-btn-secondary,
         .af-btn-danger {
@@ -504,9 +526,10 @@
 
         .af-btn-event {
             background: var(--af-bg-soft);
-            border: 1px solid var(--af-border-soft);
+            border: 1px solid rgba(255, 255, 255, 0.04);
             border-left: 4px solid var(--af-text-mute);
             border-radius: var(--af-radius);
+            box-shadow: var(--af-inner-glow);
             color: #ffffff;
             cursor: pointer;
             font-size: 11px;
@@ -520,7 +543,7 @@
         .af-log-item {
             align-items: center;
             background: rgba(255, 255, 255, 0.015);
-            border: 1px solid var(--af-border-soft);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius: var(--af-radius);
             cursor: pointer;
             display: flex;
@@ -538,6 +561,9 @@
             text-align: center;
         }
 
+        /* ==========================================================================
+           7. REPORTS & EXPORT
+           ========================================================================== */
         .report-panel {
             text-align: left;
         }
@@ -617,6 +643,10 @@
     </style>
 </head>
 <body onload="App.initialize()">
+
+    <!-- =======================================================================
+         [ APP SHELL ] DOM Base Structure
+         ======================================================================= -->
     <header>
         <div class="header-brand">
             <h1>AnalyticsFutbol</h1>
@@ -806,6 +836,9 @@
         </section>
     </main>
 
+    <!-- =======================================================================
+         [ SYSTEM LOGIC ] JavaScript Architecture & Core Functions
+         ======================================================================= -->
     <script>
         const App = {
             supabase: null,
