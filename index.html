@@ -762,6 +762,24 @@
                     </svg>
                     <canvas id="tactical-canvas-overlay" style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none;"></canvas>
                 </div>
+
+                <div class="af-panel-head" style="margin-top: 24px;">
+                    <span class="af-card-label">Sectorización Automática (Ataque Local)</span>
+                </div>
+                <div class="af-metric-grid" style="grid-template-columns: repeat(3, minmax(0, 1fr));">
+                    <div class="af-metric">
+                        <div id="ui-zone-left" class="af-metric-value" style="font-size:20px;">0%</div>
+                        <div class="af-metric-label">Carril Izq.</div>
+                    </div>
+                    <div class="af-metric">
+                        <div id="ui-zone-center" class="af-metric-value" style="color:var(--af-accent); font-size:20px;">0%</div>
+                        <div class="af-metric-label">Carril Cen.</div>
+                    </div>
+                    <div class="af-metric">
+                        <div id="ui-zone-right" class="af-metric-value" style="font-size:20px;">0%</div>
+                        <div class="af-metric-label">Carril Der.</div>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -829,6 +847,14 @@
                     <button id="btn-active-local" class="af-btn-team active-a" onclick="App.setTeamContext('A')">Equipo local</button>
                     <button id="btn-active-visit" class="af-btn-team" onclick="App.setTeamContext('B')">Equipo visitante</button>
                 </div>
+                
+                <div style="display:flex; gap:8px; margin-bottom: 14px; overflow-x:auto; padding-bottom:4px;">
+                    <button class="af-chip-btn mod-btn" onclick="App.setModifier('(A puerta)', this)">+ A puerta</button>
+                    <button class="af-chip-btn mod-btn" onclick="App.setModifier('(Fuera)', this)">+ Fuera</button>
+                    <button class="af-chip-btn mod-btn" onclick="App.setModifier('(En área)', this)">+ En área</button>
+                    <button class="af-chip-btn mod-btn" onclick="App.setModifier('(Alta int.)', this)">+ Alta int.</button>
+                </div>
+
                 <div class="af-events-grid">
                     <button class="af-btn-event" style="border-left-color:var(--af-balon)" onclick="App.triggerEvent('GOL')">Gol</button>
                     <button class="af-btn-event" style="border-left-color:var(--af-accent)" onclick="App.triggerEvent('RECUPERACIÓN')">Recuperación</button>
@@ -850,6 +876,9 @@
             <div class="af-card">
                 <div class="af-panel-head">
                     <span class="af-card-label">Línea de tiempo sincronizada</span>
+                    <div class="af-toolbar">
+                        <button class="af-chip-btn" style="color:#ff98a8; border-color:rgba(244, 63, 94, 0.45); background:rgba(244, 63, 94, 0.12)" onclick="App.undoLastEvent()">Deshacer</button>
+                    </div>
                 </div>
                 <div id="ui-event-log-container">
                     <div class="af-empty">Todavía no hay eventos registrados.</div>
@@ -893,7 +922,9 @@
         const App = {
             supabase: null,
             activeTeam: 'A',
+            activeModifier: '',
             eventCache: [],
+            syncQueue: [],
             rosterData: { 'A': {}, 'B': {} },
             secondsCounter: 0,
             chronoInterval: null,
@@ -907,6 +938,7 @@
             tacticalMode: 'none',
             historicalPositions: [],
             simulatedPasses: [],
+            spatialStats: { left: 0, center: 0, right: 0 },
 
             matchState: {
                 id: null,
@@ -938,6 +970,7 @@
 
                 setInterval(function() {
                     App.syncWithSupabase();
+                    App.processSyncQueue();
                 }, 5000);
             },
 
@@ -1007,17 +1040,45 @@
                 }
             },
 
+            setModifier: function(modStr, el) {
+                if (this.activeModifier === modStr) {
+                    this.activeModifier = '';
+                    el.style.borderColor = 'var(--af-border)';
+                    el.style.color = 'var(--af-text-mid)';
+                } else {
+                    document.querySelectorAll('.mod-btn').forEach(function(b) {
+                        b.style.borderColor = 'var(--af-border)';
+                        b.style.color = 'var(--af-text-mid)';
+                    });
+                    this.activeModifier = modStr;
+                    el.style.borderColor = 'var(--af-balon)';
+                    el.style.color = '#ffffff';
+                }
+            },
+
             triggerEvent: async function(type) {
                 const playerEl = document.getElementById('af-player-engine');
                 const timeString = document.getElementById('chrono-display').innerText;
                 const currentVideoSec = playerEl.currentTime || 0;
 
+                let finalType = type;
+                if (this.activeModifier !== '') {
+                    finalType = type + ' ' + this.activeModifier;
+                    this.activeModifier = '';
+                    document.querySelectorAll('.mod-btn').forEach(function(b) {
+                        b.style.borderColor = 'var(--af-border)';
+                        b.style.color = 'var(--af-text-mid)';
+                    });
+                }
+
                 const newEvent = {
                     id: Date.now(),
-                    type: type,
+                    type: finalType,
+                    rawType: type,
                     team: this.activeTeam,
                     time: timeString,
-                    vSec: currentVideoSec
+                    vSec: currentVideoSec,
+                    syncStatus: 'ok'
                 };
 
                 this.eventCache.unshift(newEvent);
@@ -1038,10 +1099,16 @@
                     this.refreshReportPreview();
 
                     if (this.supabase && this.matchState.id) {
-                        await this.supabase.from('matches').update({
+                        const scorePayload = {
                             team_a_goals: this.matchState.localScore,
                             team_b_goals: this.matchState.visitScore
-                        }).eq('id', this.matchState.id);
+                        };
+                        try {
+                            if (!navigator.onLine) throw new Error("Offline");
+                            await this.supabase.from('matches').update(scorePayload).eq('id', this.matchState.id);
+                        } catch (err) {
+                            this.syncQueue.push({ action: 'update', table: 'matches', payload: scorePayload, eqCol: 'id', eqVal: this.matchState.id });
+                        }
                     }
 
                     setTimeout(function() {
@@ -1051,13 +1118,90 @@
 
                 if (this.supabase) {
                     const matchId = this.matchState.id || 'LIVE_REC';
-                    await this.supabase.from('tactical_events').insert([{
+                    const eventPayload = {
                         match_id: matchId,
                         team: this.activeTeam,
-                        event_type: type,
+                        event_type: finalType,
                         match_time: timeString,
                         video_second: currentVideoSec
-                    }]);
+                    };
+                    try {
+                        if (!navigator.onLine) throw new Error("Offline");
+                        await this.supabase.from('tactical_events').insert([eventPayload]);
+                    } catch (err) {
+                        newEvent.syncStatus = 'pending';
+                        this.syncQueue.push({ action: 'insert', table: 'tactical_events', payload: eventPayload, evRef: newEvent });
+                    }
+                    this.refreshEventLogUI();
+                }
+            },
+
+            undoLastEvent: async function() {
+                if (this.eventCache.length === 0) return;
+                
+                const lastEv = this.eventCache.shift();
+                this.refreshEventLogUI();
+                this.refreshReportPreview();
+
+                if (lastEv.type === 'GOL' || lastEv.rawType === 'GOL') {
+                    if (lastEv.team === 'A' && this.matchState.localScore > 0) {
+                        this.matchState.localScore--;
+                        document.getElementById('ui-score-local').innerText = this.matchState.localScore;
+                    } else if (lastEv.team === 'B' && this.matchState.visitScore > 0) {
+                        this.matchState.visitScore--;
+                        document.getElementById('ui-score-visit').innerText = this.matchState.visitScore;
+                    }
+                    this.refreshReportPreview();
+
+                    if (this.supabase && this.matchState.id) {
+                        const scorePayload = {
+                            team_a_goals: this.matchState.localScore,
+                            team_b_goals: this.matchState.visitScore
+                        };
+                        try {
+                            if (!navigator.onLine) throw new Error("Offline");
+                            await this.supabase.from('matches').update(scorePayload).eq('id', this.matchState.id);
+                        } catch (err) {
+                            this.syncQueue.push({ action: 'update', table: 'matches', payload: scorePayload, eqCol: 'id', eqVal: this.matchState.id });
+                        }
+                    }
+                }
+
+                if (this.supabase) {
+                    const matchId = this.matchState.id || 'LIVE_REC';
+                    const matchPayload = {
+                        match_id: matchId,
+                        team: lastEv.team,
+                        event_type: lastEv.type,
+                        match_time: lastEv.time,
+                        video_second: lastEv.vSec
+                    };
+                    try {
+                        if (!navigator.onLine) throw new Error("Offline");
+                        await this.supabase.from('tactical_events').delete().match(matchPayload);
+                    } catch (err) {
+                        this.syncQueue.push({ action: 'delete', table: 'tactical_events', payload: matchPayload });
+                    }
+                }
+            },
+
+            processSyncQueue: async function() {
+                if (!navigator.onLine || this.syncQueue.length === 0 || !this.supabase) return;
+                
+                const task = this.syncQueue[0];
+                try {
+                    if (task.action === 'insert') {
+                        await this.supabase.from(task.table).insert([task.payload]);
+                        if (task.evRef) task.evRef.syncStatus = 'ok';
+                    } else if (task.action === 'delete') {
+                        await this.supabase.from(task.table).delete().match(task.payload);
+                    } else if (task.action === 'update') {
+                        await this.supabase.from(task.table).update(task.payload).eq(task.eqCol, task.eqVal);
+                    }
+                    this.syncQueue.shift();
+                    this.refreshEventLogUI();
+                } catch (e) {
+                    console.warn("[SYNC] Reintento fallido:", e.message);
                 }
             },
 
@@ -1072,7 +1216,7 @@
                 container.innerHTML = this.eventCache.map(function(ev) {
                     return `
                     <div class="af-log-item" onclick="App.seekToClip(${ev.vSec})">
-                        <div><b>${ev.type}</b> <span style="color:var(--af-text-low)">(Eq. ${ev.team})</span></div>
+                        <div><b>${ev.type}</b> <span style="color:var(--af-text-low)">(Eq. ${ev.team})</span> ${ev.syncStatus === 'pending' ? '<span style="color:var(--af-warning); font-size:10px; margin-left:6px;">⏳ Pendiente</span>' : ''}</div>
                         <div style="font-family:var(--af-font-data); font-size:10px; color:var(--af-text-low)">${ev.time}</div>
                     </div>
                     `;
@@ -1117,11 +1261,17 @@
 
             pushClipToDatabase: async function(s, e) {
                 if (this.supabase) {
-                    await this.supabase.from('clips_requests').insert([{
+                    const payload = {
                         match_id: this.matchState.id || 'LIVE_REC',
                         start_time: s,
                         end_time: e
-                    }]);
+                    };
+                    try {
+                        if (!navigator.onLine) throw new Error("Offline");
+                        await this.supabase.from('clips_requests').insert([payload]);
+                    } catch (err) {
+                        this.syncQueue.push({ action: 'insert', table: 'clips_requests', payload: payload });
+                    }
                 }
             },
 
@@ -1309,6 +1459,31 @@
                                 if (App.simulatedPasses.length > 25) App.simulatedPasses.shift();
                             }
                         }
+                        
+                        // AUTOMATIC SPATIAL SECTORIZATION ENGINE
+                        let leftC = 0, centerC = 0, rightC = 0;
+                        const totalPos = App.historicalPositions.length;
+                        if (totalPos > 0) {
+                            App.historicalPositions.forEach(p => {
+                                if (p.y < 33.3) leftC++;
+                                else if (p.y < 66.6) centerC++;
+                                else rightC++;
+                            });
+                            App.spatialStats = {
+                                left: Math.round((leftC / totalPos) * 100),
+                                center: Math.round((centerC / totalPos) * 100),
+                                right: Math.round((rightC / totalPos) * 100)
+                            };
+                            const elL = document.getElementById('ui-zone-left');
+                            const elC = document.getElementById('ui-zone-center');
+                            const elR = document.getElementById('ui-zone-right');
+                            if(elL && elC && elR) {
+                                elL.innerText = App.spatialStats.left + '%';
+                                elC.innerText = App.spatialStats.center + '%';
+                                elR.innerText = App.spatialStats.right + '%';
+                            }
+                        }
+
                         App.renderTacticalOverlay();
 
                         App.renderEngineData({
@@ -1593,6 +1768,24 @@
                             </div>
                         </div>
 
+                        <h2>Tendencia Espacial (Local)</h2>
+                        <table style="margin-bottom:34px;">
+                            <thead>
+                                <tr>
+                                    <th>Carril Izquierdo</th>
+                                    <th>Carril Central</th>
+                                    <th>Carril Derecho</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><b>${App.spatialStats ? App.spatialStats.left : 0}%</b></td>
+                                    <td><b style="color:#008f62;">${App.spatialStats ? App.spatialStats.center : 0}%</b></td>
+                                    <td><b>${App.spatialStats ? App.spatialStats.right : 0}%</b></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
                         ${physHtml}
 
                         <h2>Detalle de acciones tácticas</h2>
@@ -1689,15 +1882,23 @@
                 this.matchState.localPossession = 50;
                 this.matchState.fullIAData = { players: [], positions: [] };
                 this.eventCache = [];
+                this.syncQueue = [];
                 this.rosterData = { 'A': {}, 'B': {} };
                 this.secondsCounter = 0;
                 this.clipBuffer = { pointIn: null, pointOut: null };
                 this.isPdfExporting = false;
                 
-                // Reinicio de Buffers gráficos
+                // Reinicio de Buffers gráficos y estado
                 this.historicalPositions = [];
                 this.simulatedPasses = [];
                 this.tacticalMode = 'none';
+                this.spatialStats = { left: 0, center: 0, right: 0 };
+                
+                this.activeModifier = '';
+                document.querySelectorAll('.mod-btn').forEach(function(b) {
+                    b.style.borderColor = 'var(--af-border)';
+                    b.style.color = 'var(--af-text-mid)';
+                });
 
                 if (this.chronoInterval) {
                     clearInterval(this.chronoInterval);
@@ -1720,6 +1921,15 @@
                 document.getElementById('radar-ui-layer').innerHTML = "";
                 document.getElementById('af-clip-status').innerText = "Analizador v5.1: esperando puntos IN/OUT";
                 
+                const elL = document.getElementById('ui-zone-left');
+                const elC = document.getElementById('ui-zone-center');
+                const elR = document.getElementById('ui-zone-right');
+                if(elL && elC && elR) {
+                    elL.innerText = "0%";
+                    elC.innerText = "0%";
+                    elR.innerText = "0%";
+                }
+
                 this.updateRosterUI();
                 this.renderTacticalOverlay();
 
