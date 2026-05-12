@@ -482,9 +482,8 @@
 
         .af-actions-row {
             display: grid;
-            grid-template-columns: 2fr 1fr;
+            grid-template-columns: 1fr 1fr;
             gap: 10px;
-            margin-top: 14px;
         }
 
         .af-team-toggle {
@@ -559,6 +558,16 @@
             font-size: 12px;
             padding: 24px 16px;
             text-align: center;
+        }
+
+        .af-input {
+            background: var(--af-bg-soft);
+            color: #ffffff;
+            border: 1px solid var(--af-border);
+            border-radius: var(--af-radius);
+            padding: 12px;
+            font-size: 12px;
+            font-family: inherit;
         }
 
         /* ==========================================================================
@@ -663,6 +672,7 @@
     <nav class="nav-scroller">
         <button class="nav-tab active" onclick="App.switchView('live', this)">Marcador</button>
         <button class="nav-tab" onclick="App.switchView('tactical', this)">Táctico</button>
+        <button class="nav-tab" onclick="App.switchView('roster', this)">Plantillas</button>
         <button class="nav-tab" onclick="App.switchView('physic', this)">Físico</button>
         <button class="nav-tab" onclick="App.switchView('clips', this)">Clips</button>
         <button class="nav-tab" onclick="App.switchView('events', this)">Eventos</button>
@@ -722,7 +732,7 @@
                 <div class="af-panel-head">
                     <span class="af-card-label">Análisis de bloque IA</span>
                 </div>
-                <div class="af-metric-grid">
+                <div class="af-metric-grid" style="margin-bottom: 18px;">
                     <div class="af-metric">
                         <div id="ui-tact-compacity" class="af-metric-value">--</div>
                         <div class="af-metric-label">Compacidad</div>
@@ -731,6 +741,46 @@
                         <div id="ui-tact-height" class="af-metric-value" style="color:var(--af-accent)">--</div>
                         <div class="af-metric-label">Altura media</div>
                     </div>
+                </div>
+                
+                <div class="af-panel-head" style="margin-top: 24px;">
+                    <span class="af-card-label">Mapas avanzados (Motor 2D)</span>
+                </div>
+                <div class="af-actions-row" style="margin-bottom: 14px;">
+                    <button id="btn-tact-heat" class="af-btn-secondary" onclick="App.toggleTacticalMode('heat')">Mapa de Calor (L)</button>
+                    <button id="btn-tact-pass" class="af-btn-secondary" onclick="App.toggleTacticalMode('pass')">Red de Pases (L)</button>
+                </div>
+                <div class="af-pitch">
+                    <svg class="af-pitch-svg" viewBox="0 0 105 68" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="105" height="68" fill="none" stroke="var(--af-lines)" stroke-width="0.6"/>
+                        <line x1="52.5" y1="0" x2="52.5" y2="68" stroke="var(--af-lines)" stroke-width="0.6"/>
+                        <circle cx="52.5" cy="34" r="9.15" fill="none" stroke="var(--af-lines)" stroke-width="0.6"/>
+                        <rect x="0" y="13.84" width="16.5" height="40.32" fill="none" stroke="var(--af-lines)" stroke-width="0.6"/>
+                        <rect x="88.5" y="13.84" width="16.5" height="40.32" fill="none" stroke="var(--af-lines)" stroke-width="0.6"/>
+                        <rect x="0" y="24.84" width="5.5" height="18.32" fill="none" stroke="var(--af-lines)" stroke-width="0.6"/>
+                        <rect x="99.5" y="24.84" width="5.5" height="18.32" fill="none" stroke="var(--af-lines)" stroke-width="0.6"/>
+                    </svg>
+                    <canvas id="tactical-canvas-overlay" style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none;"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-roster" class="view-section">
+            <div class="af-card">
+                <div class="af-panel-head">
+                    <span class="af-card-label">Gestión de Plantillas (Alineación)</span>
+                </div>
+                <div style="display:flex; gap:10px; margin-bottom: 14px; flex-wrap:wrap;">
+                    <select id="roster-team-sel" class="af-input" style="flex:1; min-width:120px;">
+                        <option value="A">Equipo Local</option>
+                        <option value="B">Equipo Visitante</option>
+                    </select>
+                    <input type="number" id="roster-dorsal-in" class="af-input" placeholder="Dorsal (ej. 10)" style="width:110px;">
+                    <input type="text" id="roster-name-in" class="af-input" placeholder="Nombre del jugador" style="flex:2; min-width:180px;">
+                </div>
+                <button class="af-btn-primary" onclick="App.assignPlayerName()">Guardar / Actualizar Jugador</button>
+                <div id="roster-list" style="margin-top: 24px; font-size: 13px; color: var(--af-text-high);">
+                    <div class="af-empty">No se han registrado nombres. Los informes mostrarán los IDs crudos.</div>
                 </div>
             </div>
         </section>
@@ -743,7 +793,7 @@
                 <table class="af-table">
                     <thead>
                         <tr>
-                            <th>Dorsal</th>
+                            <th>Jugador</th>
                             <th>Posición</th>
                             <th>Distancia</th>
                             <th>V. máx</th>
@@ -763,7 +813,7 @@
                     <video id="af-player-engine" controls poster="https://via.placeholder.com/800x450/111/fff?text=ESPERANDO+SINCRO+PC"></video>
                     <canvas id="af-drawing-canvas"></canvas>
                 </div>
-                <div class="af-actions-row">
+                <div class="af-actions-row" style="margin-top:14px;">
                     <button class="af-btn-primary" onclick="App.toggleDrawingMode()">Lápiz táctico</button>
                     <button class="af-btn-secondary" onclick="App.clearCanvas()">Limpiar</button>
                 </div>
@@ -790,7 +840,7 @@
                     <button id="btn-parada" class="af-btn-event" style="border-left-color:var(--af-text-mute)" onclick="App.triggerEvent('PARADA')">Parada</button>
                 </div>
 
-                <div class="af-actions-row">
+                <div class="af-actions-row" style="margin-top:14px;">
                     <button id="af-btn-in" class="af-btn-secondary" onclick="App.markClipPoint('in')">Inicio clip</button>
                     <button id="af-btn-out" class="af-btn-secondary" onclick="App.markClipPoint('out')">Fin clip</button>
                 </div>
@@ -844,6 +894,7 @@
             supabase: null,
             activeTeam: 'A',
             eventCache: [],
+            rosterData: { 'A': {}, 'B': {} },
             secondsCounter: 0,
             chronoInterval: null,
             isDrawingActive: false,
@@ -851,6 +902,11 @@
             simulationInterval: null,
             syncCooldown: false,
             isPdfExporting: false,
+            
+            // Core Visualizer State
+            tacticalMode: 'none',
+            historicalPositions: [],
+            simulatedPasses: [],
 
             matchState: {
                 id: null,
@@ -901,6 +957,9 @@
 
                 if (viewId === 'report') {
                     this.refreshReportPreview();
+                }
+                if (viewId === 'tactical') {
+                    this.renderTacticalOverlay();
                 }
             },
 
@@ -1126,9 +1185,13 @@
                         const dClean = parseFloat(player.dist || 0).toFixed(1);
                         const vClean = parseFloat(player.maxSpd || 0).toFixed(1);
                         const teamCol = player.team === 'A' ? 'var(--af-local)' : 'var(--af-visit)';
+                        const pName = (App.rosterData && App.rosterData[player.team] && App.rosterData[player.team][player.id]) 
+                            ? App.rosterData[player.team][player.id] 
+                            : `#${player.id}`;
+                        
                         return `
                         <tr>
-                            <td style="font-weight:800; color:${teamCol}">#${player.id}</td>
+                            <td style="font-weight:800; color:${teamCol}">${pName}</td>
                             <td>${player.pos || 'MID'}</td>
                             <td>${dClean} km</td>
                             <td style="color:var(--af-accent)">${vClean} km/h</td>
@@ -1229,6 +1292,25 @@
                         App.matchState.fullIAData = { positions: mockPos, players: mockPlayers };
                         App.matchState.localPossession = 55 + Math.sin(now) * 8;
 
+                        // DATA RECOLLECTION FOR HEATMAP & PASSES
+                        mockPos.forEach(function(p) {
+                            if (p.team === 'A') {
+                                App.historicalPositions.push({ x: p.x, y: p.y });
+                                if (App.historicalPositions.length > 600) App.historicalPositions.shift();
+                            }
+                        });
+
+                        if (Math.random() > 0.88) {
+                            const teamA = mockPos.filter(p => p.team === 'A');
+                            const origin = teamA[Math.floor(Math.random() * teamA.length)];
+                            const target = teamA[Math.floor(Math.random() * teamA.length)];
+                            if (origin && target && origin.id !== target.id) {
+                                App.simulatedPasses.push({ fx: origin.x, fy: origin.y, tx: target.x, ty: target.y });
+                                if (App.simulatedPasses.length > 25) App.simulatedPasses.shift();
+                            }
+                        }
+                        App.renderTacticalOverlay();
+
                         App.renderEngineData({
                             full_data: { positions: mockPos, players: mockPlayers }
                         });
@@ -1238,6 +1320,55 @@
                     clearInterval(this.simulationInterval);
                     this.simulationInterval = null;
                     this.syncWithSupabase();
+                }
+            },
+            
+            toggleTacticalMode: function(mode) {
+                this.tacticalMode = this.tacticalMode === mode ? 'none' : mode;
+                document.getElementById('btn-tact-heat').style.borderColor = this.tacticalMode === 'heat' ? 'var(--af-local)' : 'var(--af-border)';
+                document.getElementById('btn-tact-heat').style.color = this.tacticalMode === 'heat' ? 'var(--af-local)' : 'var(--af-text-high)';
+                document.getElementById('btn-tact-pass').style.borderColor = this.tacticalMode === 'pass' ? 'var(--af-local)' : 'var(--af-border)';
+                document.getElementById('btn-tact-pass').style.color = this.tacticalMode === 'pass' ? 'var(--af-local)' : 'var(--af-text-high)';
+                this.renderTacticalOverlay();
+            },
+
+            renderTacticalOverlay: function() {
+                const can = document.getElementById('tactical-canvas-overlay');
+                if (!can) return;
+                const ctx = can.getContext('2d');
+                can.width = can.offsetWidth;
+                can.height = can.offsetHeight;
+                ctx.clearRect(0, 0, can.width, can.height);
+
+                if (this.tacticalMode === 'none') return;
+
+                const sX = can.width / 100;
+                const sY = can.height / 100;
+
+                if (this.tacticalMode === 'heat') {
+                    this.historicalPositions.forEach(function(p) {
+                        const grad = ctx.createRadialGradient(p.x * sX, p.y * sY, 0, p.x * sX, p.y * sY, 28);
+                        grad.addColorStop(0, 'rgba(244, 63, 94, 0.06)');
+                        grad.addColorStop(1, 'rgba(244, 63, 94, 0)');
+                        ctx.fillStyle = grad;
+                        ctx.beginPath();
+                        ctx.arc(p.x * sX, p.y * sY, 28, 0, Math.PI * 2);
+                        ctx.fill();
+                    });
+                } else if (this.tacticalMode === 'pass') {
+                    ctx.strokeStyle = 'rgba(244, 63, 94, 0.5)';
+                    ctx.lineWidth = 1.5;
+                    this.simulatedPasses.forEach(function(pass) {
+                        ctx.beginPath();
+                        ctx.moveTo(pass.fx * sX, pass.fy * sY);
+                        ctx.lineTo(pass.tx * sX, pass.ty * sY);
+                        ctx.stroke();
+                        
+                        ctx.fillStyle = 'var(--af-local)';
+                        ctx.beginPath();
+                        ctx.arc(pass.tx * sX, pass.ty * sY, 2.5, 0, Math.PI * 2);
+                        ctx.fill();
+                    });
                 }
             },
 
@@ -1274,7 +1405,7 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Dorsal</th>
+                                    <th>Jugador</th>
                                     <th>Posición</th>
                                     <th>Distancia (km)</th>
                                     <th>Vel. máx (km/h)</th>
@@ -1282,9 +1413,12 @@
                             </thead>
                             <tbody>
                                 ${state.fullIAData.players.map(function(p) {
+                                    const pName = (App.rosterData && App.rosterData[p.team] && App.rosterData[p.team][p.id]) 
+                                        ? App.rosterData[p.team][p.id] 
+                                        : `#${p.id}`;
                                     return `
                                     <tr>
-                                        <td><b>#${p.id}</b></td>
+                                        <td><b>${pName}</b></td>
                                         <td>${p.pos || 'MID'}</td>
                                         <td>${parseFloat(p.dist || 0).toFixed(1)}</td>
                                         <td><b style="color:#008f62;">${parseFloat(p.maxSpd || 0).toFixed(1)}</b></td>
@@ -1515,6 +1649,38 @@
                 }, 1500);
             },
 
+            assignPlayerName: function() {
+                const team = document.getElementById('roster-team-sel').value;
+                const dorsal = document.getElementById('roster-dorsal-in').value;
+                const name = document.getElementById('roster-name-in').value;
+                if(dorsal && name) {
+                    this.rosterData[team][dorsal] = name;
+                    document.getElementById('roster-name-in').value = '';
+                    document.getElementById('roster-dorsal-in').value = '';
+                    this.updateRosterUI();
+                    if(this.matchState.fullIAData && this.matchState.fullIAData.players) {
+                        this.renderEngineData({ full_data: this.matchState.fullIAData });
+                    }
+                }
+            },
+
+            updateRosterUI: function() {
+                const container = document.getElementById('roster-list');
+                const keysA = Object.keys(this.rosterData['A']);
+                const keysB = Object.keys(this.rosterData['B']);
+                
+                if (keysA.length === 0 && keysB.length === 0) {
+                    container.innerHTML = '<div class="af-empty">No se han registrado nombres. Los informes mostrarán los IDs crudos.</div>';
+                    return;
+                }
+
+                let html = '<div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">';
+                html += '<div><strong style="color:var(--af-local); display:block; margin-bottom:8px;">LOCAL</strong><ul style="list-style:none; padding:0;">' + keysA.map(d => `<li style="padding:6px 0; border-bottom:1px solid var(--af-border-soft);"><span style="color:var(--af-text-low); display:inline-block; width:30px;">#${d}</span> ${this.rosterData['A'][d]}</li>`).join('') + '</ul></div>';
+                html += '<div><strong style="color:var(--af-visit); display:block; margin-bottom:8px;">VISITANTE</strong><ul style="list-style:none; padding:0;">' + keysB.map(d => `<li style="padding:6px 0; border-bottom:1px solid var(--af-border-soft);"><span style="color:var(--af-text-low); display:inline-block; width:30px;">#${d}</span> ${this.rosterData['B'][d]}</li>`).join('') + '</ul></div>';
+                html += '</div>';
+                container.innerHTML = html;
+            },
+
             resetMatchSystem: async function() {
                 console.log("[MOTOR] Reseteando estado del partido e inyectando nueva DB para nuevo encuentro...");
 
@@ -1523,9 +1689,15 @@
                 this.matchState.localPossession = 50;
                 this.matchState.fullIAData = { players: [], positions: [] };
                 this.eventCache = [];
+                this.rosterData = { 'A': {}, 'B': {} };
                 this.secondsCounter = 0;
                 this.clipBuffer = { pointIn: null, pointOut: null };
                 this.isPdfExporting = false;
+                
+                // Reinicio de Buffers gráficos
+                this.historicalPositions = [];
+                this.simulatedPasses = [];
+                this.tacticalMode = 'none';
 
                 if (this.chronoInterval) {
                     clearInterval(this.chronoInterval);
@@ -1547,6 +1719,9 @@
                 document.getElementById('ui-physic-body').innerHTML = "";
                 document.getElementById('radar-ui-layer').innerHTML = "";
                 document.getElementById('af-clip-status').innerText = "Analizador v5.1: esperando puntos IN/OUT";
+                
+                this.updateRosterUI();
+                this.renderTacticalOverlay();
 
                 if (this.supabase) {
                     const { data, error } = await this.supabase
