@@ -838,7 +838,6 @@
                     <span class="af-card-label">Análisis de jugadas</span>
                 </div>
                 <div class="af-video-box">
-                    <!-- Añadido crossorigin="anonymous" para evitar que Apple bloquee los videos que vienen del PC -->
                     <video id="af-player-engine" controls crossorigin="anonymous" ontimeupdate="App.syncRadarWithVideo(this.currentTime)" poster="https://via.placeholder.com/800x450/111/fff?text=ESPERANDO+SINCRO+PC" playsinline></video>
                     <canvas id="af-drawing-canvas"></canvas>
                 </div>
@@ -1026,6 +1025,19 @@
                 document.getElementById('view-' + viewId).classList.add('active');
                 if (btnElement) btnElement.classList.add('active');
 
+                // FUERZA RECALCULAR EL LIENZO AL ENTRAR EN LA PESTAÑA CLIPS (SOLUCIÓN LÁPIZ 0X0)
+                if (viewId === 'clips' && this.isDrawingActive) {
+                    const can = document.getElementById('af-drawing-canvas');
+                    if (can.offsetWidth > 0) {
+                        can.width = can.offsetWidth;
+                        can.height = can.offsetHeight;
+                        const ctx = can.getContext('2d');
+                        ctx.strokeStyle = '#990000'; // Rojo oscuro
+                        ctx.lineWidth = 4;
+                        ctx.lineCap = 'round';
+                    }
+                }
+
                 if (viewId === 'report') {
                     this.refreshReportPreview();
                 }
@@ -1117,7 +1129,7 @@
                     time: timeString,
                     vSec: currentVideoSec,
                     syncStatus: 'ok',
-                    clipUrl: null // Preparado para inyección desde Nube Externa
+                    clipUrl: null
                 };
 
                 this.eventCache.unshift(newEvent);
@@ -1327,6 +1339,8 @@
                     const ev = this.eventCache.find(e => e.id === evId);
                     if (ev && ev.clipUrl) {
                         if (player.src !== ev.clipUrl) {
+                            // RESTAURAR CORS PARA VIDEOS DE LA NUBE
+                            player.setAttribute('crossorigin', 'anonymous');
                             player.src = ev.clipUrl;
                             player.poster = "";
                         }
@@ -1393,10 +1407,11 @@
                 const fileName = `manual_${Date.now()}.${fileExt}`;
 
                 try {
-                    // BYPASS: Reproducimos el archivo directamente desde la memoria del iPhone
-                    // Esto es instantáneo y evita que Apple bloquee la captura de pantalla por CORS
+                    // BYPASS DE SEGURIDAD APPLE (CORS) PARA VÍDEOS LOCALES
+                    // Al quitar crossorigin, Safari lo trata como un archivo del propio móvil y permite la captura
                     const localUrl = URL.createObjectURL(file);
                     const player = document.getElementById('af-player-engine');
+                    player.removeAttribute('crossorigin');
                     player.src = localUrl;
                     player.poster = "";
                     player.load();
@@ -1656,8 +1671,13 @@
                 let drawing = false;
 
                 const resizeCanvas = function() {
-                    can.width = can.offsetWidth;
-                    can.height = can.offsetHeight;
+                    if (can.offsetWidth > 0) {
+                        can.width = can.offsetWidth;
+                        can.height = can.offsetHeight;
+                        ctx.strokeStyle = '#990000'; // ROJO OSCURO
+                        ctx.lineWidth = 4;
+                        ctx.lineCap = 'round';
+                    }
                 };
 
                 resizeCanvas();
@@ -1683,9 +1703,6 @@
                     e.preventDefault();
                     const p = getCoords(e);
                     ctx.lineTo(p.x, p.y);
-                    ctx.strokeStyle = '#cc0000'; // COLOR CAMBIADO A ROJO OSCURO
-                    ctx.lineWidth = 4;
-                    ctx.lineCap = 'round';
                     ctx.stroke();
                 };
 
@@ -1704,7 +1721,20 @@
 
             toggleDrawingMode: function() {
                 this.isDrawingActive = !this.isDrawingActive;
-                document.getElementById('af-drawing-canvas').classList.toggle('active', this.isDrawingActive);
+                const can = document.getElementById('af-drawing-canvas');
+                can.classList.toggle('active', this.isDrawingActive);
+                
+                if (this.isDrawingActive) {
+                    // FUERZA LA RECALIBRACIÓN (SOLUCIONA EL LÁPIZ 0X0)
+                    if (can.width !== can.offsetWidth) {
+                        can.width = can.offsetWidth;
+                        can.height = can.offsetHeight;
+                    }
+                    const ctx = can.getContext('2d');
+                    ctx.strokeStyle = '#990000'; // ROJO OSCURO
+                    ctx.lineWidth = 5; // Un poco más grueso para visibilidad
+                    ctx.lineCap = 'round';
+                }
             },
 
             clearCanvas: function() {
