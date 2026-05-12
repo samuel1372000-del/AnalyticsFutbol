@@ -8,7 +8,7 @@
     <meta name="apple-mobile-web-app-title" content="AF Elite 5.1">
 
     <link rel="apple-touch-icon" href="icon.png">
-    <title>AnalyticsFutbol v0.5.2</title>
+    <title>AnalyticsFutbol Elite v5.1</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -835,6 +835,14 @@
                     <button class="af-btn-primary" onclick="App.toggleDrawingMode()">Lápiz táctico</button>
                     <button class="af-btn-secondary" onclick="App.clearCanvas()">Limpiar</button>
                 </div>
+                
+                <div class="af-panel-head" style="margin-top: 24px;">
+                    <span class="af-card-label">Gestión de Espacio (Nube -> Telegram)</span>
+                </div>
+                <div class="af-actions-row">
+                    <button id="btn-tg-auto" class="af-btn-secondary" onclick="App.toggleTelegramSync()">Auto-Envío: OFF</button>
+                    <button class="af-btn-secondary" style="color:var(--af-balon); border-color:rgba(245, 166, 35, 0.4);" onclick="App.forceTelegramFlush()">Liberar Nube Ahora</button>
+                </div>
             </div>
         </section>
 
@@ -939,6 +947,7 @@
             historicalPositions: [],
             simulatedPasses: [],
             spatialStats: { left: 0, center: 0, right: 0 },
+            telegramAutoSync: false,
 
             matchState: {
                 id: null,
@@ -1270,6 +1279,37 @@
                         if (!navigator.onLine) throw new Error("Offline");
                         await this.supabase.from('clips_requests').insert([payload]);
                     } catch (err) {
+                        this.syncQueue.push({ action: 'insert', table: 'clips_requests', payload: payload });
+                    }
+                }
+            },
+            
+            toggleTelegramSync: function() {
+                this.telegramAutoSync = !this.telegramAutoSync;
+                const btn = document.getElementById('btn-tg-auto');
+                btn.innerText = this.telegramAutoSync ? "Auto-Envío: ON" : "Auto-Envío: OFF";
+                btn.style.borderColor = this.telegramAutoSync ? 'var(--af-accent)' : 'var(--af-border)';
+                btn.style.color = this.telegramAutoSync ? 'var(--af-accent)' : 'var(--af-text-high)';
+                
+                if (this.supabase && this.matchState.id) {
+                    const payload = { telegram_sync: this.telegramAutoSync };
+                    try {
+                        if (!navigator.onLine) throw new Error("Offline");
+                        this.supabase.from('matches').update(payload).eq('id', this.matchState.id).then();
+                    } catch(e) {
+                        this.syncQueue.push({ action: 'update', table: 'matches', payload: payload, eqCol: 'id', eqVal: this.matchState.id });
+                    }
+                }
+            },
+            
+            forceTelegramFlush: function() {
+                alert("Señal enviada al Motor PC. Empaquetando clips hacia Telegram y borrando de Supabase Storage para liberar cuota.");
+                if (this.supabase && this.matchState.id) {
+                    const payload = { match_id: this.matchState.id, start_time: -999, end_time: -999 };
+                    try {
+                        if (!navigator.onLine) throw new Error("Offline");
+                        this.supabase.from('clips_requests').insert([payload]).then();
+                    } catch(e) {
                         this.syncQueue.push({ action: 'insert', table: 'clips_requests', payload: payload });
                     }
                 }
@@ -1899,6 +1939,14 @@
                     b.style.borderColor = 'var(--af-border)';
                     b.style.color = 'var(--af-text-mid)';
                 });
+                
+                this.telegramAutoSync = false;
+                const btnTg = document.getElementById('btn-tg-auto');
+                if (btnTg) {
+                    btnTg.innerText = "Auto-Envío: OFF";
+                    btnTg.style.borderColor = "var(--af-border)";
+                    btnTg.style.color = "var(--af-text-high)";
+                }
 
                 if (this.chronoInterval) {
                     clearInterval(this.chronoInterval);
