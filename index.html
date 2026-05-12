@@ -1087,7 +1087,8 @@
                     team: this.activeTeam,
                     time: timeString,
                     vSec: currentVideoSec,
-                    syncStatus: 'ok'
+                    syncStatus: 'ok',
+                    clipUrl: null // Preparado para inyección desde Nube Externa
                 };
 
                 this.eventCache.unshift(newEvent);
@@ -1224,17 +1225,28 @@
 
                 container.innerHTML = this.eventCache.map(function(ev) {
                     return `
-                    <div class="af-log-item" onclick="App.seekToClip(${ev.vSec})">
-                        <div><b>${ev.type}</b> <span style="color:var(--af-text-low)">(Eq. ${ev.team})</span> ${ev.syncStatus === 'pending' ? '<span style="color:var(--af-warning); font-size:10px; margin-left:6px;">⏳ Pendiente</span>' : ''}</div>
+                    <div class="af-log-item" onclick="App.seekToClip(${ev.vSec}, ${ev.id})">
+                        <div><b>${ev.type}</b> <span style="color:var(--af-text-low)">(Eq. ${ev.team})</span> ${ev.syncStatus === 'pending' ? '<span style="color:var(--af-warning); font-size:10px; margin-left:6px;">⏳ Pendiente</span>' : ''} ${ev.clipUrl ? '<span style="color:var(--af-visit); font-size:10px; margin-left:6px;">▶️ Link Nube</span>' : ''}</div>
                         <div style="font-family:var(--af-font-data); font-size:10px; color:var(--af-text-low)">${ev.time}</div>
                     </div>
                     `;
                 }).join('');
             },
 
-            seekToClip: function(seconds) {
+            seekToClip: function(seconds, evId = null) {
                 const player = document.getElementById('af-player-engine');
                 this.switchView('clips', document.querySelector('[onclick*="clips"]'));
+                
+                if (evId) {
+                    const ev = this.eventCache.find(e => e.id === evId);
+                    if (ev && ev.clipUrl) {
+                        if (player.src !== ev.clipUrl) {
+                            player.src = ev.clipUrl;
+                            player.poster = "";
+                        }
+                    }
+                }
+                
                 player.currentTime = seconds;
                 player.play();
             },
