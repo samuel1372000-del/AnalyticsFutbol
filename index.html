@@ -544,7 +544,6 @@
             background: rgba(255, 255, 255, 0.015);
             border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius: var(--af-radius);
-            cursor: pointer;
             display: flex;
             justify-content: space-between;
             margin-bottom: 8px;
@@ -894,7 +893,7 @@
                 <div class="af-panel-head">
                     <span class="af-card-label">Línea de tiempo sincronizada</span>
                     <div class="af-toolbar">
-                        <button class="af-chip-btn" style="color:#ff98a8; border-color:rgba(244, 63, 94, 0.45); background:rgba(244, 63, 94, 0.12)" onclick="App.undoLastEvent()">Deshacer</button>
+                        <button class="af-chip-btn" style="color:#ff98a8; border-color:rgba(244, 63, 94, 0.45); background:rgba(244, 63, 94, 0.12)" onclick="App.undoLastEvent()">Deshacer último</button>
                     </div>
                 </div>
                 <div id="ui-event-log-container">
@@ -927,6 +926,7 @@
                 </div>
 
                 <button class="af-btn-primary" onclick="App.exportProfessionalPDF()">Descargar informe oficial PDF</button>
+                <button class="af-btn-secondary" onclick="App.exportRawCSV()" style="margin-top:12px; border-color:var(--af-border); color:var(--af-text-high);">Descargar Datos Crudos (CSV)</button>
                 <button class="af-btn-danger" onclick="App.resetMatchSystem()" style="margin-top:12px;">Finalizar y volver al inicio</button>
             </div>
         </section>
@@ -1206,6 +1206,60 @@
                 }
             },
 
+            deleteSpecificEvent: async function(id) {
+                if (!confirm("¿Eliminar este evento específico del historial?")) return;
+                
+                const evIndex = this.eventCache.findIndex(e => e.id === id);
+                if (evIndex === -1) return;
+                
+                const evToDel = this.eventCache[evIndex];
+                this.eventCache.splice(evIndex, 1);
+                
+                this.refreshEventLogUI();
+                this.refreshReportPreview();
+
+                if (evToDel.type === 'GOL' || evToDel.rawType === 'GOL') {
+                    if (evToDel.team === 'A' && this.matchState.localScore > 0) {
+                        this.matchState.localScore--;
+                        document.getElementById('ui-score-local').innerText = this.matchState.localScore;
+                    } else if (evToDel.team === 'B' && this.matchState.visitScore > 0) {
+                        this.matchState.visitScore--;
+                        document.getElementById('ui-score-visit').innerText = this.matchState.visitScore;
+                    }
+                    this.refreshReportPreview();
+
+                    if (this.supabase && this.matchState.id) {
+                        const scorePayload = {
+                            team_a_goals: this.matchState.localScore,
+                            team_b_goals: this.matchState.visitScore
+                        };
+                        try {
+                            if (!navigator.onLine) throw new Error("Offline");
+                            await this.supabase.from('matches').update(scorePayload).eq('id', this.matchState.id);
+                        } catch (err) {
+                            this.syncQueue.push({ action: 'update', table: 'matches', payload: scorePayload, eqCol: 'id', eqVal: this.matchState.id });
+                        }
+                    }
+                }
+
+                if (this.supabase) {
+                    const matchId = this.matchState.id || 'LIVE_REC';
+                    const matchPayload = {
+                        match_id: matchId,
+                        team: evToDel.team,
+                        event_type: evToDel.type,
+                        match_time: evToDel.time,
+                        video_second: evToDel.vSec
+                    };
+                    try {
+                        if (!navigator.onLine) throw new Error("Offline");
+                        await this.supabase.from('tactical_events').delete().match(matchPayload);
+                    } catch (err) {
+                        this.syncQueue.push({ action: 'delete', table: 'tactical_events', payload: matchPayload });
+                    }
+                }
+            },
+
             processSyncQueue: async function() {
                 if (!navigator.onLine || this.syncQueue.length === 0 || !this.supabase) return;
                 
@@ -1236,9 +1290,12 @@
 
                 container.innerHTML = this.eventCache.map(function(ev) {
                     return `
-                    <div class="af-log-item" onclick="App.seekToClip(${ev.vSec}, ${ev.id})">
-                        <div><b>${ev.type}</b> <span style="color:var(--af-text-low)">(Eq. ${ev.team})</span> ${ev.syncStatus === 'pending' ? '<span style="color:var(--af-warning); font-size:10px; margin-left:6px;">⏳ Pendiente</span>' : ''} ${ev.clipUrl ? '<span style="color:var(--af-visit); font-size:10px; margin-left:6px;">▶️ Link Nube</span>' : ''}</div>
-                        <div style="font-family:var(--af-font-data); font-size:10px; color:var(--af-text-low)">${ev.time}</div>
+                    <div class="af-log-item" style="display:flex; justify-content:space-between; align-items:center;">
+                        <div onclick="App.seekToClip(${ev.vSec}, ${ev.id})" style="flex:1;">
+                            <div><b>${ev.type}</b> <span style="color:var(--af-text-low)">(Eq. ${ev.team})</span> ${ev.syncStatus === 'pending' ? '<span style="color:var(--af-warning); font-size:10px; margin-left:6px;">⏳ Pendiente</span>' : ''} ${ev.clipUrl ? '<span style="color:var(--af-visit); font-size:10px; margin-left:6px;">▶️ Link Nube</span>' : ''}</div>
+                            <div style="font-family:var(--af-font-data); font-size:10px; color:var(--af-text-low)">${ev.time}</div>
+                        </div>
+                        <button onclick="App.deleteSpecificEvent(${ev.id})" style="background:transparent; border:none; color:var(--af-local); font-size:18px; padding:0 8px; cursor:pointer;">&times;</button>
                     </div>
                     `;
                 }).join('');
@@ -1982,6 +2039,26 @@
                 setTimeout(function() {
                     App.isPdfExporting = false;
                 }, 1500);
+            },
+            
+            exportRawCSV: function() {
+                if (this.eventCache.length === 0) {
+                    alert("No hay datos para exportar.");
+                    return;
+                }
+                let csv = "ID_Evento,Tiempo_Partido,Equipo,Tipo_Evento,Segundo_Video,Estado_Sincro\n";
+                this.eventCache.forEach(function(ev) {
+                    csv += `${ev.id},${ev.time},${ev.team},${ev.type},${ev.vSec},${ev.syncStatus}\n`;
+                });
+                
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                link.setAttribute("href", url);
+                link.setAttribute("download", `AF_Elite_RawData_${Date.now()}.csv`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
             },
 
             assignPlayerName: function() {
