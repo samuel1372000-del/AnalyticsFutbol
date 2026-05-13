@@ -840,6 +840,7 @@
                 <div class="af-video-box">
                     <video id="af-player-engine" controls crossorigin="anonymous" ontimeupdate="App.syncRadarWithVideo(this.currentTime)" poster="https://via.placeholder.com/800x450/111/fff?text=ESPERANDO+SINCRO+PC" playsinline></video>
                     <canvas id="af-drawing-canvas"></canvas>
+                    <div id="af-video-hud" style="position:absolute; top:10px; left:10px; pointer-events:none; display:flex; gap:8px;"></div>
                 </div>
                 <div class="af-actions-row" style="margin-top:14px; grid-template-columns: 1fr 1fr 1fr;">
                     <button class="af-btn-primary" onclick="App.toggleDrawingMode()">Lápiz táctico</button>
@@ -884,7 +885,7 @@
                     <button class="af-chip-btn mod-btn" onclick="App.setModifier('(A puerta)', this)">+ A puerta</button>
                     <button class="af-chip-btn mod-btn" onclick="App.setModifier('(Fuera)', this)">+ Fuera</button>
                     <button class="af-chip-btn mod-btn" onclick="App.setModifier('(En área)', this)">+ En área</button>
-                    <button class="af-chip-btn mod-btn" onclick="App.setModifier('(Alta int.)', this)">+ Alta int.</button>
+                    <button class="af-chip-btn mod-btn" onclick="App.setModifier('(Alta int.))', this)">+ Alta int.</button>
                 </div>
 
                 <div class="af-events-grid">
@@ -1662,6 +1663,37 @@
                 // Solo dibuja si el fotograma no tiene más de 1 segundo de desfase
                 if (minDiff < 1.0) {
                     this.renderRadarPositions(closestFrame.positions);
+                    
+                    // --- PARCHE HUD TÁCTICO ---
+                    if (closestFrame.metrics && closestFrame.metrics[this.activeTeam]) {
+                        const m = closestFrame.metrics[this.activeTeam];
+                        
+                        // 1. Paneles estáticos en pestaña "Táctico"
+                        const compUI = document.getElementById('ui-tact-compacity');
+                        const hgtUI = document.getElementById('ui-tact-height');
+                        
+                        if (compUI && m.d_L1_L2 !== undefined) {
+                            compUI.innerText = m.d_L1_L2 + 'm';
+                            if (m.d_L1_L2 < 12) compUI.style.color = 'var(--af-accent)'; // Verde (Compacto)
+                            else if (m.d_L1_L2 <= 15) compUI.style.color = 'var(--af-warning)'; // Amarillo (Alerta)
+                            else compUI.style.color = 'var(--af-local)'; // Rojo (Roto)
+                        }
+                        
+                        if (hgtUI && m.h_L1 !== undefined) {
+                            if (m.h_L1 < 25) { hgtUI.innerText = 'B. Bajo'; hgtUI.style.color = 'var(--af-text-high)'; }
+                            else if (m.h_L1 < 40) { hgtUI.innerText = 'B. Medio'; hgtUI.style.color = 'var(--af-text-high)'; }
+                            else { hgtUI.innerText = 'B. Alto'; hgtUI.style.color = 'var(--af-accent)'; }
+                        }
+                        
+                        // 2. HUD transparente sobre el vídeo en vivo
+                        const hud = document.getElementById('af-video-hud');
+                        if (hud && m.d_L1_L2 !== undefined) {
+                            let color = m.d_L1_L2 < 12 ? '#00d68f' : (m.d_L1_L2 <= 15 ? '#ffcc66' : '#f43f5e');
+                            let warning = m.d_L1_L2 > 15 ? ' ⚠️ BLOQUE ROTO' : '';
+                            hud.innerHTML = `<span style="background:rgba(0,0,0,0.7); color:${color}; padding:4px 8px; border-radius:4px; font-size:10px; font-weight:bold;">Dist: ${m.d_L1_L2}m${warning}</span>`;
+                        }
+                    }
+                    // --------------------------
                 }
             },
 
