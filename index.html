@@ -34,7 +34,7 @@
             --af-balon: #f5a623;
             --af-warning: #ffcc66;
             --af-font-main: 'Manrope', sans-serif;
-            --af-font-data: 'Roboto Mono', monospace;
+            --af-font- 'Roboto Mono', monospace;
             --af-text-high: #f4f7f8;
             --af-text-mid: #b5c0c8;
             --af-text-low: #74818c;
@@ -661,6 +661,77 @@
         #af-net-status.offline { color: var(--af-local); }
         @keyframes goalPulse { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0,214,143,0.6); } 50% { transform: scale(1.08); box-shadow: 0 0 0 10px rgba(0,214,143,0); } 100% { transform: scale(1); } }
         .af-score-digit.goal-anim { animation: goalPulse 0.5s ease-out; }
+
+        /* ==========================================================================
+           9. PROFESSIONAL SPORTS-TECH OVERRIDES (ANTI-AI / HUDL-INSPIRED)
+           ========================================================================== */
+        :root {
+            --af-accent: #059669;
+            --af-accent-soft: rgba(5, 150, 105, 0.15);
+            --af-local: #DC2626;
+            --af-visit: #2563EB;
+            --af-balon: #D97706;
+            --af-card: #111827;
+            --af-card-soft: #1F2937;
+            --af-border: #272F3C;
+            --af-border-soft: #1F2633;
+            --af-radius: 8px;
+            --af-shadow: 0 1px 2px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.2);
+            --af-inner-glow: none;
+        }
+
+        .af-card {
+            background: var(--af-card);
+            border: 1px solid var(--af-border);
+            box-shadow: var(--af-shadow);
+            backdrop-filter: none;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .af-panel-head { margin-bottom: 20px; gap: 12px; }
+        .af-card-label, .af-score-label, .af-metric-label, .af-table th {
+            font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+        }
+
+        .af-chip-btn, .af-btn-primary, .af-btn-secondary, .af-btn-danger, .af-btn-team, .af-btn-event {
+            border-radius: 8px; font-weight: 700; letter-spacing: 0.02em; transition: background 0.15s ease, border-color 0.15s ease;
+        }
+        .af-chip-btn { padding: 10px 14px; font-size: 10px; }
+        .af-btn-primary { background: var(--af-accent); color: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+        .af-btn-secondary { background: var(--af-card-soft); border-color: var(--af-border); }
+        .af-btn-event { border-left: 3px solid var(--af-text-mute); padding: 14px; min-height: auto; }
+
+        .af-score-digit { font-size: clamp(40px, 12vw, 64px); font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; }
+        .af-metric-value { font-size: 28px; font-weight: 700; letter-spacing: -0.01em; }
+
+        .player-ia {
+            border: 1px solid rgba(255,255,255,0.5);
+            background: rgba(0,0,0,0.4);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+            font-size: 9px; font-weight: 700;
+            backdrop-filter: none;
+        }
+        .player-ia::after {
+            content: ''; position: absolute; inset: -3px;
+            border: 1px solid currentColor; border-radius: 50%; opacity: 0.35;
+        }
+
+        .af-input, select.af-chip-btn {
+            background: #0B1017; border: 1px solid var(--af-border); border-radius: 8px;
+            padding: 10px 12px; font-size: 12px; color: var(--af-text-high);
+        }
+        .af-input:focus, select:focus { outline: none; border-color: var(--af-accent); box-shadow: 0 0 0 2px var(--af-accent-soft); }
+
+        .af-metric-grid, .af-events-grid, .af-actions-row { gap: 16px; }
+        .af-video-box { background: #000; border: 1px solid var(--af-border); border-radius: 10px; box-shadow: 0 4px 16px rgba(0,0,0,0.4); }
+
+        @keyframes goalPulse { 0% { transform: scale(1); } 50% { transform: scale(1.06); } 100% { transform: scale(1); } }
+        .af-score-digit.goal-anim { animation: goalPulse 0.4s ease-out; color: var(--af-accent) !important; }
+
+        header { padding: calc(14px + env(safe-area-inset-top)) 16px 12px; background: rgba(17, 24, 39, 0.98); backdrop-filter: blur(8px); }
+        .nav-tab { font-weight: 700; letter-spacing: 0.06em; padding: 14px 16px; }
+        .nav-tab.active { background: var(--af-accent-soft); color: var(--af-accent); border-bottom-color: var(--af-accent); }
     </style>
 </head>
 <body onload="App.initialize()">
@@ -1466,7 +1537,7 @@
                     if (error) throw error;
 
                     // 2. Obtener URL pública para guardarla en base de datos
-                    const { data: urlData } = this.supabase.storage.from('clips').getPublicUrl(fileName);
+                    const {  urlData } = this.supabase.storage.from('clips').getPublicUrl(fileName);
                     const publicUrl = urlData.publicUrl;
 
                     if (statusLabel) statusLabel.innerText = "✅ Vídeo cargado y listo para analizar.";
@@ -1616,7 +1687,7 @@
                     }
 
                     // RECUPERAR LINKS DE VÍDEO (La Base Arquitectónica)
-                    const { data: dbEvents } = await this.supabase
+                    const {  dbEvents } = await this.supabase
                         .from('tactical_events')
                         .select('team, video_second, clip_url')
                         .eq('match_id', this.matchState.id)
@@ -1938,7 +2009,7 @@
                         App.renderTacticalOverlay();
 
                         App.renderEngineData({
-                            full_data: { positions: mockPos, players: mockPlayers }
+                            full_ { positions: mockPos, players: mockPlayers }
                         });
                         App.refreshReportPreview();
                     }, 180);
@@ -2338,7 +2409,7 @@
                     // [PATCH] Persistencia local
                     localStorage.setItem('af_roster', JSON.stringify(this.rosterData));
                     if(this.matchState.fullIAData && this.matchState.fullIAData.players) {
-                        this.renderEngineData({ full_data: this.matchState.fullIAData });
+                        this.renderEngineData({ full_ this.matchState.fullIAData });
                     }
                 }
             },
@@ -2452,7 +2523,7 @@
                             team_a_goals: 0,
                             team_b_goals: 0,
                             possession_a: 50,
-                            full_data: { players: [], positions: [], tracking_frames: [] }
+                            full_ { players: [], positions: [], tracking_frames: [] }
                         }])
                         .select();
 
