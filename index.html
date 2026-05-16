@@ -6,8 +6,6 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="AF Elite 5.1">
-    <meta name="theme-color" content="#080a0c">
-    <link rel="manifest" href="manifest.json">
 
     <link rel="apple-touch-icon" href="icon.png">
     <title>AnalyticsFutbol Elite v5.1</title>
@@ -34,7 +32,7 @@
             --af-balon: #f5a623;
             --af-warning: #ffcc66;
             --af-font-main: 'Manrope', sans-serif;
-            --af-font- 'Roboto Mono', monospace;
+            --af-font-data: 'Roboto Mono', monospace;
             --af-text-high: #f4f7f8;
             --af-text-mid: #b5c0c8;
             --af-text-low: #74818c;
@@ -651,87 +649,6 @@
                 grid-template-columns: repeat(4, minmax(0, 1fr));
             }
         }
-
-        /* ==========================================================================
-           8. PATCHES QUIRÚRGICOS (iOS / RED / UI)
-           ========================================================================== */
-        html, body { overscroll-behavior: none; }
-        #af-player-engine, canvas#af-drawing-canvas, canvas#tactical-canvas-overlay { transform: translateZ(0); will-change: transform; }
-        #af-net-status { font-size: 9px; font-weight: 800; color: var(--af-accent); text-transform: uppercase; letter-spacing: 1px; margin-top: 6px; }
-        #af-net-status.offline { color: var(--af-local); }
-        @keyframes goalPulse { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0,214,143,0.6); } 50% { transform: scale(1.08); box-shadow: 0 0 0 10px rgba(0,214,143,0); } 100% { transform: scale(1); } }
-        .af-score-digit.goal-anim { animation: goalPulse 0.5s ease-out; }
-
-        /* ==========================================================================
-           9. PROFESSIONAL SPORTS-TECH OVERRIDES (ANTI-AI / HUDL-INSPIRED)
-           ========================================================================== */
-        :root {
-            --af-accent: #059669;
-            --af-accent-soft: rgba(5, 150, 105, 0.15);
-            --af-local: #DC2626;
-            --af-visit: #2563EB;
-            --af-balon: #D97706;
-            --af-card: #111827;
-            --af-card-soft: #1F2937;
-            --af-border: #272F3C;
-            --af-border-soft: #1F2633;
-            --af-radius: 8px;
-            --af-shadow: 0 1px 2px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.2);
-            --af-inner-glow: none;
-        }
-
-        .af-card {
-            background: var(--af-card);
-            border: 1px solid var(--af-border);
-            box-shadow: var(--af-shadow);
-            backdrop-filter: none;
-            padding: 24px;
-            margin-bottom: 20px;
-        }
-
-        .af-panel-head { margin-bottom: 20px; gap: 12px; }
-        .af-card-label, .af-score-label, .af-metric-label, .af-table th {
-            font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
-        }
-
-        .af-chip-btn, .af-btn-primary, .af-btn-secondary, .af-btn-danger, .af-btn-team, .af-btn-event {
-            border-radius: 8px; font-weight: 700; letter-spacing: 0.02em; transition: background 0.15s ease, border-color 0.15s ease;
-        }
-        .af-chip-btn { padding: 10px 14px; font-size: 10px; }
-        .af-btn-primary { background: var(--af-accent); color: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
-        .af-btn-secondary { background: var(--af-card-soft); border-color: var(--af-border); }
-        .af-btn-event { border-left: 3px solid var(--af-text-mute); padding: 14px; min-height: auto; }
-
-        .af-score-digit { font-size: clamp(40px, 12vw, 64px); font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; }
-        .af-metric-value { font-size: 28px; font-weight: 700; letter-spacing: -0.01em; }
-
-        .player-ia {
-            border: 1px solid rgba(255,255,255,0.5);
-            background: rgba(0,0,0,0.4);
-            box-shadow: 0 2px 6px rgba(0,0,0,0.5);
-            font-size: 9px; font-weight: 700;
-            backdrop-filter: none;
-        }
-        .player-ia::after {
-            content: ''; position: absolute; inset: -3px;
-            border: 1px solid currentColor; border-radius: 50%; opacity: 0.35;
-        }
-
-        .af-input, select.af-chip-btn {
-            background: #0B1017; border: 1px solid var(--af-border); border-radius: 8px;
-            padding: 10px 12px; font-size: 12px; color: var(--af-text-high);
-        }
-        .af-input:focus, select:focus { outline: none; border-color: var(--af-accent); box-shadow: 0 0 0 2px var(--af-accent-soft); }
-
-        .af-metric-grid, .af-events-grid, .af-actions-row { gap: 16px; }
-        .af-video-box { background: #000; border: 1px solid var(--af-border); border-radius: 10px; box-shadow: 0 4px 16px rgba(0,0,0,0.4); }
-
-        @keyframes goalPulse { 0% { transform: scale(1); } 50% { transform: scale(1.06); } 100% { transform: scale(1); } }
-        .af-score-digit.goal-anim { animation: goalPulse 0.4s ease-out; color: var(--af-accent) !important; }
-
-        header { padding: calc(14px + env(safe-area-inset-top)) 16px 12px; background: rgba(17, 24, 39, 0.98); backdrop-filter: blur(8px); }
-        .nav-tab { font-weight: 700; letter-spacing: 0.06em; padding: 14px 16px; }
-        .nav-tab.active { background: var(--af-accent-soft); color: var(--af-accent); border-bottom-color: var(--af-accent); }
     </style>
 </head>
 <body onload="App.initialize()">
@@ -743,7 +660,6 @@
         <div class="header-brand">
             <h1>AnalyticsFutbol</h1>
             <span>ELITE SYSTEM v5.1</span>
-            <div id="af-net-status">● EN LÍNEA</div>
         </div>
         <div class="chrono-engine">
             <button class="chrono-btn" onclick="App.adjustTime(-1)">-</button>
@@ -1086,12 +1002,6 @@
                     "sb_publishable_bGfCRIXGSuGb5XK_SJ0tdw_XYNIHW14"
                 );
 
-                // [PATCH] Persistencia de cola y plantillas
-                const savedQ = localStorage.getItem('af_sync_queue');
-                if (savedQ) this.syncQueue = JSON.parse(savedQ);
-                const savedR = localStorage.getItem('af_roster');
-                if (savedR) this.rosterData = JSON.parse(savedR);
-
                 this.initDrawingSystem();
                 this.syncWithSupabase();
                 this.refreshReportPreview();
@@ -1100,22 +1010,6 @@
                     App.syncWithSupabase();
                     App.processSyncQueue();
                 }, 5000);
-
-                // [PATCH] Detección de red
-                window.addEventListener('online', function() {
-                    document.getElementById('af-net-status').classList.remove('offline');
-                    document.getElementById('af-net-status').innerText = '● EN LÍNEA';
-                });
-                window.addEventListener('offline', function() {
-                    document.getElementById('af-net-status').classList.add('offline');
-                    document.getElementById('af-net-status').innerText = '● SIN RED (COLA ACTIVA)';
-                });
-
-                // [PATCH] Autoplay compliant iOS
-                const vid = document.getElementById('af-player-engine');
-                vid.muted = true;
-                vid.setAttribute('playsinline', '');
-                vid.setAttribute('webkit-playsinline', '');
             },
 
             switchView: function(viewId, btnElement) {
@@ -1253,11 +1147,6 @@
                         this.matchState.visitScore++;
                         document.getElementById('ui-score-visit').innerText = this.matchState.visitScore;
                     }
-
-                    // [PATCH] Feedback visual gol
-                    const scoreEl = document.getElementById(this.activeTeam === 'A' ? 'ui-score-local' : 'ui-score-visit');
-                    scoreEl.classList.add('goal-anim');
-                    setTimeout(function() { scoreEl.classList.remove('goal-anim'); }, 600);
 
                     this.refreshReportPreview();
 
@@ -1537,7 +1426,7 @@
                     if (error) throw error;
 
                     // 2. Obtener URL pública para guardarla en base de datos
-                    const {  urlData } = this.supabase.storage.from('clips').getPublicUrl(fileName);
+                    const { data: urlData } = this.supabase.storage.from('clips').getPublicUrl(fileName);
                     const publicUrl = urlData.publicUrl;
 
                     if (statusLabel) statusLabel.innerText = "✅ Vídeo cargado y listo para analizar.";
@@ -1687,7 +1576,7 @@
                     }
 
                     // RECUPERAR LINKS DE VÍDEO (La Base Arquitectónica)
-                    const {  dbEvents } = await this.supabase
+                    const { data: dbEvents } = await this.supabase
                         .from('tactical_events')
                         .select('team, video_second, clip_url')
                         .eq('match_id', this.matchState.id)
@@ -1754,10 +1643,6 @@
             },
 
             syncRadarWithVideo: function(videoTime) {
-                // [PATCH] Throttle 80ms para evitar jank en iOS al arrastrar barra
-                if (!this._lastVideoSync || Date.now() - this._lastVideoSync < 80) return;
-                this._lastVideoSync = Date.now();
-
                 if (!this.matchState.fullIAData || !this.matchState.fullIAData.tracking_frames) return;
                 
                 const tracking = this.matchState.fullIAData.tracking_frames;
@@ -2009,7 +1894,7 @@
                         App.renderTacticalOverlay();
 
                         App.renderEngineData({
-                            full_ { positions: mockPos, players: mockPlayers }
+                            full_data: { positions: mockPos, players: mockPlayers }
                         });
                         App.refreshReportPreview();
                     }, 180);
@@ -2092,15 +1977,7 @@
 
                 const state = this.matchState;
                 const eventsSnapshot = this.eventCache.slice();
-                let win = null;
-
-                // [PATCH] Fallback Safari popup blocker
-                try {
-                    win = window.open('', '_blank', 'noopener,noreferrer');
-                } catch(e) {
-                    const blob = new Blob([docStructure], {type: 'text/html'});
-                    win = window.open(URL.createObjectURL(blob), '_blank');
-                }
+                const win = window.open('', '_blank');
 
                 if (!win) {
                     this.isPdfExporting = false;
@@ -2406,10 +2283,8 @@
                     document.getElementById('roster-name-in').value = '';
                     document.getElementById('roster-dorsal-in').value = '';
                     this.updateRosterUI();
-                    // [PATCH] Persistencia local
-                    localStorage.setItem('af_roster', JSON.stringify(this.rosterData));
                     if(this.matchState.fullIAData && this.matchState.fullIAData.players) {
-                        this.renderEngineData({ full_ this.matchState.fullIAData });
+                        this.renderEngineData({ full_data: this.matchState.fullIAData });
                     }
                 }
             },
@@ -2523,7 +2398,7 @@
                             team_a_goals: 0,
                             team_b_goals: 0,
                             possession_a: 50,
-                            full_ { players: [], positions: [], tracking_frames: [] }
+                            full_data: { players: [], positions: [], tracking_frames: [] }
                         }])
                         .select();
 
@@ -2538,10 +2413,6 @@
                 } else {
                     this.matchState.id = "MATCH_" + Date.now();
                 }
-
-                // [PATCH] Limpieza persistencia local
-                localStorage.removeItem('af_sync_queue');
-                localStorage.removeItem('af_roster');
 
                 this.refreshReportPreview();
                 this.switchView('live', document.querySelectorAll('.nav-tab')[0]);
